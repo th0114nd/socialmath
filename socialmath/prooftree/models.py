@@ -45,11 +45,16 @@ class Node(models.Model):
 	type = models.IntegerField()
 	title = models.CharField(max_length=100)
 	statement = models.TextField()
+	def __str__(self):
+		return self.title
 
 # Entity for proofs.
 class Proof(models.Model):
 	pf_id = models.AutoField(primary_key=True)
+	title = models.CharField(max_length=100)
 	content = models.TextField()
+	def __str__(self):
+		return self.title
 
 # Mapping between theorem and proofs
 class Prove(models.Model):
