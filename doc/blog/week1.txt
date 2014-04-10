@@ -23,7 +23,8 @@ Over the pasts week, we have
 
 Goals for the upcoming week:
     Jianchi is working on the backend. This week he will write templates that
-        dictate the structure of the view.
+        dictate the structure of the view. He will also try to get the production
+        server configuration set up, time permitting.
 
     Tim is remembering what he did a few summers ago to seed the database with some
         simple proofs, and figuring out the client-server API. He is going to
@@ -31,10 +32,10 @@ Goals for the upcoming week:
         are working properly, and write some sample responses to use as a mock in testing
         the frontends adherence to the API and proper usage of the data that it receives.
 
-
     Kexin is working on the database. This week she will be writing URL handlers to access
         the database based on HTTP requests.
 
     Ying-yu is working on visualization in the frontend. This means working with Jianchi's
-        templates to show the DAG, and working with the API to properly interpret server responses
-        and calculate the relationships between DAGEntries.
+        templates to show the DAG, and working with the API to properly
+        interpret server responses and calculate the relationships between
+        DAGEntries.
