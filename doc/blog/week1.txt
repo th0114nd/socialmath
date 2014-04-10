@@ -1,0 +1,40 @@
+The Story so far:
+    After a problematic start with newly discovered prior art, we decided
+to change gears from a traffic simulator to a web app to accomodate the
+visualization of mathematical structures. The basic application architecture is the
+typical LAMP stack with a REST API and CRUD functionality. In this case the P
+is actually Python instead of perl or PHP, the M stands for SQLite, A could
+either be Apache or AWS as our needs turn out to be (really any server that
+offers a Web Server Gateway Interface module will do). On the backend we're running
+django to setup the structure of the site, and on the frontend we're using
+d3.js for visualization, AngularJS for DOM manipulation, as well as Bootstrap
+for templates and style. That is of course if there is enough orthogonality
+between the web frameworks for them to play nicely together.
+
+    The first steps we are taking are similar to any team making a CRUD app:
+setting up the database and a method of communication between the client
+and server.
+
+Over the pasts week, we have
+    Determined a schema for the database and fleshed out data structures for the DAG
+    Familiarized ourselves with the frameworks that we will be working with for
+        the remainder of the term
+    Promoted synergy
+
+Goals for the upcoming week:
+    Jianchi is working on the backend. This week he will write templates that
+        dictate the structure of the view.
+
+    Tim is remembering what he did a few summers ago to seed the database with some
+        simple proofs, and figuring out the client-server API. He is going to
+        use this to both seed the database and check that the server side access routines
+        are working properly, and write some sample responses to use as a mock in testing
+        the frontends adherence to the API and proper usage of the data that it receives.
+
+
+    Kexin is working on the database. This week she will be writing URL handlers to access
+        the database based on HTTP requests.
+
+    Ying-yu is working on visualization in the frontend. This means working with Jianchi's
+        templates to show the DAG, and working with the API to properly interpret server responses
+        and calculate the relationships between DAGEntries.
