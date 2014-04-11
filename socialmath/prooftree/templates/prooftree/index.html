@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>SocialMath Submitting New Article</title>
+</head>
+
+<body>
+	<h2> Welcome to Social Math </h2>
+
+	{% if latest_theorem_list %}
+	<p> Here are the latest works that have recently been added to the SocialMath knowledge graph. </p>
+	<ul>
+		{% for theorem in latest_theorem_list %}
+			<li><a href="/prooftree/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<p> There are no recent works added to the SocialMath knowledge graph. </p>
+	{% endif %}
+
+	<p><a href="/prooftree/submit_theorem/"> Add a new theorem </a></p>
+	<p><a href="/prooftree/submit_article/"> Add a new article or proof </a></p>
+
+</body>
+
+</html>
