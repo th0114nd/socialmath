@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="graphForce">
+    <head>
+        <meta charset="utf-8">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="graph.css">
+        <title>Mock-up</title>
+    </head>
+    <body ng-controller="graphControl">
+        <div>
+            <svg ng-attr-width="{{width}}"
+                 ng-attr-height="{{height}}">
+                <line   ng-repeat="link in links"
+                        class="link"
+                        ng-attr-stroke-width="{{link.strokeWidth}}"
+                        ng-attr-x1="{{link.source.x}}"
+                        ng-attr-y1="{{link.source.y}}"
+                        ng-attr-x2="{{link.target.x}}"
+                        ng-attr-y2="{{link.target.y}}">
+                </line>
+                <circle ng-repeat="node in nodes"
+                        class="node"
+                        r="5"
+                        ng-attr-fill="{{node.color}}"
+                        ng-attr-cx="{{node.x}}"
+                        ng-attr-cy="{{node.y}}">
+                    <title>{{node.name}}</title>
+                </circle>
+            </svg>
+        </div>
+        <!-- D3.js -->
+        <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+        <!-- AngularJS -->
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+        <!-- UI Bootstrap -->
+        <script type="text/javascript" src="ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+        <!-- controller -->
+        <script type="text/javascript" src="graph.js"></script>
+    </body>
+</html>
