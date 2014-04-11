@@ -40,3 +40,7 @@ def index(request):
     latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
     context = {'latest_theorem_list': latest_theorem_list}
     return render(request, 'prooftree/index.html', context)
+
+def detail(request, node_id):
+	node = get_object_or_404(Node, pk=node_id)
+	return render(request, 'prooftree/detail.html', {'node':node})

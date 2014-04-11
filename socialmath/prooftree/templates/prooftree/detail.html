@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	{% if node %}
+	<title> {{node.title}} </title>
+	{% else %}
+	<title> Object Not Found </title>
+	{% endif %}
+</head>
+
+<body>
+	{% if node %}
+	<h2> {{node.title}} </h2>
+	<p> {{node.statement}} </p>
+	<p> published at {{node.pub_time}} </p>
+	
+	{% endif %}
+
+	<p><a href="/prooftree/"> Back to Main Page</a></p>
+
+</body>
+
+</html>
