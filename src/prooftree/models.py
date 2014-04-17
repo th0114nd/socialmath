@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg, Max, Min
 import datetime
 from django.utils.timezone import utc
 
@@ -36,11 +37,16 @@ CREATE TABLE "prooftree_kwmap" (
 
 # Custom manager for DAG relations
 class NodeManager(models.Manager):
+    # Usage: Node.objects.max_id()
+    # Return: maximum primary key
+    def max_id(self):
+        return self.all().aggregate(Max('node_id'))['node_id__max']
+
     # Usage: Node.objects.max_pageno() 
     # Return: maximum page number, assuming we are loading 100
     #         entries per page
     def max_pageno(self):
-        return (self.all().count() - 1) / 100;
+        return (max_id() - 1) / 100 + 1;
 
 
 # Custom manager for DAG relations
@@ -116,10 +122,3 @@ class KWMap(models.Model):
 	kw = models.ForeignKey(Keyword)
 
 
-# TODOs:
-# - Node, proof + pub time
-# - Proof -> theorem
-# - Get all keywords mapped to a theorem
-# - Search theorems by keywords
-# - Get all proofs of a theorem
-# - Get all children to a node
