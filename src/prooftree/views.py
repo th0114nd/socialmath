@@ -44,3 +44,15 @@ def index(request):
 def detail(request, node_id):
 	node = get_object_or_404(Node, pk=node_id)
 	return render(request, 'prooftree/detail.html', {'node':node})
+
+def add(request, work_type):
+	theorem_list = Node.objects.all().order_by('-pub_time')
+	context = {'theorem_list': theorem_list}
+	context['lemma_range'] = range(9)
+	return render(request, 'prooftree/add_article.html', context)
+
+def delete(request, node_id):
+	return
+
+def change(request, node_id):
+	return
