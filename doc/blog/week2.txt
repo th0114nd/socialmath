@@ -1,0 +1,50 @@
+Socialmath week 2: elastic configuraboo
+
+This week the first draft of the API was written. It's a fairly
+standard one that supports the collection of all entries in
+a paginated manner, getting a single entry for a close up view,
+and the CRUD operations expected to have. The curious
+can take a look at it at
+
+    https://github.com/th0114nd/socialmath/doc/api.md
+
+Django makes it easy to assign handlers for the
+various URLs we're using, and we've made good progress
+at filling out the backend half of the contract specified
+by the API.
+
+The decision was also made to switch to using virtualenv:
+this gave us consistent versioning across our local machines
+as well as allowing us to use versions required by AWS without
+having conflicts of the development computers. It also makes it
+easy to start working on a different computer: to make sure
+all the (python) dependencies are installed it's a matter of
+
+    $ virtualenv .
+    $ source bin/activate
+    $ pip install -r requirements.txt
+
+It seemed like AWS had the best support for MySQL, so we decided
+to migrate over to that for storage from SQLite. Django again
+makes this easy: their models framework is db engine agnostic,
+so it's just a matter saving the current contents to json,
+changing a setting from 
+`django.db.backend.sqlite3` to `django.db.backend.mysql`,
+and creating a new db with the contents of the json file.
+
+It was only slightly harder to get MySQL set up. And by that,
+I mean it was a total PITA compared to sqlite just working.
+OSX seemed to have several different ways of starting the daemon,
+none of which worked for various reasons. Typically it had to
+do with a socket that couldn't be found, and then once that 
+was resolved managing permissions for the user.
+
+Deployment is still a work in progress with getting AWS to play nicely.
+
+Upcoming goals for the week:
+    Jianchi:
+    Kexin:
+    Tim: Start bringing the frontend code into a structure more recognizable by
+        django, complete deployment configuration.
+    Ying-Yu:
+
