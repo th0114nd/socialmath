@@ -42,7 +42,8 @@ was resolved managing permissions for the user.
 Deployment is still a work in progress with getting AWS to play nicely.
 
 Over the pasts week:
-  Jianchi:
+  Jianchi: Wrote the view templates and view methods to enable theorem and
+    article submission. 
   Tim: Wrote up the API and worked on configuration problems 
     (hosting/db setup/versioning)
   Kexin has been doing more work on the backend. She fixed bugs in the models,
@@ -51,7 +52,8 @@ Over the pasts week:
   Ying-yu
 
 Upcoming goals for the week:
-    Jianchi:
+    Jianchi: Enable user editing and deletion of currently existing theorem
+        and article.
     Kexin is planning to finishing up the work in the backend. This includes 
         seeding database with a demo example, finishing up the views, and
         possibly writing API tests.
