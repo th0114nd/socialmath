@@ -48,7 +48,10 @@ Over the pasts week:
   Kexin has been doing more work on the backend. She fixed bugs in the models,
         wrote serializers to help form json responses, and implemented views for 
         getting pages and theorems.
-  Ying-yu
+  Ying-Yu wrote a script that transforms our proof tree data structure into
+    D3.js' graph format (list of nodes and links). He has also been developing 
+    an algorithm for automatic hierarchical layout, which is harder than 
+    he initially thought and might take two more weeks to finish at worst.
 
 Upcoming goals for the week:
     Jianchi:
@@ -57,4 +60,8 @@ Upcoming goals for the week:
         possibly writing API tests.
     Tim will start bringing the frontend code into a structure more recognizable by
         django, complete deployment configuration.
-    Ying-Yu:
+    Ying-Yu will keep developing the layout algorithm. Meanwhile, he will try 
+      to make a minimal interactive display as soon as possible and work on 
+      some other front-end tasks with more stable output to keep our project 
+      progressing. Possible tasks include moving some data processing from 
+      server side to client side and general web-page layout.
