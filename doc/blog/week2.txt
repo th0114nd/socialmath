@@ -1,0 +1,13 @@
+
+Over the pasts week, 
+  Jianchi
+  Tim
+  Kexin has been doing more work on the backend. She fixed bugs in the models,
+        wrote serializers to help form json responses, and implemented views for 
+        getting pages and theorems.
+  Ying-yu
+
+Goals for the upcoming week:
+    Kexin is planning to finishing up the work in the backend. This includes 
+        seeding database with a demo example, finishing up the views, and
+        possibly writing API tests.
