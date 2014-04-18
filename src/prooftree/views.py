@@ -49,10 +49,29 @@ def add(request, work_type):
 	theorem_list = Node.objects.all().order_by('-pub_time')
 	context = {'theorem_list': theorem_list}
 	context['lemma_range'] = range(9)
-	return render(request, 'prooftree/add_article.html', context)
+	print work_type
+	if (int(work_type) == 1):
+		return render(request, 'prooftree/add_theorem.html', context)
+	elif (int(work_type) == 2):
+		return render(request, 'prooftree/add_article.html', context)
 
 def delete(request, node_id):
 	return
 
 def change(request, node_id):
 	return
+
+def submit_article(request):
+	article_title = request.POST['title']
+	theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
+	body = request.POST['body']
+	newnode = Node(kind='pf', title=article_title, statement=body)
+	newnode.save()
+	return index(request)
+
+def submit_theorem(request):
+	theorem_title = request.POST['title']
+	body = request.POST['body']
+	newnode = Node(kind='thm', title=theorem_title, statement=body)
+	newnode.save()
+	return index(request)
