@@ -12,15 +12,15 @@
 	<p> Here are the latest works that have recently been added to the SocialMath knowledge graph. </p>
 	<ul>
 		{% for theorem in latest_theorem_list %}
-			<li><a href="/prooftree/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
+			<li><a href="/prooftree/get/one/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
 		{% endfor %}
 	</ul>
 	{% else %}
 	<p> There are no recent works added to the SocialMath knowledge graph. </p>
 	{% endif %}
 
-	<p><a href="/prooftree/submit_theorem/"> Add a new theorem </a></p>
-	<p><a href="/prooftree/submit_article/"> Add a new article or proof </a></p>
+	<p><a href="/prooftree/add/theorem/"> Add a new theorem </a></p>
+	<p><a href="/prooftree/add/article/"> Add a new article or proof </a></p>
 
 </body>
 

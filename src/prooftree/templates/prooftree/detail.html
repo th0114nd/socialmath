@@ -11,10 +11,12 @@
 
 <body>
 	{% if node %}
+	<div>
 	<h2> {{node.title}} </h2>
 	<p> {{node.statement}} </p>
 	<p> published at {{node.pub_time}} </p>
-	
+	<p> <a href="/prooftree/delete/one/{{node.node_id}}">delete</a> &nbsp; <a href="/prooftree/change/{{node.node_id}}">edit</a></p>
+	</div>
 	{% endif %}
 
 	<p><a href="/prooftree/"> Back to Main Page</a></p>

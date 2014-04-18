@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+
+  
+
+  <title>SocialMath Submitting New Article</title>
+</head>
+
+<body>
+        
+
+<h2>Adding a New Article to SocialMath</h2>
+<p>
+  You may enter your article content in the text box provided below, or you may upload your pdf
+  or tex file using the upload file button. Note that you file should not exceed 4MB in size.
+  If you wish to add a new theorem, <a href="http://theory.caltech.edu/people/jchen/submit_theorem.htm">add a theorem here</a>.
+</p>
+
+<form method="post" enctype="multipart/form-data" action=".">
+  <p>
+    <table style="text-align:left">
+  
+      <tr>
+        <th><label for="id_title">Article Title</label></th>
+        <td>
+          
+          <input name="title" value="" class="title_input" type="text" id="id_title" size="50" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_theorem">Theorem Name</label></th>
+        <td>
+        <select>
+          <option value="blank">--Please Select Your Theorem--</option>
+          {% for theorem in theorem_list %}
+          <option value="">--{{theorem.title}}</option>
+          {% endfor %}
+        </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th><label for="id_body">Body</label></th>
+        <td>
+          <textarea id="id_body" rows="30" cols="80" name="body"></textarea>
+        </td>
+
+
+        <td>
+        <table style="text-align:left">
+          {% for i in lemma_range %}
+          <tr>
+            <th><label for="id_lemma">Lemma {{i}}</label></th>
+          </tr>
+          <tr>
+            <th>
+            <select>
+              <option value="blank">--Please Select Your Lemma--</option>
+              {% for theorem in theorem_list %}
+              <option value=""}>--{{theorem.title}}</option>
+              {% endfor %}
+            </select>
+            </th>
+          </tr>
+          {% endfor %}
+        </table>
+        </td>
+
+
+      </tr>
+
+      <tr>
+        <th><label for="id_keyword">Keywords</label></th>
+        <td>
+          
+          <input name="keyword" value="" class="keyword_input" type="text" id="id_keyword" size="80" />
+        </td>
+      </tr>
+      
+      <tr>
+        <th><label for="id_file1">Upload Your File Here</label></th>
+        <td>
+          
+          <input type="file" name="file1" id="id_file1" />
+        </td>
+      </tr>
+    </table>
+  </p>
+
+  <p>
+    <input type="submit" value="Submit Article" />
+  </p>
+</form>
+
+
+      </td>
+    </tr>
+    
+
+  </table>
+</body>
+</html>
