@@ -82,11 +82,11 @@ def detail(request, node_id):
         /get/one/<id>
     '''
     # Error handling
-    maxid = Node.objects.max_id()
+    maxid = int(Node.objects.max_id())
     node_id = int(node_id)
     if node_id is None:
         return HttpResponse("Bad Request. An id is required.", status=400)
-    if int(node_id) > int(maxid):
+    if node_id > maxid:
         return HttpResponse("Bad Request. Id not found.", status=404)
     try:
         node = Node.objects.get(node_id=node_id)
@@ -111,14 +111,67 @@ def add(request, work_type):
 	theorem_list = Node.objects.all().order_by('-pub_time')
 	context = {'theorem_list': theorem_list}
 	context['lemma_range'] = range(9)
-	print work_type
 	if (int(work_type) == 1):
 		return render(request, 'prooftree/add_theorem.html', context)
 	elif (int(work_type) == 2):
 		return render(request, 'prooftree/add_article.html', context)
 
-def delete(request, node_id):
-    return
+def delete_one(request, node_id):
+    ''' **HTTP PUT**
+       /delete/one/<id>'''
+    # Error handling
+    maxid = int(Node.objects.max_id())
+    node_id = int(node_id)
+    if node_id > maxid:
+        return HttpResponse("Bad Request. Id not found.", status=404)
+    try:
+        node = Node.objects.get(node_id=node_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("Bad Request. Id has been delete.", status=410)
+    # TODO: 403 do not have authorization
+
+    if request.method == 'PUT':
+        # Delete dependencies from DAG
+        DAG.objects.filter(child_id=node_id).delete()
+        DAG.objects.filter(parent_id=node_id).delete()
+        # Delete keyword mapping
+        KWMap.objects.filter(node_id=node_id).delete()
+        # Delete node
+        node.delete()
+
+def delete_pf(request, node_id, pf_id):
+    ''' **HTTP PUT**
+       /delete/proof/<id>/<proofid>'''
+    # Error handling
+    maxid = int(Node.objects.max_id())
+    node_id = int(node_id)
+    pf_id = int(pf_id)
+    if node_id > maxid or pf_id > max_id:
+        return HttpResponse("Bad Request. Id not found.", status=404)
+    try:
+        parent = Node.objects.get(node_id=node_id)
+        proof = Node.objects.get(node_id=pf_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("Bad Request. Id has been delete.", status=410)
+    # TODO: 403 do not have authorization
+
+    if request.method == 'PUT':
+        # Delete dependencies from DAG
+        DAG.objects.filter(parent_id=node_id).filter(child_id=pf_id).delete()
+        # Delete keyword mapping
+        KWMap.objects.filter(node_id=pf_id).delete()
+        # Delete node
+        proof.delete()
+
+def delete_all(request):
+    ''' **HTTP PUT**
+       /delete/all/'''
+
+    if request.method == 'PUT':
+        Node.objects.all().delete()
+        keyword.objects.all().delete()
+        DAG.objects.all().delete()
+        KWMap.objects.all().delete()
 
 def change(request, node_id):
 	return
