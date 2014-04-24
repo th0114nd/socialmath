@@ -40,13 +40,14 @@ class NodeManager(models.Manager):
     # Usage: Node.objects.max_id()
     # Return: maximum primary key
     def max_id(self):
-        return self.all().aggregate(Max('node_id'))['node_id__max']
+        return self.all().aggregate(Max('node_id'))['node_id__max'] - \
+               self.all().aggregate(Min('node_id'))['node_id__min'] + 1
 
     # Usage: Node.objects.max_pageno() 
     # Return: maximum page number, assuming we are loading 100
     #         entries per page
     def max_pageno(self):
-        return (max_id() - 1) / 100 + 1;
+        return (self.max_id() - 1) / 100 + 1;
 
 
 # Custom manager for DAG relations
@@ -65,19 +66,19 @@ class DAGManager(models.Manager):
 # Custom manager for Keyword class
 class KWManager(models.Manager):
     # Usage: Keyword.objects.get_related(keyword)
-    # Return: QuerySet of node_id for theorems tagged with keyword
+    # Return: List of node_id for theorems tagged with keyword
     def get_related(self, keyword):
-        kw_id = self.get(word__exact=Keyword).values()[0]['kw_id']
-        return KWMap.objects.filter(kw_id=kw_id).values('node_id')
+        kw = Keyword.objects.filter(word__exact=keyword)
+        return KWMap.objects.filter(kw=kw).values_list('node_id', flat=True)
 
     # Usage: Keyword.objects.get_keywords(node_id)
-    # Return: QuerySet of kw_id for theorems tagged with keyword
+    # Return: List of keywords for the theorems
     def get_keywords(self, node_id):
-        kw = KWMap.objects.filter(node_id=node_id).values('kw_id')
-        kw_list = []
-        for item in kw:
-            kw_list.append(item['kw_id'])
-        return self.filter(kw_id_in=kw_list).values('word')
+        kw_ids = list(KWMap.objects.filter(node_id=node_id).values_list('kw_id', flat=True))
+        keywords = []
+        for kw_id in kw_ids:
+            keywords.append(Keyword.objects.get(kw_id=kw_id).word)
+        return keywords
 
 
 # Entity for a node in DAG. 
