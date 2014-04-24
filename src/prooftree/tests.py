@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.utils import unittest
+from django.test.client import Client
 from prooftree.models import *
+import json
 
 class NodeTestCase(unittest.TestCase):
     ''' Unit test for Node model'''
@@ -15,11 +17,11 @@ class NodeTestCase(unittest.TestCase):
     def tearDownClass(cls):
         Node.objects.all().delete()
 
-    def test_max_id(self):
+    def test_max_nodes(self):
         ''' Test whether Node model can get the largest primary key. '''
-        self.assertEqual(Node.objects.max_id(), 100)
+        self.assertEqual(Node.objects.max_nodes(), 100)
         Node.objects.get(node_id=NodeTestCase.max_id).delete()
-        self.assertEqual(Node.objects.max_id(), 99)
+        self.assertEqual(Node.objects.max_nodes(), 99)
 
     def test_max_pageno(self):
         ''' Test whether Node model can get the corret page number. '''
@@ -95,6 +97,7 @@ class KeywordTestCase(unittest.TestCase):
     def tearDownClass(cls):
         Node.objects.all().delete()
         Keyword.objects.all().delete()
+        KWMap.objects.all().delete()
 
     def test_get_keywords(self):
         ''' Test method Keyword.objects.get_keywords(node_id) '''
@@ -112,4 +115,64 @@ class KeywordTestCase(unittest.TestCase):
         self.assertEqual(len(list(Keyword.objects.get_related('kw_3'))), 2)
 
 
-    
+class ProoftreeViewsTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = Client()
+        # Create nodes
+        cls.thm = Node.objects.create(kind="thm", statement="Theorem 1")
+        cls.pf_1 = Node.objects.create(kind="pf", statement="Proof of theorem 1")
+        cls.pf_2 = Node.objects.create(kind="pf", statement="Another proof of theorem 1")
+        cls.thm_2 = Node.objects.create(kind="thm", statement="Theorem 2")
+        cls.ax_3 = Node.objects.create(kind="ax", statement="Axiom 3")
+
+        # Save the relations
+        DAG.objects.create(parent=cls.thm, child=cls.pf_1, dep_type='any')
+        DAG.objects.create(parent=cls.thm, child=cls.pf_2, dep_type='any')
+        DAG.objects.create(parent=cls.thm, child=cls.thm_2, dep_type='all')
+        DAG.objects.create(parent=cls.thm, child=cls.ax_3, dep_type='all')
+
+    @classmethod
+    def tearDownClass(cls):
+        Node.objects.all().delete()
+        DAG.objects.all().delete()
+
+    def test_detail(self):
+        max_id = Node.objects.max_id()
+        # Test for response code 404: invalid id
+        response = GetTestCase.client.get('/prooftree/get/one/' \
+            + str(max_id + 1) + '/')
+        self.assertEqual(response.status_code, 404)
+
+        # Test for response code 410: deleted id
+        delete_id = GetTestCase.thm_2.node_id
+        Node.objects.get(node_id=delete_id).delete()
+        DAG.objects.filter(child_id=delete_id).delete()
+        DAG.objects.filter(parent_id=delete_id).delete()
+        response = GetTestCase.client.get('/prooftree/get/one/' \
+            + str(delete_id) + '/')
+        self.assertEqual(response.status_code, 410)
+
+        # Test for response code 200: id found
+        root_id = GetTestCase.thm.node_id
+        response = GetTestCase.client.get('/prooftree/get/one/' \
+            + str(root_id) + '/')
+        self.assertEqual(response.status_code, 200)
+        # Check for response
+        json_resp = json.loads(response.content)
+        self.assertEqual(len(json_resp["neighbors"]), 3)
+        self.assertEqual(json_resp["neighbors"][0]["id"], \
+            GetTestCase.pf_1.node_id)
+        self.assertEqual(json_resp["neighbors"][0]["above_neighbors"], [])
+        self.assertEqual(json_resp["neighbors"][1]["above_neighbors"], [])
+        self.assertEqual(json_resp["neighbors"][2]["above_neighbors"], [])
+
+        self.assertEqual(len(json_resp["wanted"]["bodies"]), 2)
+        self.assertEqual(json_resp["wanted"]["bodies"][0]["proof_id"], \
+            GetTestCase.pf_1.node_id)
+        self.assertEqual(json_resp["wanted"]["bodies"][0]["below_neighbors"], \
+            [root_id])
+        self.assertEqual(json_resp["wanted"]["bodies"][1]["proof_id"], \
+            GetTestCase.pf_2.node_id)
+        self.assertEqual(json_resp["wanted"]["bodies"][1]["below_neighbors"], \
+            [root_id])

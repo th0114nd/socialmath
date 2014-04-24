@@ -37,17 +37,21 @@ CREATE TABLE "prooftree_kwmap" (
 
 # Custom manager for DAG relations
 class NodeManager(models.Manager):
-    # Usage: Node.objects.max_id()
+    # Usage: Node.objects.max_nodes()
+    # Return: maximum primary key
+    def max_nodes(self):
+        return self.max_id() - self.all().aggregate(Min('node_id'))['node_id__min'] + 1
+
+    # Usage: Node.objects.max_nodes()
     # Return: maximum primary key
     def max_id(self):
-        return self.all().aggregate(Max('node_id'))['node_id__max'] - \
-               self.all().aggregate(Min('node_id'))['node_id__min'] + 1
+        return self.all().aggregate(Max('node_id'))['node_id__max']
 
     # Usage: Node.objects.max_pageno() 
     # Return: maximum page number, assuming we are loading 100
     #         entries per page
     def max_pageno(self):
-        return (self.max_id() - 1) / 100 + 1;
+        return (self.max_nodes() - 1) / 100 + 1;
 
 
 # Custom manager for DAG relations

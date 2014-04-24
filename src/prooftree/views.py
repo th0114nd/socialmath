@@ -4,6 +4,7 @@ from prooftree.serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from django.core.exceptions import *
 
 class JSONResponse(HttpResponse):
     """
@@ -89,7 +90,7 @@ def detail(request, node_id):
         return HttpResponse("Bad Request. Id not found.", status=404)
     try:
         node = Node.objects.get(node_id=node_id)
-    except Node.ObjectDoesNotExist:
+    except ObjectDoesNotExist:
         return HttpResponse("Bad Request. Id has been delete.", status=410)
 
     if request.method == 'GET':
