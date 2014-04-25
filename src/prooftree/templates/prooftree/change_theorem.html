@@ -33,13 +33,12 @@
         <td>
         <table style="text-align:left">
           {% for lemma in lemmas %}
-          {% i = 0 %}
           <tr>
-            <th><label for="id_lemma">Lemma {{i}}</label></th>
+            <th><label for="id_lemma">Lemma {% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}</label></th>
           </tr>
           <tr>
             <th>
-            <select id="lemma{{i}}" name="lemma{{i}}">
+            <select id="lemma{% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}" name="lemma% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}">
               <option value="{{lemma.node_id}}">{{lemma.title}}</option>
               <option value="blank">--Please Select Your Lemma--</option>
               {% for lm in lemmas %}
