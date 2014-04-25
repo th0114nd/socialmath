@@ -180,8 +180,13 @@ def submit_article(request):
 	article_title = request.POST['title']
 	theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
 	body = request.POST['body']
-	newnode = Node(kind='pf', title=article_title, statement=body)
-	newnode.save()
+    newnode = Node(kind='pf', title=article_title, statement=body)
+    newnode.save()
+    for i in range(9):
+        dep = request.POST['lemma' + str(i)]
+        if dep != "blank":
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='any')
+            new_dag.save()
 	return index(request)
 
 def submit_theorem(request):
@@ -189,4 +194,9 @@ def submit_theorem(request):
 	body = request.POST['body']
 	newnode = Node(kind='thm', title=theorem_title, statement=body)
 	newnode.save()
+    for i in range(9):
+        dep = request.POST['lemma' + str(i)]
+        if dep != "blank":
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='any')
+            new_dag.save()
 	return index(request)
