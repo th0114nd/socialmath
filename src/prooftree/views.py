@@ -108,13 +108,13 @@ def detail(request, node_id):
 
 
 def add(request, work_type):
-	theorem_list = Node.objects.all().order_by('-pub_time')
-	context = {'theorem_list': theorem_list}
-	context['lemma_range'] = range(9)
-	if (int(work_type) == 1):
-		return render(request, 'prooftree/add_theorem.html', context)
-	elif (int(work_type) == 2):
-		return render(request, 'prooftree/add_article.html', context)
+    theorem_list = Node.objects.all().order_by('-pub_time')
+    context = {'theorem_list': theorem_list}
+    context['lemma_range'] = range(9)
+    if (int(work_type) == 1):
+        return render(request, 'prooftree/add_theorem.html', context)
+    elif (int(work_type) == 2):
+        return render(request, 'prooftree/add_article.html', context)
 
 def delete_one(request, node_id):
     ''' **HTTP PUT**
@@ -174,12 +174,12 @@ def delete_all(request):
         KWMap.objects.all().delete()
 
 def change(request, node_id):
-	return
+    return
 
 def submit_article(request):
-	article_title = request.POST['title']
-	theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
-	body = request.POST['body']
+    article_title = request.POST['title']
+    theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
+    body = request.POST['body']
     newnode = Node(kind='pf', title=article_title, statement=body)
     newnode.save()
     for i in range(9):
@@ -187,16 +187,16 @@ def submit_article(request):
         if dep != "blank":
             new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='any')
             new_dag.save()
-	return index(request)
+    return index(request)
 
 def submit_theorem(request):
-	theorem_title = request.POST['title']
-	body = request.POST['body']
-	newnode = Node(kind='thm', title=theorem_title, statement=body)
-	newnode.save()
+    theorem_title = request.POST['title']
+    body = request.POST['body']
+    newnode = Node(kind='thm', title=theorem_title, statement=body)
+    newnode.save()
     for i in range(9):
         dep = request.POST['lemma' + str(i)]
         if dep != "blank":
             new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='any')
             new_dag.save()
-	return index(request)
+    return index(request)
