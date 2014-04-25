@@ -19,7 +19,8 @@ Over the pasts week:
     existing theorems and proofs, in addition to new theorem/proof submissions. 
   Tim: 
   Kexin:
-  Ying-Yu:
+  Ying-Yu: Tweaking hierarchical force layout algorithm for proof graph
+    (like handling collision between boxes).
 
 Upcoming goals for the week:
     Jianchi: Complete template and basic backend system, including interface, 
@@ -27,4 +28,4 @@ Upcoming goals for the week:
       implementing user-profile system. 
     Kexin:
     Tim:
-    Ying-Yu:
+    Ying-Yu: Finish layout algorithm and integrate it into existing templates.
