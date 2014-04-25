@@ -1,0 +1,30 @@
+Socialmath week 3:
+
+We implemented a full working set of basic methods and templates running in the
+backend, enabling users to add, delete, and modify theorems and proofs in the
+system. We have also implemented automated tests that will accelerate our
+debugging and development process.
+
+We are planning to:
+  1). Work on improving the current user interface and the error
+      handling system to have a good robust basic system that can be demonstrated
+      and used; 
+  2). Finish develping the automated visualization system that can layout the graph
+      structure clearly and beautifully;
+  3). Start working on user-profile and authorization system, including design and
+      implementations
+
+Over the pasts week:
+  Jianchi: Wrote the view templates and view methods that enable users to edit
+    existing theorems and proofs, in addition to new theorem/proof submissions. 
+  Tim: 
+  Kexin:
+  Ying-Yu:
+
+Upcoming goals for the week:
+    Jianchi: Complete template and basic backend system, including interface, 
+      error handling and reporting, edge cases consideration, etc. Start
+      implementing user-profile system. 
+    Kexin:
+    Tim:
+    Ying-Yu:
