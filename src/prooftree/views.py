@@ -175,15 +175,15 @@ def delete_all(request):
 
 def change(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
-    theorem_list = Node.objects.filter(kind='thm').order_by('pub_time')
+    theorem_list = list(Node.objects.filter(kind='thm').order_by('pub_time'))
     context = {'theorem_list': theorem_list}
     context['node'] = node
-    dependencies = DAG.objects.filter(child_id=node_id).filter(type='all')
+    dependencies = DAG.objects.filter(child_id=node_id).filter(dep_type='all')
     lemmas = []
     for dependency in dependencies:
         if (dependency.parent_id not in lemmas):
             i = 0
-            lemma = (get_object_or_404(Node, pk=dependency.parent_id)), i)
+            lemma = get_object_or_404(Node, pk=dependency.parent_id)
             lemmas.append(lemma)
             i += 1
     context['lemmas'] = lemmas
@@ -197,9 +197,12 @@ def change(request, node_id):
     if node.kind == 'thm':
         return render(request, 'prooftree/change_theorem.html', context)
     elif node.kind == 'pf':
-        theorem = DAG.objects.filter(child_id=node_id).filter(type='prove')
-        context['about_theorem'] = get_object_or_404(Node, pk=theorem.parent_id)
-        return render(request, 'prooftree/change_proof.html', context)
+        theorem = DAG.objects.filter(child_id=node_id).filter(dep_type='prove')
+        if (theorem != []) and (len(theorem) == 1):
+            context['about_theorem'] = get_object_or_404(Node, pk=theorem[0].parent_id)
+            return render(request, 'prooftree/change_article.html', context)
+    print node.kind
+    print theorem
     return HttpResponse("Error: Node type invalid", status=404)
 
 def submit_change(request, node_id):
@@ -213,12 +216,12 @@ def submit_change(request, node_id):
         dep = request.POST['lemma' + str(i)]
         if (dep != "blank") and (int(dep) not in deps):
             deps.append(int(dep))
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=node, type='all')
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=node, dep_type='all')
             new_dag.save()
-    theorem = request.POST['theorem']
     if (node.kind == 'pf'):
+        theorem = request.POST['theorem']
         if (theorem != "blank") and (int(theorem) not in deps):
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=node, type='prove')
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=node, dep_type='prove')
             new_dag.save()
     return render(request, 'prooftree/detail.html', {'submit':True,'node':node})
 
@@ -233,11 +236,11 @@ def submit_article(request):
         dep = request.POST['lemma' + str(i)]
         if (dep != "blank") and (int(dep) not in deps):
             deps.append(int(dep))
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='all')
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
             new_dag.save()
     theorem = request.POST['theorem']
     if (theorem != "blank") and (int(theorem) not in deps):
-        new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=newnode, type='prove')
+        new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=newnode, dep_type='prove')
         new_dag.save()
     return index(request)
 
@@ -251,6 +254,6 @@ def submit_theorem(request):
         dep = request.POST['lemma' + str(i)]
         if (dep != "blank") and (int(dep) not in deps):
             deps.append(int(dep))
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='all')
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
             new_dag.save()
     return index(request)

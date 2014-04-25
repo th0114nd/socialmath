@@ -18,13 +18,16 @@ Over the pasts week:
   Jianchi: Wrote the view templates and view methods that enable users to edit
     existing theorems and proofs, in addition to new theorem/proof submissions. 
   Tim: 
-  Kexin:
+  Kexin: Wrote unittests for models, and api call for details. Implemented view 
+    methods for delete. Spent a while trying to set up the new environment with 
+    mysql, so didn't get to seed the database this week. 
   Ying-Yu:
 
 Upcoming goals for the week:
     Jianchi: Complete template and basic backend system, including interface, 
       error handling and reporting, edge cases consideration, etc. Start
       implementing user-profile system. 
-    Kexin:
+    Kexin: Seed the database with a demo example. Finish the remaining unit 
+      tests for views. If possible, start implementing user-profile system. 
     Tim:
     Ying-Yu:
