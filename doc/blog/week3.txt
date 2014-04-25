@@ -21,7 +21,8 @@ Over the pasts week:
   Kexin: Wrote unittests for models, and api call for details. Implemented view 
     methods for delete. Spent a while trying to set up the new environment with 
     mysql, so didn't get to seed the database this week. 
-  Ying-Yu:
+  Ying-Yu: Tweaking hierarchical force layout algorithm for proof graph
+    (like handling collision between boxes).
 
 Upcoming goals for the week:
     Jianchi: Complete template and basic backend system, including interface, 
@@ -30,4 +31,4 @@ Upcoming goals for the week:
     Kexin: Seed the database with a demo example. Finish the remaining unit 
       tests for views. If possible, start implementing user-profile system. 
     Tim:
-    Ying-Yu:
+    Ying-Yu: Finish layout algorithm and integrate it into existing templates.
