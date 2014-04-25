@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^add/(?P<work_type>\d+)/$', views.add, name='add'),
     url(r'^submit_theorem/$', views.submit_theorem, name='submit-theorem'),
     url(r'^submit_article/$', views.submit_article, name='submit-article'),
+    url(r'^submit_change/(?P<node_id>\d+)/$', views.submit_change, name='submit-change'),
 ]

@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+
+  
+
+  <title>SocialMath Edit Theorem {{node.title}}</title>
+</head>
+
+<body>
+
+<form action="/prooftree/submit_change/{{node.node_id}}" method="post">
+  {% csrf_token %}
+  <p>
+    <table style="text-align:left">
+  
+      <tr>
+        <th><label for="id_title">Theorem Title</label></th>
+        <td>
+          <textarea id="title" rows="1" cols="50" name="title">{{node.title}}</textarea>
+        </td>
+      </tr>
+
+      <tr>
+        <th><label for="body">Body</label></th>
+        <td>
+          <textarea id="body" rows="30" cols="80" name="body">{{node.statement}}</textarea>
+        </td>
+
+
+        <td>
+        <table style="text-align:left">
+          {% for (lemma, i) in lemmas %}
+          <tr>
+            <th><label for="id_lemma">Lemma {{i}}</label></th>
+          </tr>
+          <tr>
+            <th>
+            <select id="lemma{{i}}" name="lemma{{i}}">
+              <option value="{{lemma.node_id}}">{{lemma.title}}</option>
+              <option value="blank">--Please Select Your Lemma--</option>
+              {% for (lm, j) in lemmas %}
+              {% if lm != lemma %}
+              <option value="{{lm.node_id}}">{{lm.title}}</option>
+              {% endif %}
+              {% endfor %}
+              {% for theorem in theorem_list %}
+              <option value="{{theorem.node_id}}"}>{{theorem.title}}</option>
+              {% endfor %}
+            </select>
+            </th>
+          </tr>
+          {% endfor %}
+          {% for i in lemma_range %}
+          <tr>
+            <th><label for="id_lemma">Lemma {{i}}</label></th>
+          </tr>
+          <tr>
+            <th>
+            <select id="lemma{{i}}" name="lemma{{i}}">
+              <option value="blank">--Please Select Your Lemma--</option>
+              {% for (lm, j) in lemmas %}
+              <option value="{{lm.node_id}}">{{lm.title}}</option>
+              {% endfor %}
+              {% for theorem in theorem_list %}
+              <option value="{{theorem.node_id}}"}>{{theorem.title}}</option>
+              {% endfor %}
+            </select>
+            </th>
+          </tr>
+          {% endfor %}
+        </table>
+        </td>
+
+
+      </tr>
+
+      <tr>
+        <th><label for="id_keyword">Keywords</label></th>
+        <td>
+          
+          <input name="keyword" value="" class="keyword_input" type="text" id="keyword" size="80" />
+        </td>
+      </tr>
+      
+      <tr>
+        <th><label for="id_file1">Upload Your File Here</label></th>
+        <td>
+          
+          <input type="file" name="file1" id="id_file1" />
+        </td>
+      </tr>
+    </table>
+  </p>
+
+  <p>
+    <input type="submit" value="Submit Theorem" />
+  </p>
+</form>
+
+</body>
+</html>
