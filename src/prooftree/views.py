@@ -185,7 +185,7 @@ def submit_article(request):
     for i in range(9):
         dep = request.POST['lemma' + str(i)]
         if dep != "blank":
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='any')
+            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, type='prove')
             new_dag.save()
     return index(request)
 

@@ -18,7 +18,7 @@ CREATE TABLE "prooftree_dag" (
     "id" integer NOT NULL PRIMARY KEY,
     "parent_id" integer NOT NULL REFERENCES "prooftree_node" ("node_id"),
     "child_id" integer NOT NULL REFERENCES "prooftree_node" ("node_id"),
-    "dep_type" varchar(3) NOT NULL
+    "dep_type" varchar(5) NOT NULL
 )
 ;
 CREATE TABLE "prooftree_keyword" (
@@ -107,12 +107,13 @@ class Node(models.Model):
 # Adjacency list of nodes in the DAG
 class DAG(models.Model):
     TYPES = (
+        ('prove', 'prove'),
         ('any', 'any'),
         ('all', 'all'),
     )
     parent = models.ForeignKey(Node, related_name="parent_id")
     child = models.ForeignKey(Node, related_name="child_id")
-    dep_type = models.CharField(max_length=3, choices=TYPES)
+    dep_type = models.CharField(max_length=5, choices=TYPES)
     objects = DAGManager() 
 
 # Entity for keywords
