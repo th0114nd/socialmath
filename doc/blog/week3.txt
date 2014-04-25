@@ -14,10 +14,10 @@ We are planning to:
   3). Start working on user-profile and authorization system, including design and
       implementations
 
-Over the pasts week:
+Over the past week:
   Jianchi: Wrote the view templates and view methods that enable users to edit
     existing theorems and proofs, in addition to new theorem/proof submissions. 
-  Tim: 
+  Tim: Was embarassingly busy, and didn't contribute much this week.
   Kexin: Wrote unittests for models, and api call for details. Implemented view 
     methods for delete. Spent a while trying to set up the new environment with 
     mysql, so didn't get to seed the database this week. 
@@ -30,5 +30,5 @@ Upcoming goals for the week:
       implementing user-profile system. 
     Kexin: Seed the database with a demo example. Finish the remaining unit 
       tests for views. If possible, start implementing user-profile system. 
-    Tim:
+    Tim: Complete migration to AWS.
     Ying-Yu: Finish layout algorithm and integrate it into existing templates.
