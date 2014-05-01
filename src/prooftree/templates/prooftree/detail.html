@@ -24,6 +24,23 @@
 	</div>
 	{% endif %}
 
+	{% if theorem %}
+	<p> This article is a proof of theorem <a href="/prooftree/get/one/{{theorem.node_id}}"> {{theorem.title}} </a></p>
+	{% endif %}
+	{% if proofs %}
+	<h3> Proofs </h3>
+	{% for proof in proofs %}
+	<h4> <a href="prooftree/get/one/{{proof.node_id}}" > {{proof.title}} </a></h4>
+	{% endfor %}
+	{% endif %}
+
+	<h3> Lemmas </h3>
+	{% for dep in dependencies %}
+	<div>
+	<h4> <a href="/prooftree/get/one/{{dep.node_id}}"> {{dep.title}} </a></h4>
+	</div>
+	{% endfor %}
+
 	<p><a href="/prooftree/"> Back to Main Page</a></p>
 
 </body>
