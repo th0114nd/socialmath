@@ -1,0 +1,17 @@
+Socialmath week 4:
+
+
+Over the past week:
+  Jianchi: 
+  Tim: 
+  Kexin: Seeded database with number theory examples. Worked on front end
+    CSS and support for LaTex on the webpage.
+  Ying-Yu: 
+
+Upcoming goals for the week:
+    Jianchi:  
+    Kexin: Work with Ying-yu for potential issues on the communication between
+      graph layout and the back end. Start implementing user profile related
+      featuer. 
+    Tim:
+    Ying-Yu: 
