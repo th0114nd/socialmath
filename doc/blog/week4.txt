@@ -2,14 +2,17 @@ Socialmath week 4:
 
 
 Over the past week:
-  Jianchi: 
+  Jianchi: Modified view functions and completed back-end basic implementation.
+    Cleared submission bugs and enabled detail-view to display dependencies,
+    theorem-proof relationships. User Interface adjustments. 
   Tim: 
   Kexin: Seeded database with number theory examples. Worked on front end
     CSS and support for LaTex on the webpage.
   Ying-Yu: 
 
 Upcoming goals for the week:
-    Jianchi:  
+    Jianchi: Keyword-search system implementation, User-profile system. Error
+      handling also needs to be added (e.g. blank titles, invalid Latex code).
     Kexin: Work with Ying-yu for potential issues on the communication between
       graph layout and the back end. Start implementing user profile related
       featuer. 
