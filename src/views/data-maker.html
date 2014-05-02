@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="force.css">
+    <style type="text/css">
+      /*.top-buffer { margin-top: 5px; }*/
+      .close-buffer { 
+        margin-right: 20px; 
+        margin-top: 3px; 
+        margin-bottom: 3px; }
+      .close {
+        -ms-transform: translate(0px,-3px); /* IE 9 */
+        -webkit-transform: translate(0px,-3px); /* Chrome, Safari, Opera */
+        transform: translate(0px,-3px);
+      }
+    </style>
+    <title>Data Maker</title>
+  </head>
+  <body>
+    <div 
+      class="container"
+      ng-app="datamaker"
+      ng-controller="DataMakerController as dmc">
+      <div class="page-header">
+        <h1>Data Maker</h1>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">New Entry</h3>
+            </div>
+            <div 
+              class="panel-body" 
+              ng-controller="NewEntryController as nec">
+              <!-- Type -->
+              <div class="form-group">
+                <div class="btn-group">
+                  <button 
+                    type="button" 
+                    class="btn btn-default" 
+                    ng-repeat="(id, text) in nec.entryTypes"
+                    ng-model="nec.newType" 
+                    btn-radio="id">
+                    {{text}}
+                  </button>
+                </div>
+              </div>
+              <!-- Title -->
+              <div class="form-group">
+                <div>
+                  <input
+                    type="text"
+                    id="title"
+                    class="form-control"
+                    placeholder="Title"
+                    ng-model="nec.newTitle"
+                    required></input>
+                </div>
+              </div>
+
+              <!-- Dependencies -->
+              <div>
+                <accordion>
+                  <accordion-group is-open="isopen">
+                    <accordion-heading>
+                      Dependencies
+                      <span 
+                        class="pull-right glyphicon" 
+                        ng-class="{'glyphicon-chevron-up': isopen, 
+                        'glyphicon-chevron-down': !isopen}">
+                      </span>
+                    </accordion-heading>
+                    <div class="form-group">
+                      <div class="input-group">
+                        <input
+                          type="search"
+                          class="form-control"
+                          placeholder="Add dependency here"
+                          ng-model="nec.searchDep"
+                          typeahead="e as nec.formatNode(e) for e in arrayOutput | filter:$viewValue | limitTo:8"
+                          typeahead-on-select="nec.searchMatch()"
+                          required></input>
+                        <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <alert type="'info'" ng-hide="nec.newDeps.length">
+                      No dependencies
+                    </alert>
+                    <ul class="list-group">
+                      <li
+                        class="list-group-item"
+                        ng-repeat="d in nec.newDeps track by $index">
+                        {{nec.formatNode(dictOutput[d])}}
+                        <button 
+                          class="close" 
+                          ng-click="nec.removeDep($index)">×</button>
+                      </li>
+                    </ul>
+                  </accordion-group>
+                </accordion>
+              </div>
+
+              <!-- Body -->
+              <div class="form-group">
+                <textarea 
+                  class="form-control"
+                  rows="5"
+                  placeholder="Body"></textarea>
+              </div>
+
+              <!-- Submit -->
+              <div class="form-group">
+                <a 
+                  class="btn btn-success" 
+                  ng-click="nec.add()">
+                  Add
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading" ng-click="hidejson=!hidejson">
+              <h3 class="panel-title">JSON Output
+                <span 
+                  class="pull-right glyphicon" 
+                  ng-class="{'glyphicon-chevron-up': !hidejson, 
+                  'glyphicon-chevron-down': hidejson}">
+                </span>
+              </h3>
+            </div>
+            <div collapse="hidejson">
+              <div class="panel-body">
+                <div class="form-group">
+                  <a 
+                    class="btn btn-success" 
+                    ng-click="promptCopy(arrayOutput)">
+                    Copy to clipboard
+                  </a>
+                </div>
+                <pre>{{arrayOutput | json}}</pre>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading" ng-click="hidegraph=!hidegraph">
+              <h3 class="panel-title">Graphic Output
+                <span 
+                  class="pull-right glyphicon" 
+                  ng-class="{'glyphicon-chevron-up': !hidegraph, 
+                  'glyphicon-chevron-down': hidegraph}">
+                </span>
+              </h3>
+            </div>
+            <div collapse="hidegraph">
+              <div 
+                class="panel-body"
+                ng-controller="GraphController as gc">
+                <!-- <alert type="'warning'">Nothing here</alert> -->
+                <div>
+                  <svg ng-attr-width="{{width}}"
+                       ng-attr-height="{{height}}">
+                    <defs>
+                      <marker 
+                        id="markerArrow"
+                        class="arrow" 
+                        markerWidth="13" 
+                        markerHeight="13" 
+                        refx="12" refy="6"
+                        orient="auto">
+                        <path 
+                          class="arrow-path" 
+                          d="M2,2 L2,11 L10,6 L2,2">
+                      </marker>
+                    </defs>
+                    <line   
+                      ng-repeat="link in graph.links"
+                      class="link"
+                      style="marker-end: url(#markerArrow);"
+                      ng-attr-stroke-width="{{link.strokeWidth}}"
+                      ng-attr-x1="{{link.source.x}}"
+                      ng-attr-y1="{{link.source.y}}"
+                      ng-attr-x2="{{link.target.x}}"
+                      ng-attr-y2="{{link.target.y}}">
+                    </line>
+<!--                     <circle 
+                      ng-repeat="node in graph.nodes"
+                      class="node"
+                      r="5"
+                      ng-attr-fill="{{node.color}}"
+                      ng-attr-cx="{{node.x}}"
+                      ng-attr-cy="{{node.y}}">
+                      <title>{{node.title}}</title>
+                    </circle> -->
+                    <g ng-repeat="node in graph.nodes">
+                      <rect
+                        class="node"
+                        rx="5"
+                        ry="5"
+                        width="120"
+                        height="30"
+                        ng-attr-fill="{{node.color}}"
+                        ng-attr-x="{{node.x - 60}}"
+                        ng-attr-y="{{node.y - 30}}">
+                        <title>{{node.title}}</title>
+                      </rect>
+                      <text
+                        style="text-anchor: middle;"
+                        font-family="Arial"
+                        font-size="18"
+                        fill="white"
+                        ng-attr-x="{{node.x}}"
+                        ng-attr-y="{{node.y + 6 - 15}}">
+                        {{node.title}}
+                      </text>
+                    </g>
+                  </svg>
+                </div>
+                <pre>{{graph | json}}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- D3.js -->
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <!-- AngularJS -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <!-- UI Bootstrap -->
+    <script type="text/javascript" src="ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+    <script type="text/javascript" src="data-maker.js"></script>
+  </body>
+</html>
