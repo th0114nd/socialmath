@@ -8,7 +8,8 @@ Over the past week:
   Tim: 
   Kexin: Seeded database with number theory examples. Worked on front end
     CSS and support for LaTex on the webpage.
-  Ying-Yu: 
+  Ying-Yu: Made a working graphical layout for knowledge graph. Studied 
+    different components provided by UI Bootstrap.
 
 Upcoming goals for the week:
     Jianchi: Keyword-search system implementation, User-profile system. Error
@@ -17,4 +18,6 @@ Upcoming goals for the week:
       graph layout and the back end. Start implementing user profile related
       featuer. 
     Tim:
-    Ying-Yu: 
+    Ying-Yu: Improve graph layout to make it less messy. Find a way to display
+      main content of submission. Work with Kexin to connent my front-end
+      to her back-end.
