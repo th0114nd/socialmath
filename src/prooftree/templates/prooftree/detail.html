@@ -1,3 +1,5 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -36,17 +38,24 @@
 	{% endif %}
 	{% if proofs %}
 	<h3> Proofs </h3>
-	{% for proof in proofs %}
-	<h4> <a href="/prooftree/get/one/{{proof.node_id}}" > {{proof.title}} </a></h4>
+	<ul class="glass">
+		{% for proof in proofs %}
+		<li><a href="/prooftree/get/one/{{proof.node_id}}" > {{proof.title}} </a></li>
 	{% endfor %}
+    </ul>
 	{% endif %}
 
+	{% if dependencies %}
 	<h3> Lemmas </h3>
 	{% for dep in dependencies %}
 	<div>
-	<h4> <a href="/prooftree/get/one/{{dep.node_id}}"> {{dep.title}} </a></h4>
+	<ul class="glass">
+	<li> <a href="/prooftree/get/one/{{dep.node_id}}"> {{dep.title}} </a></li>
+	</ul>
 	</div>
 	{% endfor %}
+	{% endif %}
+
 
 	<p><a class="btn" href="/prooftree/"><button> Home</button></a></p>
 

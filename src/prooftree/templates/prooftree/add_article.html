@@ -12,15 +12,14 @@
 <body>
         
 
-<h2>Adding a New Article to SocialMath</h2>
+<h2>Add New Article</h2>
 <p>
   You may enter your article content in the text box provided below, or you may upload your pdf
   or tex file using the upload file button. Note that you file should not exceed 4MB in size.
   If you wish to add a new theorem, <a href="/prooftree/add/1/">add a theorem here</a>.
 </p>
-<p> <a href="/prooftree/"> cancel </a> </p>
 
-<form action="/prooftree/submit_article/" method="post">
+<form action="/prooftree/submit_article/" method="post" class=".bootstrap">
   {% csrf_token %}
   <p>
     <table style="text-align:left">
