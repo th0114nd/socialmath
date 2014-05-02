@@ -53,7 +53,7 @@
           </tr>
           <tr>
             <th>
-            <select id="lemma{% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}" name="lemma{% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}">
+            <select id={% cycle 'lemma0' 'lemma1' 'lemma2' 'lemma3' 'lemma4' 'lemma5' 'lemma6' 'lemma7' 'lemma8' %} name={% cycle 'lemma0' 'lemma1' 'lemma2' 'lemma3' 'lemma4' 'lemma5' 'lemma6' 'lemma7' 'lemma8' %}>
               <option value="{{lemma.node_id}}">{{lemma.title}}</option>
               <option value="blank">--Please Select Your Lemma--</option>
               {% for lm in lemmas %}
@@ -113,7 +113,11 @@
   <p>
     <input type="submit" value="Submit Theorem" />
   </p>
+
 </form>
+<p>
+<a class="btn" href="/prooftree/get/one/{{node.node_id}}"> <button>cancel</button> </a>
+</p>
 
 </body>
 </html>

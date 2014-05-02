@@ -18,6 +18,7 @@
   or tex file using the upload file button. Note that you file should not exceed 4MB in size.
   If you wish to add a new theorem, <a href="/prooftree/add/1/">add a theorem here</a>.
 </p>
+<p> <a href="/prooftree/"> cancel </a> </p>
 
 <form action="/prooftree/submit_article/" method="post">
   {% csrf_token %}
@@ -95,6 +96,10 @@
     <input type="submit" value="Submit Article" />
   </p>
 </form>
+
+<p>
+<a class="btn" href="/prooftree/"> <button>cancel</button> </a>
+</p>
 
 </body>
 </html>
