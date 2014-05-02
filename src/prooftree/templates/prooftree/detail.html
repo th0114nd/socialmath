@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <p>
 	{% if submit %}
 	Submission success! Here is the updated work:
@@ -12,6 +13,12 @@
 	{% else %}
 	<title> Object Not Found </title>
 	{% endif %}
+	<script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
 </head>
 
 <body>
@@ -20,7 +27,7 @@
 	<h2> {{node.title}} </h2>
 	<p> {{node.statement}} </p>
 	<p> published at {{node.pub_time}} </p>
-	<p> <a href="/prooftree/delete/one/{{node.node_id}}">delete</a> &nbsp; <a href="/prooftree/change/{{node.node_id}}">edit</a></p>
+	<p> <a class="btn" href="/prooftree/delete/one/{{node.node_id}}"><button>delete</button></a> &nbsp; <a  class="btn" href="/prooftree/change/{{node.node_id}}"><button>edit</button></a></p>
 	</div>
 	{% endif %}
 
@@ -41,7 +48,7 @@
 	</div>
 	{% endfor %}
 
-	<p><a href="/prooftree/"> Back to Main Page</a></p>
+	<p><a class="btn" href="/prooftree/"><button> Home</button></a></p>
 
 </body>
 
