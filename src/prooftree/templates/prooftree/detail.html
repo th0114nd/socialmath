@@ -29,6 +29,11 @@
 	<h2> {{node.title}} </h2>
 	<p> {{node.statement}} </p>
 	<p> published at {{node.pub_time}} </p>
+	<h3 style="color:black;"> Keywords: </h3>
+	<p> {% for kw in keywords %}
+		<a class="btn" href="/prooftree/keyword/{{kw.kw_id}}">{{kw.word}}</a> &nbsp;
+		{% endfor %}
+	</p>
 	<p> <a class="btn" href="/prooftree/delete/one/{{node.node_id}}"><button>delete</button></a> &nbsp; <a  class="btn" href="/prooftree/change/{{node.node_id}}"><button>edit</button></a></p>
 	</div>
 	{% endif %}

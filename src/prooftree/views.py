@@ -7,141 +7,144 @@ from rest_framework.parsers import JSONParser
 from django.core.exceptions import *
 
 class JSONResponse(HttpResponse):
-	"""
-	An HttpResponse that renders its content into JSON.
-	"""
-	def __init__(self, data, **kwargs):
-		content = JSONRenderer().render(data)
-		kwargs['content_type'] = 'application/json'
-		super(JSONResponse, self).__init__(content, **kwargs)
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
 
 def index(request):
-	latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
-	context = {'latest_theorem_list': latest_theorem_list}
-	return render(request, 'prooftree/index.html', context)
+    latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
+    context = {'latest_theorem_list': latest_theorem_list}
+    return render(request, 'prooftree/index.html', context)
 
 def pagebrief(request, pageno='1'):
-	''' **HTTP GET**
-		/get/brief
-		/get/brief?page=n
-	'''
-	if request.method == 'GET':
-		# Check whether page number is valid
-		max_pageno = Node.objects.max_pageno()
-		pageno = int(pageno)
-		if pageno > max_pageno:
-			return HttpResponse(status=404)
-		# Get serialized data for each node on the page
-		node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
-		contents = []
-		count = 0
-		for node_id in node_range:
-			try:
-				node = Node.objects.get(node_id=node_id)
-			except Node.ObjectDoesNotExist:
-				continue
-			count += 1
-			serializer = PageNodeSerializer(node, fields=('node_id', 'kind', 'child_ids'))
-			contents.append(PageNodeSerializer(serializer.data))
-		# Form responses
-		response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
-					'data':contents}
-		return JSONResponse(response)
+    ''' **HTTP GET**
+        /get/brief
+        /get/brief?page=n
+    '''
+    if request.method == 'GET':
+        # Check whether page number is valid
+        max_pageno = Node.objects.max_pageno()
+        pageno = int(pageno)
+        if pageno > max_pageno:
+            return HttpResponse(status=404)
+        # Get serialized data for each node on the page
+        node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
+        contents = []
+        count = 0
+        for node_id in node_range:
+            try:
+                node = Node.objects.get(node_id=node_id)
+            except Node.ObjectDoesNotExist:
+                continue
+            count += 1
+            serializer = PageNodeSerializer(node, fields=('node_id', 'kind', 'child_ids'))
+            contents.append(PageNodeSerializer(serializer.data))
+        # Form responses
+        response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
+                    'data':contents}
+        return JSONResponse(response)
 
 
 def pagemedium(request, pageno='1'):
-	''' **HTTP GET**
-		/get/medium
-		/get/medium?page=n
-	'''
-	if request.method == 'GET':
-		# Check whether page number is valid
-		max_pageno = Node.objects.max_pageno()
-		pageno = int(pageno)
-		if pageno > max_pageno:
-			return HttpResponse(status=404)
-		# Get serialized data for each node on the page
-		node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
-		contents = []
-		count = 0
-		for node_id in node_range:
-			try:
-				node = Node.objects.get(node_id=node_id)
-			except Node.ObjectDoesNotExist:
-				continue
-			count += 1
-			serializer = PageNodeSerializer(node)
-			contents.append(PageNodeSerializer(serializer.data))
-		# Form responses
-		response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
-					'data':contents}
-		return JSONResponse(response)
+    ''' **HTTP GET**
+        /get/medium
+        /get/medium?page=n
+    '''
+    if request.method == 'GET':
+        # Check whether page number is valid
+        max_pageno = Node.objects.max_pageno()
+        pageno = int(pageno)
+        if pageno > max_pageno:
+            return HttpResponse(status=404)
+        # Get serialized data for each node on the page
+        node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
+        contents = []
+        count = 0
+        for node_id in node_range:
+            try:
+                node = Node.objects.get(node_id=node_id)
+            except Node.ObjectDoesNotExist:
+                continue
+            count += 1
+            serializer = PageNodeSerializer(node)
+            contents.append(PageNodeSerializer(serializer.data))
+        # Form responses
+        response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
+                    'data':contents}
+        return JSONResponse(response)
 
 def detail(request, node_id):
-	''' **HTTP GET**
-		/get/one/<id>
-	'''
-	# Error handling
-	maxid = int(Node.objects.max_id())
-	node_id = int(node_id)
-	if node_id is None:
-		return HttpResponse("Bad Request. An id is required.", status=400)
-	if node_id > maxid:
-		return HttpResponse("Bad Request. Id not found.", status=404)
-	try:
-		node = Node.objects.get(node_id=node_id)
-	except ObjectDoesNotExist:
-		return HttpResponse("Bad Request. Id has been deleted.", status=410)
+    ''' **HTTP GET**
+        /get/one/<id>
+    '''
+    # Error handling
+    maxid = int(Node.objects.max_id())
+    node_id = int(node_id)
+    if node_id is None:
+        return HttpResponse("Bad Request. An id is required.", status=400)
+    if node_id > maxid:
+        return HttpResponse("Bad Request. Id not found.", status=404)
+    try:
+        node = Node.objects.get(node_id=node_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("Bad Request. Id has been deleted.", status=410)
 
-	deps = DAG.objects.filter(child_id=node_id).filter(dep_type='all')
-	dependencies = []
-	for dep in deps:
-		neighbor = Node.objects.get(node_id=dep.parent_id)
-		dependencies.append(neighbor)
-	context = {'node':node, 'dependencies':dependencies}
+    deps = DAG.objects.filter(child_id=node_id).filter(dep_type='all')
+    dependencies = []
+    for dep in deps:
+        neighbor = Node.objects.get(node_id=dep.parent_id)
+        dependencies.append(neighbor)
+    context = {'node':node, 'dependencies':dependencies}
 
-	if node.kind == 'thm':
-		proofs = []
-		proofdags = DAG.objects.filter(parent_id=node_id).filter(dep_type='prove')
-		for pf in proofdags:
-			proofs.append(Node.objects.get(node_id=pf.child_id))
-		context['proofs'] = proofs
-	elif node.kind == 'pf':
-		theoremdag = DAG.objects.filter(child_id=node_id).filter(dep_type='prove')
-		if (len(theoremdag) == 1):
-			theorem = Node.objects.get(node_id=theoremdag[0].parent_id)
-			context['theorem'] = theorem
-	# Form responses
-	return render(request, 'prooftree/detail.html', context)
+    if node.kind == 'thm':
+        proofs = []
+        proofdags = DAG.objects.filter(parent_id=node_id).filter(dep_type='prove')
+        for pf in proofdags:
+            proofs.append(Node.objects.get(node_id=pf.child_id))
+        context['proofs'] = proofs
+    elif node.kind == 'pf':
+        theoremdag = DAG.objects.filter(child_id=node_id).filter(dep_type='prove')
+        if (len(theoremdag) == 1):
+            theorem = Node.objects.get(node_id=theoremdag[0].parent_id)
+            context['theorem'] = theorem
+    # Form responses
+    kwmaplist = KWMap.objects.filter(node=node)
+    kwlist = [km.kw for km in kwmaplist]
+    context['keywords'] = kwlist
+    return render(request, 'prooftree/detail.html', context)
 
 def detail_json(request, node_id):
-	''' **HTTP GET**
-		/get/one/<id>
-	'''
-	# Error handling
-	maxid = int(Node.objects.max_id())
-	node_id = int(node_id)
-	if node_id is None:
-		return HttpResponse("Bad Request. An id is required.", status=400)
-	if node_id > maxid:
-		return HttpResponse("Bad Request. Id not found.", status=404)
-	try:
-		node = Node.objects.get(node_id=node_id)
-	except ObjectDoesNotExist:
-		return HttpResponse("Bad Request. Id has been deleted.", status=410)
+    ''' **HTTP GET**
+        /get/one/<id>
+    '''
+    # Error handling
+    maxid = int(Node.objects.max_id())
+    node_id = int(node_id)
+    if node_id is None:
+        return HttpResponse("Bad Request. An id is required.", status=400)
+    if node_id > maxid:
+        return HttpResponse("Bad Request. Id not found.", status=404)
+    try:
+        node = Node.objects.get(node_id=node_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("Bad Request. Id has been deleted.", status=410)
 
-	if request.method == 'GET':
-		neighbor_ids = list(DAG.objects.get_children(node_id)) + \
-					   list(DAG.objects.get_parents(node_id))
-		neighbors = []
-		for neighbor_id in neighbor_ids:
-			neighbor = Node.objects.get(node_id=neighbor_id)
-			serializer = NodeSerializer(neighbor)
-			neighbors.append(serializer.data)
+    if request.method == 'GET':
+        neighbor_ids = list(DAG.objects.get_children(node_id)) + \
+                       list(DAG.objects.get_parents(node_id))
+        neighbors = []
+        for neighbor_id in neighbor_ids:
+            neighbor = Node.objects.get(node_id=neighbor_id)
+            serializer = NodeSerializer(neighbor)
+            neighbors.append(serializer.data)
 
-		# Form responses
-		response = {'wanted': NodeSerializer(node).data, 'neighbors':neighbors}
-		return JSONResponse(response)
+        # Form responses
+        response = {'wanted': NodeSerializer(node).data, 'neighbors':neighbors}
+        return JSONResponse(response)
 
 
 def add(request, work_type):
@@ -231,6 +234,9 @@ def change(request, node_id):
         context['lemma_range'] = range(len(dependencies), 9)
     else:
         context['lemma_range'] = []
+    kwmaplist = KWMap.objects.filter(node=node)
+    kwstring = ';'.join([km.kw.word for km in kwmaplist])
+    context['keywords'] = kwstring
     if node.kind == 'thm':
         return render(request, 'prooftree/change_theorem.html', context)
     elif node.kind == 'pf':
@@ -238,8 +244,6 @@ def change(request, node_id):
         if (theorem != []) and (len(theorem) == 1):
             context['about_theorem'] = get_object_or_404(Node, pk=theorem[0].parent_id)
             return render(request, 'prooftree/change_article.html', context)
-    print node.kind
-    print theorem
     return HttpResponse("Error: Node type invalid", status=404)
 
 def submit_change(request, node_id):
@@ -248,6 +252,7 @@ def submit_change(request, node_id):
     node.statement = request.POST['body']
     node.save()
     DAG.objects.filter(child_id=node_id).delete()
+    KWMap.objects.filter(node=node).delete()
     deps = []
     for i in range(9):
         dep = request.POST['lemma' + str(i)]
@@ -260,6 +265,17 @@ def submit_change(request, node_id):
         if (theorem != "blank") and (int(theorem) not in deps):
             new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=node, dep_type='prove')
             new_dag.save()
+    kwstr = request.POST['keyword']
+    kwlist = [i.strip() for i in kwstr.split(';')]
+    for kw in kwlist:
+        if kw != '':
+            if len(Keyword.objects.filter(word=kw)) == 0:
+                k = Keyword(word=kw)
+                k.save()
+            else:
+                k = Keyword.objects.get(word=kw)
+            kwmap = KWMap(node=node, kw=k)
+            kwmap.save()
     return detail(request, node_id)
 
 def submit_article(request):
@@ -279,6 +295,17 @@ def submit_article(request):
     if (theorem != "blank") and (int(theorem) not in deps):
         new_dag = DAG(parent=get_object_or_404(Node, pk=int(theorem)), child=newnode, dep_type='prove')
         new_dag.save()
+    kwstr = request.POST['keyword']
+    kwlist = [i.strip() for i in kwstr.split(';')]
+    for kw in kwlist:
+        if kw != '':
+            if len(Keyword.objects.filter(word=kw)) == 0:
+                k = Keyword(word=kw)
+                k.save()
+            else:
+                k = Keyword.objects.get(word=kw)
+            kwmap = KWMap(node=newnode, kw=k)
+            kwmap.save()
     return detail(request, newnode.node_id)
 
 def submit_theorem(request):
@@ -293,4 +320,15 @@ def submit_theorem(request):
             deps.append(int(dep))
             new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
             new_dag.save()
+    kwstr = request.POST['keyword']
+    kwlist = [i.strip() for i in kwstr.split(';')]
+    for kw in kwlist:
+        if kw != '':
+            if len(Keyword.objects.filter(word=kw)) == 0:
+                k = Keyword(word=kw)
+                k.save()
+            else:
+                k = Keyword.objects.get(word=kw)
+            kwmap = KWMap(node=newnode, kw=k)
+            kwmap.save()
     return detail(request, newnode.node_id)

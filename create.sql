@@ -4,7 +4,7 @@ CREATE DATABASE `mydb`
     DEFAULT COLLATE utf8_general_ci;
 
 USE 'mysql';
-GRANT ALL PRIVILEGES ON mydb.* TO 'djangouser'@'localhost' IDENTIFIED BY 'your_password'
+GRANT ALL PRIVILEGES ON mydb.* TO 'djangouser'@'localhost' IDENTIFIED BY 'mypassword'
 
 WITH GRANT OPTION;
 FLUSH PRIVILEGES;
