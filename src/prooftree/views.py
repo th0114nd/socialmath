@@ -332,3 +332,38 @@ def submit_theorem(request):
             kwmap = KWMap(node=newnode, kw=k)
             kwmap.save()
     return detail(request, newnode.node_id)
+
+def lookup_keyword(request, kw_id):
+    context = {}
+    kw = get_object_or_404(Keyword, pk=kw_id)
+    context['search'] = kw.word
+    context['nodes'] = [km.node for km in KWMap.objects.filter(kw=kw)]
+    context['numresults'] = len(context['nodes'])
+    return render(request, 'prooftree/search.html', context)
+
+def search(request):
+    searchtext = str(request.GET['searchtext'])
+    searchtext = ' '.join(searchtext.split('+'))
+    context = {'search':searchtext}
+    kwlst = [w.strip() for w in searchtext.split(',')]
+    if len(kwlst) == 0:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    elif len(kwlst) == 1:
+        kw = Keyword.objects.filter(word__exact=kwlst[0])
+        if len(kw) == 1:
+            return lookup_keyword(request, kw[0].kw_id)
+        else:
+            context['numresults'] = 0
+            return render(request, 'prooftree/search.html', context)
+    else:
+        kwmaplist = KWMap.objects.all()
+        for word in kwlst:
+            try:
+                kw = Keyword.objects.get(word__exact=word)
+            except Keyword.ObjectDoesNotExist:
+                context['numresults'] = 0
+                return render(request, 'prooftree/search.html', context)
+            kwmaplist = kwmaplist.filter(kw=kw)
+        context['nodes'] = [km.node for km in kwmaplist]
+        context['numresults'] = len(context['nodes'])
+        return render(request, 'prooftree/search.html', context)

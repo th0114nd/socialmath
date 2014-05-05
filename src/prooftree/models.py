@@ -73,15 +73,12 @@ class KWManager(models.Manager):
     # Return: List of node_id for theorems tagged with keyword
     def get_related(self, keyword):
         kw = Keyword.objects.filter(word__exact=keyword)
-        return KWMap.objects.filter(kw=kw).values_list('node_id', flat=True)
+        return KWMap.objects.filter(kw=kw).values_list('node', flat=True)
 
     # Usage: Keyword.objects.get_keywords(node_id)
     # Return: List of keywords for the theorems
     def get_keywords(self, node_id):
-        kw_ids = list(KWMap.objects.filter(node_id=node_id).values_list('kw_id', flat=True))
-        keywords = []
-        for kw_id in kw_ids:
-            keywords.append(Keyword.objects.get(kw_id=kw_id).word)
+        keywords = list(KWMap.objects.filter(node_id=node_id).values_list('kw', flat=True))
         return keywords
 
 

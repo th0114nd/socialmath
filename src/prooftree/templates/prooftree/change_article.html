@@ -19,7 +19,7 @@
       <tr>
         <th><label for="id_title">Article Title</label></th>
         <td>
-          <textarea id="title" rows="1" cols="50" name="title">{{node.title}}</textarea>
+          <input name="title" value="{{node.title}}" class="title_input" type="text" id="title" size="50" />
         </td>
       </tr>
       <tr>
@@ -95,7 +95,7 @@
       <tr>
         <th><label for="id_keyword">Keywords</label></th>
         <td>
-          <textarea id="keyword" rows="1" cols="80" name="keyword">{{keywords}}</textarea>
+          <input name="keyword" value="{{keywords}}" class="keyword_input" type="text" id="keyword" size="80" />
         </td>
       </tr>
       

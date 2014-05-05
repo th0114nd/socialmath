@@ -4,25 +4,29 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>SocialMath Submitting New Article</title>
+  <title>Social Math</title>
 </head>
 
 <body>
-	<h1> Welcome to Social Math </h1>
+  <h1> Welcome to Social Math </h1>
 
-	{% if latest_theorem_list %}
-	<p> Here are the latest works that have recently been added to the SocialMath knowledge graph. </p>
-	<ul class="check">
-		{% for theorem in latest_theorem_list %}
-			<li><a href="/prooftree/get/one/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
-		{% endfor %}
-	</ul>
-	{% else %}
-	<p> There are no recent works added to the SocialMath knowledge graph. </p>
-	{% endif %}
+  <form action="/prooftree/search/" method="get">
+    <input type="text" name="searchtext" value="{{search}}" id="searchtext" size="40" />
+    <input type="submit" value="Search" />
+  </form>
+  {% if latest_theorem_list %}
+  <p> Here are the latest works that have recently been added to the SocialMath knowledge graph. </p>
+  <ul class="check">
+    {% for theorem in latest_theorem_list %}
+      <li><a href="/prooftree/get/one/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p> There are no recent works added to the SocialMath knowledge graph. </p>
+  {% endif %}
 
-	<p><h5><a href="/prooftree/add/1/"> Add a new theorem </a><h5></p>
-	<p><h5><a href="/prooftree/add/2/"> Add a new article or proof </a><h5></p>
+  <p><h5><a href="/prooftree/add/1/"> Add a new theorem </a><h5></p>
+  <p><h5><a href="/prooftree/add/2/"> Add a new article or proof </a><h5></p>
 
 </body>
 
