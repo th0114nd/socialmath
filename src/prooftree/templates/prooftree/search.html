@@ -21,7 +21,7 @@
   <ul class="check">
     {% for node in nodes %}
       <li><a href="/prooftree/get/one/{{ node.node_id }}/"> {{ node.title }} </a></li>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;Publicated at {{node.pub_time}}</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;Published at {{node.pub_time}}</p>
     {% endfor %}
   </ul>
   {% endif %}
