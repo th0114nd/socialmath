@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 from prooftree.models import *
 from prooftree.serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
@@ -20,6 +20,9 @@ def index(request):
     context = {'latest_theorem_list': latest_theorem_list}
     return render(request, 'prooftree/index.html', context)
 
+def debug(request, path='base.html'):
+    return render(request, path)
+
 def pagebrief(request, pageno='1'):
     ''' **HTTP GET**
         /get/brief
@@ -30,7 +33,7 @@ def pagebrief(request, pageno='1'):
         max_pageno = Node.objects.max_pageno()
         pageno = int(pageno)
         if pageno > max_pageno:
-            return HttpResponse(status=404)
+            return HttpResponseNotFound('Page Number Out of Bound')
         # Get serialized data for each node on the page
         node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
         contents = []
@@ -38,11 +41,12 @@ def pagebrief(request, pageno='1'):
         for node_id in node_range:
             try:
                 node = Node.objects.get(node_id=node_id)
-            except Node.ObjectDoesNotExist:
+            except ObjectDoesNotExist:
                 continue
             count += 1
-            serializer = PageNodeSerializer(node, fields=('node_id', 'kind', 'child_ids'))
-            contents.append(PageNodeSerializer(serializer.data))
+            serializer = PageNodeSerializer(node, 
+                fields=('node_id', 'kind', 'title', 'parent_ids', 'child_ids'))
+            contents.append(serializer.data)
         # Form responses
         response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
                     'data':contents}
@@ -59,7 +63,7 @@ def pagemedium(request, pageno='1'):
         max_pageno = Node.objects.max_pageno()
         pageno = int(pageno)
         if pageno > max_pageno:
-            return HttpResponse(status=404)
+            return HttpResponseNotFound('Page Number Out of Bound')
         # Get serialized data for each node on the page
         node_range = range((pageno - 1) * 100 + 1, pageno * 100 + 1)
         contents = []
@@ -67,11 +71,11 @@ def pagemedium(request, pageno='1'):
         for node_id in node_range:
             try:
                 node = Node.objects.get(node_id=node_id)
-            except Node.ObjectDoesNotExist:
+            except ObjectDoesNotExist:
                 continue
             count += 1
             serializer = PageNodeSerializer(node)
-            contents.append(PageNodeSerializer(serializer.data))
+            contents.append(serializer.data)
         # Form responses
         response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
                     'data':contents}
