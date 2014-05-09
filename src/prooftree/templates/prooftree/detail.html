@@ -29,6 +29,7 @@
 	<h2> {{node.title}} </h2>
 	<p> {{node.statement}} </p>
 	<p> published at {{node.pub_time}} </p>
+	<p> last modified at {{node.last_modified}}</p>
 	<h3 style="color:black;"> Keywords: </h3>
 	<p> {% for kw in keywords %}
 		<a class="btn" href="/prooftree/keyword/{{kw.kw_id}}">{{kw.word}}</a> &nbsp;

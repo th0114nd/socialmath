@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.core.exceptions import *
+from datetime import datetime
 
 class JSONResponse(HttpResponse):
     """
@@ -250,6 +251,7 @@ def submit_change(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
     node.title = request.POST['title']
     node.statement = request.POST['body']
+    node.last_modeified = datetime.now()
     node.save()
     DAG.objects.filter(child_id=node_id).delete()
     KWMap.objects.filter(node=node).delete()
@@ -282,7 +284,7 @@ def submit_article(request):
     article_title = request.POST['title']
     theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
     body = request.POST['body']
-    newnode = Node(kind='pf', title=article_title, statement=body)
+    newnode = Node(kind='pf', title=article_title, statement=body, last_modified=datetime.now())
     newnode.save()
     deps = []
     for i in range(9):
@@ -311,7 +313,7 @@ def submit_article(request):
 def submit_theorem(request):
     theorem_title = request.POST['title']
     body = request.POST['body']
-    newnode = Node(kind='thm', title=theorem_title, statement=body)
+    newnode = Node(kind='thm', title=theorem_title, statement=body, last_modified=datetime.now())
     newnode.save()
     deps = []
     for i in range(9):

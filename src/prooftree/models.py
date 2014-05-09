@@ -95,7 +95,8 @@ class Node(models.Model):
     title = models.CharField(max_length=100, null=True)
     statement = models.TextField()
     pub_time = models.DateTimeField(auto_now_add=True)
-    objects = NodeManager() 
+    last_modified = models.DateTimeField(auto_now_add=False, auto_now=False)
+    objects = NodeManager()
 
     def __str__kind(self):
         return self.title        
