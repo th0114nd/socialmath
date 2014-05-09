@@ -1,5 +1,16 @@
 Socialmath week 4:
 
+This week, we implemented the keyword-adding/modifying, and searching
+functionalities. Now a search bar will be displayed at the index page, and
+the search is based on the keywords linked to theorems and articles.
+The theorem/article submission now supports LaTex code and can display
+mathematical equations correctly using MathJax, a free online
+LaTex compiling tool.
+On the visualization part, Ying-yu has made substantial progress to
+set up the layout of the knowledge graph. We are now expecting a
+website-visualization merge.
+In addition, the stylesheet of the website is written so it looks much
+prettier now!
 
 Over the past week:
   Jianchi: Modified view functions and completed back-end basic implementation.
@@ -11,13 +22,18 @@ Over the past week:
   Ying-Yu: Made a working graphical layout for knowledge graph. Studied 
     different components provided by UI Bootstrap.
 
+Merging the javascript visualization code with the current backend-database
+construct Jianchi and Kexin has set up will be the biggest goal next week.
+Kexin will also be working on putting the website on the Amazon EC2 server.
+Meanwhile, Jianchi will try to implement the user-authentication and profile
+system, to make the website more complete.
+
 Upcoming goals for the week:
-    Jianchi: Keyword-search system implementation, User-profile system. Error
+    Jianchi: User-profile system implementation. Error
       handling also needs to be added (e.g. blank titles, invalid Latex code).
     Kexin: Work with Ying-yu for potential issues on the communication between
       graph layout and the back end. Start implementing user profile related
-      featuer. 
-    Tim:
+      feature. 
     Ying-Yu: Improve graph layout to make it less messy. Find a way to display
       main content of submission. Work with Kexin to connent my front-end
-      to her back-end.
+      to the back-end.

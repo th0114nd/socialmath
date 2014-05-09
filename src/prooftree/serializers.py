@@ -30,12 +30,17 @@ class PageNodeSerializer(DynamicFieldsModelSerializer):
     '''
     child_ids = serializers.SerializerMethodField('get_children')
 
+    parent_ids = serializers.SerializerMethodField('get_parents')
+
     def get_children(self, node):
         return DAG.objects.get_children(node.node_id)
 
+    def get_parents(self, node):
+        return DAG.objects.get_parents(node.node_id)
+
     class Meta:
         model = Node
-        fields = ('node_id', 'kind', 'statement', 'child_ids')
+        fields = ('node_id', 'kind', 'title', 'statement', 'parent_ids', 'child_ids')
 
 
 class ProofSerializer(serializers.Serializer):

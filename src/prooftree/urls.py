@@ -2,9 +2,9 @@ from django.conf.urls import url
 from prooftree import views
 
 urlpatterns = [
-	url(r'^$', views.index, name='index'),
-    url(r'^get/brief(?P<pageno>\d+)/$', views.pagebrief, name='pagebrief'),
-    url(r'^get/medium(?P<pageno>\d+)/$', views.pagemedium, name='pagemedium'),
+    url(r'^$', views.index, name='index'),
+    url(r'^get/brief/(?P<pageno>\d+)/$', views.pagebrief, name='pagebrief'),
+    url(r'^get/medium/(?P<pageno>\d+)/$', views.pagemedium, name='pagemedium'),
     url(r'^get/one/(?P<node_id>\d+)/$', views.detail, name='detail'),    
     url(r'^delete/one/(?P<node_id>\d+)/$', views.delete_one, name='delete-one'),
     url(r'^delete/all/$', views.delete_all, name='delete-all'),
@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^submit_change/(?P<node_id>\d+)/$', views.submit_change, name='submit-change'),
     url(r'^keyword/(?P<kw_id>\d+)/$', views.lookup_keyword, name='keyword'), 
     url(r'^search/$', views.search, name='search'),
+    url(r'^debug/(?P<path>.*)$', views.debug, name='debug'),
 ]
