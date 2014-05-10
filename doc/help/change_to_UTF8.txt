@@ -1,0 +1,15 @@
+rds-create-db-parameter-group utf8mb4 -f mysql5.5 -d "default parameter with utf8mb4"
+
+rds-modify-db-parameter-group utf8mb4 \
+--parameters="name=character_set_server, value=utf8mb4, method=immediate" \
+--parameters="name=character_set_filesystem, value=utf8mb4, method=immediate" \
+--parameters="name=character_set_client, value=utf8mb4, method=immediate" \
+--parameters="name=character_set_connection, value=utf8mb4, method=immediate" \
+--parameters="name=character_set_database, value=utf8mb4, method=immediate" \
+--parameters="name=character_set_results, value=utf8mb4, method=immediate" \
+--parameters="name=collation_server, value=utf8mb4_general_ci, method=immediate" \
+--parameters="name=collation_connection, value=utf8mb4_general_ci, method=immediate"
+
+rds-modify-db-instance --db-instance-identifier aal8k9ur0016a5 --db-parameter-group-name utf8mb4
+
+rds-reboot-db-instance --db-instance-identifier aal8k9ur0016a5
