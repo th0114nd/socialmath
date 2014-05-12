@@ -1,6 +1,6 @@
 Prime number theorem
 
-Let $π(x)$ be the prime-counting function that gives the number of primes less than or equal to $x$, for any real number $x$. Then:
+Let $\pi(x)$ be the prime-counting function that gives the number of primes less than or equal to $x$, for any real number $x$. Then:
 
 $$\lim_{x\to\infty}\frac{\pi(x)}{x/\ln(x)}=1,$$
 known as the asymptotic law of distribution of prime numbers.
@@ -13,7 +13,7 @@ For any two positive coprime integers $a$ and $d$, there are infinitely many pri
 
 Proof of Lagrange's Theorem
 
-This can be shown using the concept of left cosets of $H$ in $G$. The left cosets are the equivalence classes of a certain equivalence relation on $G$ and therefore form a partition of $G$. Specifically, $x$ and $y$ in $G$ are related if and only if there exists $h$ in $H$ such that $x = yh$. If we can show that all cosets of $H$ have the same number of elements, then each coset of $H$ has precisely $|H|$ elements. We are then done since the order of $H$ times the number of cosets is equal to the number of elements in $G$, thereby proving that the order of $H$ divides the order of $G$. Now, if aH and bH are two left cosets of $H$, we can define a map $f : aH \to bH$ by setting $f(x) = ba^{−1}x$. This map is bijective because its inverse is given by $f^{-1}(y) = ab^{-1}y\mbox{.}$
+This can be shown using the concept of left cosets of $H$ in $G$. The left cosets are the equivalence classes of a certain equivalence relation on $G$ and therefore form a partition of $G$. Specifically, $x$ and $y$ in $G$ are related if and only if there exists $h$ in $H$ such that $x = yh$. If we can show that all cosets of $H$ have the same number of elements, then each coset of $H$ has precisely $|H|$ elements. We are then done since the order of $H$ times the number of cosets is equal to the number of elements in $G$, thereby proving that the order of $H$ divides the order of $G$. Now, if aH and bH are two left cosets of $H$, we can define a map $f : aH \to bH$ by setting $f(x) = ba^{-1}x$. This map is bijective because its inverse is given by $f^{-1}(y) = ab^{-1}y\mbox{.}$
 
 
 Wilson's theorem
@@ -51,7 +51,7 @@ Euclid's proof of Euclid's theorem
 Consider any finite list of prime numbers $p_1, p_2, ..., p_n$. It will be shown that at least one additional prime number not in this list exists. Let P be the product of all the prime numbers in the list: $P = p_1p_2...p_n$. Let $q = P + 1$. Then $q$ is either prime or not:
 
 If $q$ is prime, then there is at least one more prime than is in the list.
-If $q$ is not prime, then some prime factor $p$ divides $q$. If this factor p were on our list, then it would divide $P$ (since $P$ is the product of every number on the list); but p divides $P + 1 = q$. If $p$ divides $P$ and $q$, then $p$ would have to divide the difference of the two numbers, which is $(P + 1) − P$ or just 1. Since no prime number divides 1, this would be a contradiction and so $p$ cannot be on the list. This means that at least one more prime number exists beyond those in the list.
+If $q$ is not prime, then some prime factor $p$ divides $q$. If this factor p were on our list, then it would divide $P$ (since $P$ is the product of every number on the list); but p divides $P + 1 = q$. If $p$ divides $P$ and $q$, then $p$ would have to divide the difference of the two numbers, which is $(P + 1) - P$ or just 1. Since no prime number divides 1, this would be a contradiction and so $p$ cannot be on the list. This means that at least one more prime number exists beyond those in the list.
 This proves that for every finite list of prime numbers there is a prime number not on the list, and therefore there must be infinitely many prime numbers.
 
 
