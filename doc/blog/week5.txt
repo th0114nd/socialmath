@@ -1,10 +1,22 @@
 Socialmath week 5:
 
+Over the past week, we have been focusing on putting a simple working version of our
+product online. On one hand, we have been trying to connect Ying-yu's front end 
+visualization with back end database. On the other hand, we have started to set up
+Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to make
+progress on both sides, but there are still work to be done.
+
+Meanwhile, we have also been extending the website's functionalities. Jianchi has
+been working on the user authentication system. We are hoping to enable users to
+set up a private knowledge graph that is only accessible by, for example, students
+in a class.
+
 The website is now available at: http://socialmath-env.elasticbeanstalk.com/prooftree/
+The website has been seeded with number theory theorems. Currently, the visualiztion is  unavailable.
 
 Over the past week:
   Jianchi:  Finished user register-login-authorization coding. 
-  Kexin: Worked with Ying-yu to help merge his visualization. Set up AWS.
+  Kexin: Worked with Ying-yu to help merge his visualization. Set up AWS. 
   Ying-Yu: Let visualization part take data from server side.
   Tim: Nothing.
 
@@ -15,6 +27,5 @@ Upcoming goals for the week:
     Kexin: Solved the remaining configuration issues with AWS, e.g. fix the broken
       stylesheets. Help Jianchi with database migration problems.
     Ying-Yu: Integrate show detail, add, delete functions with visualization.
-
     Tim: Work on private graph system to enable smaller groups of users to maintain
       their own individual proof trees.
