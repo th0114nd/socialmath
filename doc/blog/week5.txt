@@ -6,7 +6,7 @@ Over the past week:
   Jianchi:  Finished user register-login-authorization coding. 
   Kexin: Worked with Ying-yu to help merge his visualization. Set up AWS.
   Ying-Yu: 
-
+  Tim: Nothing.
 
 Upcoming goals for the week:
     Jianchi: Implement user-profile system and other user functionalities (change 
@@ -15,3 +15,5 @@ Upcoming goals for the week:
     Kexin: Solved the remaining configuration issues with AWS, e.g. fix the broken
       stylesheets. Help Jianchi with database migration problems.
     Ying-Yu:
+    Tim: Work on private graph system to enable smaller groups of users to maintain
+      their own individual proof trees.
