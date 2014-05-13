@@ -3,13 +3,15 @@ Socialmath week 5:
 The website is now available at: http://socialmath-env.elasticbeanstalk.com/prooftree/
 
 Over the past week:
-  Jianchi:  
+  Jianchi:  Finished user register-login-authorization coding. 
   Kexin: Worked with Ying-yu to help merge his visualization. Set up AWS.
   Ying-Yu: 
 
 
 Upcoming goals for the week:
-    Jianchi:
+    Jianchi: Implement user-profile system and other user functionalities (change 
+      password, etc.) Start implementing "private graph" system. Start migrating
+      new database models into the online database.
     Kexin: Solved the remaining configuration issues with AWS, e.g. fix the broken
       stylesheets. Help Jianchi with database migration problems.
     Ying-Yu:
