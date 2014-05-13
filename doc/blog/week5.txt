@@ -5,7 +5,7 @@ The website is now available at: http://socialmath-env.elasticbeanstalk.com/proo
 Over the past week:
   Jianchi:  Finished user register-login-authorization coding. 
   Kexin: Worked with Ying-yu to help merge his visualization. Set up AWS.
-  Ying-Yu: 
+  Ying-Yu: Let visualization part take data from server side.
   Tim: Nothing.
 
 Upcoming goals for the week:
@@ -14,6 +14,7 @@ Upcoming goals for the week:
       new database models into the online database.
     Kexin: Solved the remaining configuration issues with AWS, e.g. fix the broken
       stylesheets. Help Jianchi with database migration problems.
-    Ying-Yu:
+    Ying-Yu: Integrate show detail, add, delete functions with visualization.
+
     Tim: Work on private graph system to enable smaller groups of users to maintain
       their own individual proof trees.
