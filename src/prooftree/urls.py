@@ -3,9 +3,12 @@ from prooftree import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^app/$', views.app, name='app'),
+    url(r'^get/latest/$', views.latest_json, name='latest-json'),
     url(r'^get/brief/(?P<pageno>\d+)/$', views.pagebrief, name='pagebrief'),
     url(r'^get/medium/(?P<pageno>\d+)/$', views.pagemedium, name='pagemedium'),
     url(r'^get/one/(?P<node_id>\d+)/$', views.detail, name='detail'),    
+    url(r'^get/detail/(?P<node_id>\d+)/$', views.detail_json, name='detail_json'),    
     url(r'^delete/one/(?P<node_id>\d+)/$', views.delete_one, name='delete-one'),
     url(r'^delete/all/$', views.delete_all, name='delete-all'),
     url(r'^delete/proof/(?P<node_id>\d+)/(?P<pf_id>\d+)/$', views.delete_pf, name='delete-pf'),

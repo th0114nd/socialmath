@@ -20,6 +20,23 @@ def index(request):
     context = {'latest_theorem_list': latest_theorem_list}
     return render(request, 'prooftree/index.html', context)
 
+def app(request):
+    return render(request, 'prooftree/app.html')
+
+def latest_json(request):
+    nodes = Node.objects.all().order_by('-pub_time')[:10]
+
+    contents = []
+
+    for node in nodes:
+        serializer = PageNodeSerializer(node, 
+            fields=('node_id', 'kind', 'title'))
+        contents.append(serializer.data)
+
+    response = {'data': contents}
+
+    return JSONResponse(response)
+
 def debug(request, path='base.html'):
     return render(request, path)
 
@@ -119,6 +136,7 @@ def detail(request, node_id):
     kwmaplist = KWMap.objects.filter(node=node)
     kwlist = [km.kw for km in kwmaplist]
     context['keywords'] = kwlist
+    print(context)
     return render(request, 'prooftree/detail.html', context)
 
 def detail_json(request, node_id):
@@ -138,16 +156,32 @@ def detail_json(request, node_id):
         return HttpResponse("Bad Request. Id has been deleted.", status=410)
 
     if request.method == 'GET':
-        neighbor_ids = list(DAG.objects.get_children(node_id)) + \
-                       list(DAG.objects.get_parents(node_id))
-        neighbors = []
-        for neighbor_id in neighbor_ids:
-            neighbor = Node.objects.get(node_id=neighbor_id)
-            serializer = NodeSerializer(neighbor)
-            neighbors.append(serializer.data)
+        parent_ids = list(DAG.objects.get_parents(node_id))
+
+        parents = []
+
+        for nid in parent_ids:
+            n = Node.objects.get(node_id=nid)
+            serializer = PageNodeSerializer(n, 
+                fields=('node_id', 'kind', 'title'))
+            parents.append(serializer.data)
+
+        child_ids = list(DAG.objects.get_children(node_id))
+
+        children = []
+
+        for nid in child_ids:
+            n = Node.objects.get(node_id=nid)
+            serializer = PageNodeSerializer(n, 
+                fields=('node_id', 'kind', 'title'))
+            children.append(serializer.data)
 
         # Form responses
-        response = {'wanted': NodeSerializer(node).data, 'neighbors':neighbors}
+        response = {
+            'node': NodeSerializer(node).data, 
+            'parents': parents, 
+            'children': children }
+
         return JSONResponse(response)
 
 

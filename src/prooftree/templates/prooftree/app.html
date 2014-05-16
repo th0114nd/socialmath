@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<link href="{{ STATIC_URL }}css/force.css" rel="stylesheet">
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container content" ng-app="ProoftreeApp">
+    <div ui-view>Loading...</div>
+</div>
+{% endblock content %}
+
+{% block extra_javascript %}
+<!-- D3.js -->
+<script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+
+<script src="{{ STATIC_URL }}js/app.js"></script>
+{% endblock extra_javascript %}
