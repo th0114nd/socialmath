@@ -40,7 +40,7 @@ class PageNodeSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Node
-        fields = ('node_id', 'kind', 'title', 'statement', 'parent_ids', 'child_ids')
+        fields = ('node_id', 'kind', 'pub_time', 'title', 'statement', 'parent_ids', 'child_ids')
 
 
 class ProofSerializer(serializers.Serializer):

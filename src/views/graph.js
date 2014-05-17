@@ -1,3 +1,24 @@
+
+/*
+class NodeSerializer(serializers.Serializer):
+    ''' Return example:
+        {"id":2, "kind":"theorem", "date":"4/17/14",$
+                "title":"There is a unique additive inverse",
+                "bodies":[{"proof_id":1,$
+                           "content":"Assume there are two additive inverses...",$
+                           "below_neighbors": [1]},
+                          {"proof_id":2,
+                           "content": "Z is a ring, therefore...",$
+                           "below_neighbors": [1]}]
+                "above_neighbors": []}
+*/
+
+// allNodesDict = 
+
+function Node() {
+
+}
+
 app = angular.module("graphForce", [])
 
 app.controller("graphControl", function($scope, $http) {

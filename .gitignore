@@ -4,3 +4,5 @@
 bin/
 lib/
 include/
+.elasticbeanstalk/
+.DS_Store

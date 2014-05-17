@@ -1,8 +1,9 @@
-function Node(id, type, title, depends) {
+function Node(id, type, title, depends, body) {
   this.id = id;
   this.type = type;
   this.title = title;
   this.depends = depends;
+  this.body = body;
 };
 
 angular.module('prooftree', [])
@@ -75,10 +76,14 @@ angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
     };
 
     var force = d3.layout.force()
-        .charge(-250)
-        .linkDistance(200)
-        .linkStrength(0.1)
-        .size([this.scope.width, this.scope.height]);
+      .charge(-250)
+      .linkDistance(200)
+      .linkStrength(0.1)
+      .size([this.scope.width, this.scope.height]);
+
+    scope.showDetail = function showDetail(node) {
+      window.alert(node.body);
+    };
 
     scope.tick = function tick(e) {
       // Push different nodes in different directions for clustering.
@@ -102,24 +107,24 @@ angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
       scope.$apply();
     };
 
-    scope.$watch("$parent.lastUpdate", function(newValue) {
-      scope.graph = scope.conv(scope.data);
+    scope.$watchCollection("data", function(newValue) {
+      scope.graph = scope.conv(newValue);
       var nodes = scope.graph.nodes;
       var links = scope.graph.links;
 
       for(var i = 0; i < links.length ; i++) {
-          links[i].strokeWidth = 1;
+        links[i].strokeWidth = 1;
       }
 
       for(var i = 0; i < nodes.length ; i++) {
-          nodes[i].color = colorDict[nodes[i].type];
+        nodes[i].color = colorDict[nodes[i].type];
       }
 
       force
-          .nodes(nodes)
-          .links(links)
-          .on("tick", scope.tick)
-          .start();
+        .nodes(nodes)
+        .links(links)
+        .on("tick", scope.tick)
+        .start();
     });
 
 
@@ -136,6 +141,7 @@ angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
 
     this.newType = 'ax';
     this.newTitle = '';
+    this.newBody = '';
     this.newDeps = [];
     this.nextID = 1;
 
@@ -174,7 +180,8 @@ angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
           this.nextID,
           this.newType,
           this.newTitle,
-          this.newDeps.sort(function (a,b) {return a-b;}));
+          this.newDeps.sort(function (a,b) {return a-b;}),
+          this.newBody);
         scope.dictOutput[this.nextID] = newNode;
         scope.arrayOutput.push(newNode);
         scope.lastUpdate = new Date().getTime();
@@ -182,6 +189,7 @@ angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
 
       this.nextID++;
       this.newTitle = '';
+      this.newBody = '';
       this.newDeps = [];
     };
 

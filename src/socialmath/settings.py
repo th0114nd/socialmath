@@ -56,7 +56,6 @@ WSGI_APPLICATION = 'socialmath.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -67,6 +66,19 @@ DATABASES = {
         'PORT': ''
     }
 }
+
+# Database setting for AWS
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ['RDS_DB_NAME'],
+        'USER': os.environ['RDS_USERNAME'],
+        'PASSWORD': os.environ['RDS_PASSWORD'],
+        'HOST': os.environ['RDS_HOSTNAME'],
+        'PORT': os.environ['RDS_PORT'],
+        'OPTIONS': {'charset': 'utf8mb4'}
+    }
+}'''
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

@@ -1,0 +1,124 @@
+Prime number theorem
+
+Let $\pi(x)$ be the prime-counting function that gives the number of primes less than or equal to $x$, for any real number $x$. Then:
+
+$$\lim_{x\to\infty}\frac{\pi(x)}{x/\ln(x)}=1,$$
+known as the asymptotic law of distribution of prime numbers.
+
+
+Dirichlet's theorem on arithmetic progressions
+
+For any two positive coprime integers $a$ and $d$, there are infinitely many primes of the form $a + nd$, where $n$ is a non-negative integer. 
+
+
+Proof of Lagrange's Theorem
+
+This can be shown using the concept of left cosets of $H$ in $G$. The left cosets are the equivalence classes of a certain equivalence relation on $G$ and therefore form a partition of $G$. Specifically, $x$ and $y$ in $G$ are related if and only if there exists $h$ in $H$ such that $x = yh$. If we can show that all cosets of $H$ have the same number of elements, then each coset of $H$ has precisely $|H|$ elements. We are then done since the order of $H$ times the number of cosets is equal to the number of elements in $G$, thereby proving that the order of $H$ divides the order of $G$. Now, if aH and bH are two left cosets of $H$, we can define a map $f : aH \to bH$ by setting $f(x) = ba^{-1}x$. This map is bijective because its inverse is given by $f^{-1}(y) = ab^{-1}y\mbox{.}$
+
+
+Wilson's theorem
+
+Wilson's theorem states that a natural number $n > 1$ is a prime number if and only if
+
+$$(n-1)!\ \equiv\ -1 \pmod n$$
+
+
+Lagrange's theorem
+
+For any finite group $G$, the order (number of elements) of every subgroup $H$ of $G$ divides the order of $G$.
+
+
+Euler's theorem
+
+If $n$ and $a$ are coprime positive integers, then
+$$a^{\varphi (n)} \equiv 1 \pmod{n}$$
+where $\varphi (n)$ is Euler's totient function. 
+
+
+Fermat's little theorem
+
+If $p$ is a prime number, then for any integer $a$, the number $a ^ p - a$ is an integer multiple of $p$. 
+$$a^p \equiv a \pmod p$$
+
+
+Euclid's theorem
+
+There are infinitely many primes.
+
+
+Euclid's proof of Euclid's theorem
+
+Consider any finite list of prime numbers $p_1, p_2, ..., p_n$. It will be shown that at least one additional prime number not in this list exists. Let P be the product of all the prime numbers in the list: $P = p_1p_2...p_n$. Let $q = P + 1$. Then $q$ is either prime or not:
+
+If $q$ is prime, then there is at least one more prime than is in the list.
+If $q$ is not prime, then some prime factor $p$ divides $q$. If this factor p were on our list, then it would divide $P$ (since $P$ is the product of every number on the list); but p divides $P + 1 = q$. If $p$ divides $P$ and $q$, then $p$ would have to divide the difference of the two numbers, which is $(P + 1) - P$ or just 1. Since no prime number divides 1, this would be a contradiction and so $p$ cannot be on the list. This means that at least one more prime number exists beyond those in the list.
+This proves that for every finite list of prime numbers there is a prime number not on the list, and therefore there must be infinitely many prime numbers.
+
+
+
+Erdős' proof of Euclid's theorem
+
+First note that every integer n can be uniquely written as
+
+$$rs^2$$
+where $r$ is square-free, or not divisible by any square numbers (let $s^2$ be the largest square number that divides n and then let $r=n/s^2$). Now suppose that there are only finitely many prime numbers and call the number of prime numbers $k$.
+
+Fix a positive integer $N$ and try to count the number of integers between 1 and $N$. Each of these numbers can be written as $rs^2$ where r is square-free and r and $s^2$ are both less than $N$. By the fundamental theorem of arithmetic, there are only $2k$ square-free numbers r as each of the prime numbers factorizes $r$ at most once, and we must have $s<\sqrt{N}$. So the total number of integers less than $N$ is at most $2k\sqrt{N}$; i.e.:
+
+$$2^k\sqrt {N}\ge N$$
+Since this inequality does not hold for $N$ sufficiently large, there must be infinitely many primes.
+
+
+Euler's proof of Euclid's theorem
+
+If P is the set of all prime numbers, Euler wrote that:
+
+$$\prod_{p\in P} \frac{1}{1-1/p}=\prod_{p\in P} \sum_{k\geq 0} \frac{1}{p^k}=\sum_n\frac{1}{n}.$$
+The first equality is given by the formula for a geometric series in each term of the product. To show the second equality, distribute the product over the sum:
+
+$$\prod_{p\in P} \sum_{k\geq 0} \frac{1}{p^k}=\sum_{k\geq 0} \frac{1}{2^k}\times\sum_{k\geq 0} \frac{1}{3^k}\times\sum_{k\geq 0} \frac{1}{5^k}\times\sum_{k\geq 0} \frac{1}{7^k}\times\cdots=\sum_n\frac{1}{n}$$
+In the result, every product of primes appears exactly once and so by the fundamental theorem of arithmetic the sum is equal to the sum over all integers.
+
+The sum on the right is the harmonic series, which diverges. Thus the product on the left must also diverge. Since each term of the product is finite, the number of terms must be infinite; therefore, there is an infinite number of primes.
+
+
+Fundamental theorem of arithmetic
+Every integer has a unique prime factorization.
+
+Proof of Fundamental theorem of arithmetic
+
+Lemma: Euclid's lemma
+
+Existence:
+We need to show that every integer greater than 1 is a product of primes. By induction: assume it is true for all numbers between 1 and n. If n is prime, there is nothing more to prove (a prime is a trivial product of primes, a "product" with only one factor). Otherwise, there are integers a and b, where $n = ab$ and $1 < a \leq b < n$. By the induction hypothesis, $a = p_1p_2...p_j$ and $b = q_1q_2...q_k$ are products of primes. But then $n = ab = p_1p_2...p_jq_1q_2...q_k$ is a product of primes.
+
+Uniqueness:
+Assume that $s > 1$ is the product of prime numbers in two different ways: $s =p_1p_2 ... p_m = q_1q_2 ... q_n$. We must show $m = n$ and that the $q_j$ are a rearrangement of the pi.
+
+By Euclid's lemma, $p_1$ must divide one of the $q_j$; relabeling the $q_j$ if necessary, say that $p_1$ divides $q_1$. But $q_1$ is prime, so its only divisors are itself and 1. Therefore, $p_1 = q_1$, so that $$\frac{s}{p1} = p_2 ... p_m = q_2 ... q_n$$. Reasoning the same way, $p_2$ must equal one of the remaining $q_j$. Relabeling again if necessary, say $p_2 = q_2$. Then $$\frac{s}{p1p2} = p_3 ... p_m = q_3 ... q_n$$.
+
+This can be done for each of the m $p_i$'s, showing that $m \leq n$ and every $p_i$ is a $q_j$. Applying the same argument with the $p$'s and $q$'s reversed shows $n \leq m$ (hence $m = n$) and every $q_j$ is a $p_i$.
+
+
+
+Euclid's lemma
+
+
+If a prime divides the product of two numbers, it must divide at least one of those numbers.
+
+
+Proof of Euclid's Lemma
+
+
+Let a and n be relatively prime, and assume that $n | ab$. By Bézout, there are r and s making $rn+sa = 1$.
+Multiply both sides by b: $rnb+sab = b.$
+The first term on the left is divisible by n, and the second term is divisible by ab which by hypothesis is divisible by n. Therefore their sum, b, is also divisible by n. This is the generalization of Euclid's lemma mentioned above.
+
+
+
+Bézout's identity
+
+If x and y are relatively prime integers, there exist integers r and s such that $rx+sy = 1$.
+
+
+

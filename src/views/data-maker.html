@@ -111,7 +111,8 @@
                 <textarea 
                   class="form-control"
                   rows="5"
-                  placeholder="Body"></textarea>
+                  placeholder="Body"
+                  ng-model="nec.newBody"></textarea>
               </div>
 
               <!-- Submit -->
@@ -209,7 +210,8 @@
                         height="30"
                         ng-attr-fill="{{node.color}}"
                         ng-attr-x="{{node.x - 60}}"
-                        ng-attr-y="{{node.y - 30}}">
+                        ng-attr-y="{{node.y - 30}}"
+                        ng-click="showDetail(node)">
                         <title>{{node.title}}</title>
                       </rect>
                       <text

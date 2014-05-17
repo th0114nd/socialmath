@@ -25,6 +25,23 @@ def index(request):
         context['user'] = request.user
     return render(request, 'prooftree/index.html', context)
 
+def app(request):
+    return render(request, 'prooftree/app.html')
+
+def latest_json(request):
+    nodes = Node.objects.all().order_by('-pub_time')[:10]
+
+    contents = []
+
+    for node in nodes:
+        serializer = PageNodeSerializer(node, 
+            fields=('node_id', 'kind', 'title'))
+        contents.append(serializer.data)
+
+    response = {'data': contents}
+
+    return JSONResponse(response)
+
 def debug(request, path='base.html'):
     return render(request, path)
 
@@ -143,16 +160,36 @@ def detail_json(request, node_id):
         return HttpResponse("Bad Request. Id has been deleted.", status=410)
 
     if request.method == 'GET':
-        neighbor_ids = list(DAG.objects.get_children(node_id)) + \
-                       list(DAG.objects.get_parents(node_id))
-        neighbors = []
-        for neighbor_id in neighbor_ids:
-            neighbor = Node.objects.get(node_id=neighbor_id)
-            serializer = NodeSerializer(neighbor)
-            neighbors.append(serializer.data)
+        parent_ids = list(DAG.objects.get_parents(node_id))
+
+        parents = []
+
+        for nid in parent_ids:
+            n = Node.objects.get(node_id=nid)
+            serializer = PageNodeSerializer(n, 
+                fields=('node_id', 'kind', 'title'))
+            parents.append(serializer.data)
+
+        child_ids = list(DAG.objects.get_children(node_id))
+
+        children = []
+
+        for nid in child_ids:
+            n = Node.objects.get(node_id=nid)
+            serializer = PageNodeSerializer(n, 
+                fields=('node_id', 'kind', 'title'))
+            children.append(serializer.data)
+
+        kwmaplist = KWMap.objects.filter(node=node)
+        kwlist = [km.kw.word for km in kwmaplist]
 
         # Form responses
-        response = {'wanted': NodeSerializer(node).data, 'neighbors':neighbors}
+        response = {
+            'node': PageNodeSerializer(node).data, 
+            'keywords': kwlist,
+            'parents': parents, 
+            'children': children }
+
         return JSONResponse(response)
 
 
@@ -349,22 +386,25 @@ def lookup_keyword(request, kw_id):
     context['search'] = kw.word
     context['nodes'] = [km.node for km in KWMap.objects.filter(kw=kw)]
     context['numresults'] = len(context['nodes'])
-    return render(request, 'prooftree/search.html', context)
+    return {'request': request, 'context': context}
 
 def search(request):
     searchtext = str(request.GET['searchtext'])
     searchtext = ' '.join(searchtext.split('+'))
     context = {'search':searchtext}
     kwlst = [w.strip() for w in searchtext.split(',')]
-    if len(kwlst) == 0:
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    elif len(kwlst) == 1:
+    # # kwlst = [''] when searchtext = ''
+    #
+    # if len(kwlst) == 0:
+    #     print(request)
+    #     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    if len(kwlst) == 1:
         kw = Keyword.objects.filter(word__exact=kwlst[0])
-        if len(kw) == 1:
+        if kw:
             return lookup_keyword(request, kw[0].kw_id)
         else:
             context['numresults'] = 0
-            return render(request, 'prooftree/search.html', context)
+            return {'request': request, 'context': context}
     else:
         kwmaplist = KWMap.objects.all()
         for word in kwlst:
@@ -372,11 +412,30 @@ def search(request):
                 kw = Keyword.objects.get(word__exact=word)
             except Keyword.ObjectDoesNotExist:
                 context['numresults'] = 0
-                return render(request, 'prooftree/search.html', context)
+                return {'request': request, 'context': context}
             kwmaplist = kwmaplist.filter(kw=kw)
         context['nodes'] = [km.node for km in kwmaplist]
         context['numresults'] = len(context['nodes'])
-        return render(request, 'prooftree/search.html', context)
+        return {'request': request, 'context': context}
+
+def search_render(request):
+    rc = search(request)
+    return render(rc['request'], 'prooftree/search.html', rc['context'])
+
+def search_json(request):
+    context = search(request)['context']
+    response = {
+        'keyword': context['search'], 
+        'nodes': []
+    }
+
+    if context.has_key('nodes'):
+        for node in context['nodes']:
+            serializer = PageNodeSerializer(node, 
+                fields=('node_id', 'kind', 'title', 'pub_time'))
+            response['nodes'].append(serializer.data)
+
+    return JSONResponse(response)
 
 def show_signup(request, errno):
     if request.user.is_authenticated():
