@@ -151,3 +151,8 @@ a:visited {
     background-color: #EBEBEB;
     border-color: #ADADAD;
 }
+.topcorner{
+    position:absolute;
+    top:0;
+    right:0;
+}

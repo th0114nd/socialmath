@@ -17,4 +17,9 @@ urlpatterns = [
     url(r'^keyword/(?P<kw_id>\d+)/$', views.lookup_keyword, name='keyword'), 
     url(r'^search/$', views.search, name='search'),
     url(r'^debug/(?P<path>.*)$', views.debug, name='debug'),
+    url(r'^login/(?P<errno>\d+)/$', views.show_login, name='login'),
+    url(r'^login_submit/$', views.view_login, name='submit-login'),
+    url(r'^logout/(?P<mode>\d+)/$', views.view_logout, name='logout'),
+    url(r'^signup/(?P<errno>\d+)/$', views.show_signup, name='signup'),
+    url(r'^signup_submit/$', views.signup, name='submit_signup'),
 ]

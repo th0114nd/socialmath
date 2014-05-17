@@ -8,6 +8,15 @@
 </head>
 
 <body>
+  <div class = "topcorner">
+    {% if user %}
+    <p> Welcome, {{user.username}}! </p>
+    <p> <a href="/prooftree/logout/0/"> logout </a></p>
+    {% else %}
+    <p> Welcome to SocialMath! </p>
+    <p> You are not signed in yet. &nbsp; <a href="/prooftree/login/0/"> login </a> &nbsp; or &nbsp; <a href="/prooftree/signup/0/"> sign up </a>. </p>
+    {% endif %}
+  </div>
   <h1> Welcome to Social Math </h1>
 
   <form action="/prooftree/search/" method="get">

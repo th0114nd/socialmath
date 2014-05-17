@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
 from prooftree.models import *
 from prooftree.serializers import *
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,6 +6,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.core.exceptions import *
 from datetime import datetime
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 
 class JSONResponse(HttpResponse):
     """
@@ -19,6 +21,8 @@ class JSONResponse(HttpResponse):
 def index(request):
     latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
     context = {'latest_theorem_list': latest_theorem_list}
+    if request.user.is_authenticated():
+        context['user'] = request.user
     return render(request, 'prooftree/index.html', context)
 
 def debug(request, path='base.html'):
@@ -373,3 +377,91 @@ def search(request):
         context['nodes'] = [km.node for km in kwmaplist]
         context['numresults'] = len(context['nodes'])
         return render(request, 'prooftree/search.html', context)
+
+def show_signup(request, errno):
+    if request.user.is_authenticated():
+        return view_logout(request, 2)
+    if (errno != 0):
+        context = {"errno": errno}
+    return render(request, 'prooftree/register.html', context)
+
+def signup(request):
+    uname = request.POST['username']
+    if (uname == ""):
+        return show_signup(request, 1)
+    if len(User.objects.filter(username=uname)) != 0:
+        return show_signup(request, 2)
+    passwd = request.POST['password']
+    cpasswd = request.POST['confirm_password']
+    if passwd == "" or passwd != cpasswd:
+        return show_signup(request, 3)
+    email = (request.POST['email'] if request.POST['email'] != "" else None)
+    first_name = (request.POST['first_name'] if request.POST['first_name'] != "" else None)
+    last_name = (request.POST['last_name'] if request.POST['last_name'] != "" else None)
+    newuser = User.objects.create_user(uname, email, passwd)
+    newuser.last_name = last_name
+    newuser.first_name = first_name
+    newuser.save()
+    login(request, newuser)
+    return render(request, '/prooftree/signup_success.html', {'newuser':newuser})
+
+def show_login(request, errno):
+    if errno != 0:
+        context = {'errno': errno}
+    if request.user.is_authenticated():
+        logout(request)
+    return render(request, 'prooftree/login.html', context)
+
+def view_login(request):
+    uname = request.POST['username']
+    passwd = request.POST['password']
+    user = authenticate(username=uname, password=passwd)
+    request.user = user
+    if user is not None:
+        return index(request)
+    else:
+        return show_login(request, 1)
+
+def view_logout(request, mode):
+    if mode == 2:
+        return render(request, 'prooftree/confirm_logout.html')
+    logout(request)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def change_passwd(request, errno):
+    if errno != 0:
+        context = {'errno': errno}
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return render(request, '/prooftree/change_passwd.html', context)
+
+def submit_passwd(request):
+    if request.POST['old_password'] != request.user.password:
+        return change_passwd(request, 1)
+    elif request.POST['new_password'] != request.POST['confirm_password']:
+        return change_passwd(request, 2)
+    request.user.set_password(request.POST['new_password'])
+    request.user.save()
+    return render(request, '/prooftree/submit_passwd.html')
+
+def profile_detail(request, username):
+    user = get_object_or_404(User, username=username)
+    context = {'user': user}
+    history = Event.objects.get_userhistory(user)
+    context['history'] = history
+    following = Event.objects.get_userfollowing(user)
+    context['following'] = following
+    return render(request, 'prooftree/profile.html', context)
+
+def follow(request, node_id):
+    node = get_object_or_404(Node, pk=node_id)
+    if request.user.is_authenticated():
+        new_event = Event(node=node, user=request.user, event_type='followed')
+        new_event.save()
+    return detail(request, node_id)
+
+def unfollow(request, node_id):
+    node = get_object_or_404(Node, pk=node_id)
+    if request.user.is_authenticated():
+        Event.objects.filter(node=node).filter(user=request.user).filter(event_type='followed')
+    return detail(request, node_id)

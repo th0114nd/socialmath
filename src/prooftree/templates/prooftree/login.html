@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+
+  
+
+  <title>SocialMath User Login</title>
+</head>
+
+<body>
+        
+
+<h2>Log in to SocialMath</h2>
+<p>
+  If you do not have an account and wish to sign up for, <a href="/prooftree/signup/0/">register</a> instead.
+</p>
+{% if errno %}
+<p> <font color="red">
+  Username and password do not match. Please input again.
+</font> </p> 
+{% endif %}
+
+<form action="/prooftree/login_submit/" method="post">
+  {% csrf_token %}
+  <p>
+    <table style="text-align:left">
+  
+      <tr>
+        <th><label for="id_username">Username</label></th>
+        <td>
+          <input name="username" value="" class="username_input" type="text" id="username" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_password">Password</label></th>
+        <td>
+          <input name="password" value="" class="password_input" type="password" id="password" size="15" />
+        </td>
+      </tr>
+    </table>
+  </p>
+
+  <p>
+    <input type="submit" value="Sign In" />
+  </p>
+</form>
+
+<p>
+<a class="btn" href="/prooftree/"> <button>cancel</button> </a>
+</p>
+
+</body>
+</html>

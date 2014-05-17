@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Avg, Max, Min
 import datetime
 from django.utils.timezone import utc
+from django.contrib.auth.models import User
 
 
 
@@ -81,6 +82,16 @@ class KWManager(models.Manager):
         keywords = list(KWMap.objects.filter(node_id=node_id).values_list('kw', flat=True))
         return keywords
 
+class EVManager(models.Manager):
+    def get_userhistory(self, user):
+        events = Event.objects.filter(user=user)
+        return events
+
+    def get_userfollowing(self, user):
+        interests = Event.objects.filter(user=user).filter(event_type="followed").values_list('node', flat=True)
+        return interests
+
+
 
 # Entity for a node in DAG. 
 class Node(models.Model):
@@ -126,3 +137,14 @@ class KWMap(models.Model):
 	kw = models.ForeignKey(Keyword)
 
 
+class Event(models.Model):
+    TYPES = (
+        ('added', 'added'),
+        ('modified', 'modified'), 
+        ('followed', 'followed'),
+    )
+    node = models.ForeignKey(Node)
+    pub_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+    event_type = models.Charfield(max_length=8, choices=TYPES)
+    objects = EVManager()

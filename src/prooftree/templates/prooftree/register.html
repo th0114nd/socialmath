@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+
+  
+
+  <title>SocialMath New User Registration</title>
+</head>
+
+<body>
+        
+
+<h2>Sign up for SocialMath</h2>
+<p>
+  If you already have an account, <a href="/prooftree/login/0/">log in</a> instead.
+</p>
+{% if errno %}
+<p> <font color="red">
+  {% if errno == 1 %}
+  Sorry, but you cannot leave the username field blank.
+  {% else if errno == 2 %}
+  Sorry, but the username you chose has already been taken. Please choose another username. 
+  {% else if errno == 3 %}
+  Sorry, but your password is blank, or your confirming password does not match with your password. Please input again. 
+  {% endif %}
+</font> </p> 
+
+<form action="/prooftree/signup_submit/" method="post">
+  {% csrf_token %}
+  <p>
+    <table style="text-align:left">
+  
+      <tr>
+        <th><label for="id_username">Username</label></th>
+        <td>
+          <input name="username" value="" class="username_input" type="text" id="username" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_password">Password</label></th>
+        <td>
+          <input name="password" value="" class="password_input" type="password" id="password" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_cpassword">Confirm Password</label></th>
+        <td>
+          <input name="confirm_password" value="" class="confirm_password_input" type="password" id="confirm_password" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_email">Email</label></th>
+        <td>
+          <input name="email" value="" class="email_input" type="text" id="email" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_last_name">Last Name</label></th>
+        <td>
+          <input name="last_name" value="" class="last_name_input" type="text" id="last_name" size="15" />
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_first_name">First Name</label></th>
+        <td>
+          <input name="first_name" value="" class="first_name_input" type="text" id="first_name" size="15" />
+        </td>
+      </tr>
+    </table>
+  </p>
+
+  <p>
+    <input type="submit" value="Sign Up" />
+  </p>
+</form>
+
+<p>
+<a class="btn" href="/prooftree/"> <button>cancel</button> </a>
+</p>
+
+</body>
+</html>
