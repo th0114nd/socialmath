@@ -136,7 +136,6 @@ def detail(request, node_id):
     kwmaplist = KWMap.objects.filter(node=node)
     kwlist = [km.kw for km in kwmaplist]
     context['keywords'] = kwlist
-    print(context)
     return render(request, 'prooftree/detail.html', context)
 
 def detail_json(request, node_id):
@@ -176,9 +175,13 @@ def detail_json(request, node_id):
                 fields=('node_id', 'kind', 'title'))
             children.append(serializer.data)
 
+        kwmaplist = KWMap.objects.filter(node=node)
+        kwlist = [km.kw.word for km in kwmaplist]
+
         # Form responses
         response = {
-            'node': NodeSerializer(node).data, 
+            'node': PageNodeSerializer(node).data, 
+            'keywords': kwlist,
             'parents': parents, 
             'children': children }
 
@@ -377,22 +380,25 @@ def lookup_keyword(request, kw_id):
     context['search'] = kw.word
     context['nodes'] = [km.node for km in KWMap.objects.filter(kw=kw)]
     context['numresults'] = len(context['nodes'])
-    return render(request, 'prooftree/search.html', context)
+    return {'request': request, 'context': context}
 
 def search(request):
     searchtext = str(request.GET['searchtext'])
     searchtext = ' '.join(searchtext.split('+'))
     context = {'search':searchtext}
     kwlst = [w.strip() for w in searchtext.split(',')]
-    if len(kwlst) == 0:
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    elif len(kwlst) == 1:
+    # # kwlst = [''] when searchtext = ''
+    #
+    # if len(kwlst) == 0:
+    #     print(request)
+    #     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    if len(kwlst) == 1:
         kw = Keyword.objects.filter(word__exact=kwlst[0])
-        if len(kw) == 1:
+        if kw:
             return lookup_keyword(request, kw[0].kw_id)
         else:
             context['numresults'] = 0
-            return render(request, 'prooftree/search.html', context)
+            return {'request': request, 'context': context}
     else:
         kwmaplist = KWMap.objects.all()
         for word in kwlst:
@@ -400,8 +406,27 @@ def search(request):
                 kw = Keyword.objects.get(word__exact=word)
             except Keyword.ObjectDoesNotExist:
                 context['numresults'] = 0
-                return render(request, 'prooftree/search.html', context)
+                return {'request': request, 'context': context}
             kwmaplist = kwmaplist.filter(kw=kw)
         context['nodes'] = [km.node for km in kwmaplist]
         context['numresults'] = len(context['nodes'])
-        return render(request, 'prooftree/search.html', context)
+        return {'request': request, 'context': context}
+
+def search_render(request):
+    rc = search(request)
+    return render(rc['request'], 'prooftree/search.html', rc['context'])
+
+def search_json(request):
+    context = search(request)['context']
+    response = {
+        'keyword': context['search'], 
+        'nodes': []
+    }
+
+    if context.has_key('nodes'):
+        for node in context['nodes']:
+            serializer = PageNodeSerializer(node, 
+                fields=('node_id', 'kind', 'title', 'pub_time'))
+            response['nodes'].append(serializer.data)
+
+    return JSONResponse(response)

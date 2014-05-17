@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3>{{ node.title }}</h3>
+</div>
+<div class="modal-body">
+    <span mathjax-bind="node.statement"></span>
+    <hr />
+    <p> Published at {{node.pub_time | date}} </p>
+    <hr />
+    <label> Keywords: </label>
+    <span>
+        <a 
+            class="label label-default" 
+            ng-repeat="kw in keywords"
+            href="/prooftree/keyword/{{kw.kw_id}}">
+            {{kw}}
+        </a> 
+    </span>
+<!--     <pre>{{ node | json }}
+{{ keywords | json }}
+{{ parents | json }}
+{{ children | json }}</pre> -->
+</div>

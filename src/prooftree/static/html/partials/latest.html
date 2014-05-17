@@ -2,13 +2,13 @@
 <h1> Welcome to Social Math </h1>
 
 <div class="form-group">
-  <form action="/prooftree/search/" method="get">
+  <form ng-submit="searchSubmit(keywords)">
     <div class="input-group">
       <input 
         class="form-control" 
         type="text" 
         name="searchtext" 
-        value="{{search}}" 
+        ng-model="keywords" 
         id="searchtext" />
       <span class="input-group-btn">
         <input class="btn btn-primary" type="submit" value="Search" />
@@ -19,28 +19,87 @@
 
 <div 
   class="panel panel-primary"
-  ng-show="latest.length">
-  <div class="panel-heading">Latest Submissions</div>
-  <div class="list-group">
-    <a 
-      ng-repeat="node in latest"
-      class="list-group-item list-group-item-default"
-      href="/prooftree/get/one/{{ node.node_id }}/"> 
-      {{ node.title }} 
-    </a>
-    <a 
-      class="list-group-item list-group-item-info"
-      href="#"> 
-      ... more
-    </a>
+  collapse="!searchResult">
+  <div 
+    class="panel-heading"
+    ng-click="hideSearch = !hideSearch">
+    Search Results ({{searchNodes.length}} found)
+    <span class="pull-right" chevron-icon="!hideSearch"></span>
+  </div>
+  <div collapse="hideSearch">
+    <div class="panel-body">
+      {{searchResult | json}}
+    </div>
+  </div>
+  <div class="list-group" ng-show="searchNodes" collapse="hideSearch">
+    <div 
+      ng-repeat="node in searchNodes"
+      class="list-group-item list-group-item-default">
+      <span class="btn-group" style="margin-right:10px;">
+        <a 
+          class="btn btn-default"
+          ng-click="showDetail(node.node_id); $event.preventDefault()"
+          href="/prooftree/get/detail/{{ node.node_id }}/">
+          <span>
+            <span class="glyphicon glyphicon-list-alt"></span>
+          </span>
+        </a>
+        <a 
+          class="btn btn-default"
+          href="">
+          <span>
+            <span class="glyphicon glyphicon-tree-conifer"></span>
+          </span>
+        </a>
+      </span>
+      <span>{{ node.title }}</span>
+    </div>
   </div>
 </div>
 
-<div class="row" ng-hide="latest.length">
-  <div class="col-sm-7">
-    <alert type="'info'">
-      There are no recent works added to the SocialMath knowledge graph.
-    </alert>
+<div 
+  class="panel panel-primary">
+  <div 
+    class="panel-heading"
+    ng-click="hideLatest = !hideLatest">
+    Latest Submissions
+    <span class="pull-right" chevron-icon="!hideLatest"></span>
+  </div>
+  <div collapse="hideLatest">
+    <div class="panel-body" ng-hide="latest">
+      <alert type="'info'">
+        No recent works
+      </alert>
+    </div>
+  </div>
+  <div class="list-group" ng-show="latest" collapse="hideLatest">
+    <div 
+      ng-repeat="node in latest"
+      class="list-group-item list-group-item-default">
+      <span class="btn-group" style="margin-right:10px;">
+        <a 
+          class="btn btn-default"
+          ng-click="showDetail(node.node_id); $event.preventDefault()"
+          href="/prooftree/get/detail/{{ node.node_id }}/">
+          <span>
+            <span class="glyphicon glyphicon-eye-open"></span>
+          </span>
+        </a>
+        <a 
+          class="btn btn-default"
+          href="">
+          <span>
+            <span class="glyphicon glyphicon-tree-conifer"></span>
+          </span>
+        </a>
+      </span>
+      <span>{{ node.title }}</span>
+    </div>
+<!--     <a 
+      class="list-group-item list-group-item-info"
+      href="#"> 
+      Show more
+    </a> -->
   </div>
 </div>
 

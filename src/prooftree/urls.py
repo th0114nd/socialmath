@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^submit_article/$', views.submit_article, name='submit-article'),
     url(r'^submit_change/(?P<node_id>\d+)/$', views.submit_change, name='submit-change'),
     url(r'^keyword/(?P<kw_id>\d+)/$', views.lookup_keyword, name='keyword'), 
-    url(r'^search/$', views.search, name='search'),
+    url(r'^search/$', views.search_render, name='search'),
+    url(r'^searchj/$', views.search_json, name='searchj'),
     url(r'^debug/(?P<path>.*)$', views.debug, name='debug'),
 ]

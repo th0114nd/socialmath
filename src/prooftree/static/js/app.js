@@ -11,6 +11,37 @@ Prooftree = angular.module('ProoftreeApp', [
   'ui.bootstrap'
 ])
 
+Prooftree.directive('eatClick', function() {
+  return function(scope, element, attrs) {
+    $(element).click(function(event) {
+      event.preventDefault();
+    });
+  }
+})
+
+Prooftree.directive('chevronIcon', function() {
+  return {
+    restrict: 'A',
+    scope: {
+      show: '=chevronIcon'
+    },
+    templateUrl: '/static/html/partials/chevronIcon.html'
+  };
+})
+
+Prooftree.directive("mathjaxBind", function() {
+  return {
+    restrict: "A",
+    controller: ["$scope", "$element", "$attrs",
+        function($scope, $element, $attrs) {
+      $scope.$watch($attrs.mathjaxBind, function(value) {
+        $element.text(value == undefined ? "" : value);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
+      });
+    }]
+  };
+});
+
 Prooftree.config(function ($stateProvider, $urlRouterProvider) {
     // For any unmatched url, send to /route1
     $urlRouterProvider.otherwise("/");
@@ -40,6 +71,22 @@ Prooftree.factory('GetService', function($http) {
       return $http.get('/prooftree/get/brief/' + page)
         .then(function(result) {
           return result.data;
+        });
+    }, 
+
+    'detail': function(node_id) {
+      return $http.get('/prooftree/get/detail/' + node_id)
+        .then(function(result) {
+          return result;
+        });
+    }, 
+
+    'search': function(searchtext) {
+      return $http.get('/prooftree/searchj/',
+          { params: {'searchtext': searchtext} }
+        )
+        .then(function(result) {
+          return result;
         });
     }, 
 
@@ -99,16 +146,57 @@ Prooftree.factory('GraphService', function () {
   }
 });
 
-Prooftree.controller('LatestCtrl', ['$scope', 'GetService', 
-function ($scope, GetService) {
+Prooftree.controller('DetailCtrl', ['$scope', 'GetService', 'data',
+function ($scope, GetService, data) {
+  DetailCtrl = this;
+  var scope = $scope;
+
+  scope.node = data.node;
+  scope.keywords = data.keywords;
+  scope.parents = data.parents;
+  scope.children = data.children;
+}])
+
+Prooftree.controller('LatestCtrl', 
+['$scope', '$rootScope', '$modal', 'GetService', 
+function ($scope, $rootScope, $modal, GetService) {
   LatestCtrl = this;
   var scope = $scope;
 
   scope.latest = [];
 
+  scope.searchResult = undefined;
+
   scope.load = function () { 
     GetService.latest().then(function(response) {
       scope.latest = response.data;
+    });
+  };
+
+  scope.searchSubmit = function (searchtext) {
+    GetService.search(searchtext).then(function(response) {
+      scope.searchResult = response;
+      scope.searchNodes = response.data.nodes;
+      scope.hideLatest = true;
+    });
+  };
+
+  scope.showDetail = function (node_id) { 
+    GetService.detail(node_id).then(function(response) {
+      openDetail(response);
+    });
+  };
+
+  var openDetail = function (context) {
+    var modalInstance = $modal.open({
+      templateUrl: '/static/html/partials/detail_modal.html',
+      controller: 'DetailCtrl',
+      size: 'lg',
+      resolve: {
+        data: function () {
+          return context.data;
+        }
+      }
     });
   };
 
