@@ -29,6 +29,42 @@ Prooftree.directive('chevronIcon', function() {
   };
 })
 
+Prooftree.directive('draggable', DragDirective);
+
+Prooftree.directive('draggable2', function($document) {
+  return function(scope, element, attr) {
+    var startX = 0, startY = 0, x = 0, y = 0;
+    element.css({
+     position: 'relative',
+     // border: '1px solid red',
+     // backgroundColor: 'lightgrey',
+     cursor: 'pointer'
+    });
+    element.on('mousedown', function(event) {
+      // Prevent default dragging of selected content
+      event.preventDefault();
+      startX = event.screenX - x;
+      startY = event.screenY - y;
+      $document.on('mousemove', mousemove);
+      $document.on('mouseup', mouseup);
+    });
+
+    function mousemove(event) {
+      y = event.screenY - startY;
+      x = event.screenX - startX;
+      element.css({
+        top: y + 'px',
+        left:  x + 'px'
+      });
+    }
+
+    function mouseup() {
+      $document.off('mousemove', mousemove);
+      $document.off('mouseup', mouseup);
+    }
+  };
+});
+
 Prooftree.directive("mathjaxBind", function() {
   return {
     restrict: "A",
@@ -131,10 +167,12 @@ Prooftree.factory('GraphService', function () {
       var links = result.nodes[i].parent_ids;
       for (var j = 0; j < links.length; j++) {
         var t = id2Pos[links[j]];
-        result.links.push({
-          'source': i, 
-          'target': t});
-        nodes[t].free = false;
+        if (t != undefined) {
+          result.links.push({
+            'source': i, 
+            'target': t});
+          nodes[t].free = false;
+        }
       }
     }
 
@@ -166,6 +204,8 @@ function ($scope, $rootScope, $modal, GetService) {
   scope.latest = [];
 
   scope.searchResult = undefined;
+
+  scope.graphTemplate = '/static/html/partials/graph.html';
 
   scope.load = function () { 
     GetService.latest().then(function(response) {
@@ -288,6 +328,8 @@ function ($scope, GetService, GraphService) {
       .on("tick", scope.tick)
       .start();
   });
+
+
 }])
 
 angular.module('datamaker', ['ui.bootstrap', 'prooftree'])

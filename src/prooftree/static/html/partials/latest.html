@@ -103,13 +103,15 @@
   </div>
 </div>
 
+<div ng-controller="GraphCtrl" ng-include="graphTemplate"></div>
+
 <div class="form-group">
-<a type="button" class="btn btn-primary" href="/prooftree/add/1/">
-  New Theorem
-</a>
+  <a type="button" class="btn btn-primary" href="/prooftree/add/1/" draggable eat-click style="position: relative;">
+    New Theorem
+  </a>
 </div>
 <div class="form-group">
-<a type="button" class="btn btn-primary" href="/prooftree/add/2/">
-  New Article / Proof
-</a>
+  <a type="button" class="btn btn-primary" href="/prooftree/add/2/">
+    New Article / Proof
+  </a>
 </div>
