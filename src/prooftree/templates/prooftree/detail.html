@@ -1,5 +1,6 @@
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+ <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
+ <!-- Bootstrap CSS -->
+ <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -31,11 +32,9 @@
 	<p> published at {{node.pub_time}} </p>
 	<h3 style="color:black;"> Keywords: </h3>
 	<p> {% for kw in keywords %}
-		<a class="btn" href="/prooftree/keyword/{{kw.kw_id}}">{{kw.word}}</a> &nbsp;
+		<a class="btn btn-link" href="/prooftree/keyword/{{kw.kw_id}}">{{kw.word}}</a> &nbsp;
 		{% endfor %}
 	</p>
-	<p> <a class="btn" href="/prooftree/delete/one/{{node.node_id}}"><button>delete</button></a> &nbsp; <a  class="btn" href="/prooftree/change/{{node.node_id}}"><button>edit</button></a></p>
-	</div>
 	{% endif %}
 
 	{% if theorem %}
@@ -61,8 +60,10 @@
 	{% endfor %}
 	{% endif %}
 
-
-	<p><a class="btn" href="/prooftree/"><button> Home</button></a></p>
+    
+	</div>
+	<p><a class="btn btn-primary" href="/prooftree/">Home</a>  &nbsp; &nbsp; <a class="btn btn-default" href="/prooftree/change/{{node.node_id}}">edit</a> &nbsp; &nbsp;
+	 <a class="btn btn-danger" href="/prooftree/delete/one/{{node.node_id}}">delete</a></p>
 
 </body>
 

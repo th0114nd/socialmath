@@ -2,11 +2,13 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <link rel="stylesheet" type="text/css" href="/static/style.css" />
-
+  <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
+  <!-- Bootstrap CSS -->
+  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  
   
 
-  <title>SocialMath Submitting New Article</title>
+  <title>SocialMath Add New Proof</title>
 </head>
 
 <body>
@@ -27,8 +29,7 @@
       <tr>
         <th><label for="id_title">Article Title</label></th>
         <td>
-          
-          <input name="title" value="" class="title_input" type="text" id="title" size="50" />
+          <input name="title" value="" class="title_input" type="text" id="title" size="80"/>
         </td>
       </tr>
       <tr>
@@ -46,7 +47,7 @@
       <tr>
         <th><label for="body">Body</label></th>
         <td>
-          <textarea id="body" rows="30" cols="80" name="body"></textarea>
+          <textarea id="body" rows="20" cols="100" name="body"></textarea>
         </td>
 
 
@@ -91,14 +92,13 @@
     </table>
   </p>
 
-  <p>
-    <input type="submit" value="Submit Article" />
-  </p>
+
+<div class="form-actions">
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <a class="btn btn-link" href="/prooftree/"> Cancel</a>
+</div>
 </form>
 
-<p>
-<a class="btn" href="/prooftree/"> <button>cancel</button> </a>
-</p>
 
 </body>
 </html>
