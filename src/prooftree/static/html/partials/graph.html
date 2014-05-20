@@ -1,4 +1,4 @@
-<div>
+<div class="well">
   <svg ng-attr-width="{{width}}"
        ng-attr-height="{{height}}">
     <defs>
@@ -24,7 +24,10 @@
       ng-attr-x2="{{link.target.x}}"
       ng-attr-y2="{{link.target.y}}">
     </line>
-    <g ng-repeat="node in graph.nodes">
+    <g 
+      ng-repeat="node in graph.nodes"
+      ng-click="showDetail(node)"
+      transform="translate({{node.x}} {{node.y}})">
       <rect
         class="node"
         rx="5"
@@ -32,9 +35,9 @@
         width="120"
         height="30"
         ng-attr-fill="{{node.color}}"
-        ng-attr-x="{{node.x - 60}}"
-        ng-attr-y="{{node.y - 30}}"
-        ng-click="showDetail(node)">
+        ng-attr-x="{{-60}}"
+        ng-attr-y="{{-30}}"
+        >
         <title>{{node.title}}</title>
       </rect>
       <text
@@ -42,9 +45,9 @@
         font-family="Arial"
         font-size="18"
         fill="white"
-        ng-attr-x="{{node.x}}"
-        ng-attr-y="{{node.y + 6 - 15}}"
-        ng-click="showDetail(node)">
+        ng-attr-x="{{0}}"
+        ng-attr-y="{{6 - 15}}"
+        >
         {{node.title}}
       </text>
     </g>

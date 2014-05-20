@@ -19,14 +19,7 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 def index(request):
-    latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
-    context = {'latest_theorem_list': latest_theorem_list}
-    if request.user.is_authenticated():
-        context['user'] = request.user
-    return render(request, 'prooftree/index.html', context)
-
-def app(request):
-    return render(request, 'prooftree/app.html')
+    return render(request, 'prooftree/index.html')
 
 def latest_json(request):
     nodes = Node.objects.all().order_by('-pub_time')[:10]

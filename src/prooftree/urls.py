@@ -3,7 +3,6 @@ from prooftree import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^app/$', views.app, name='app'),
     url(r'^get/latest/$', views.latest_json, name='latest-json'),
     url(r'^get/brief/(?P<pageno>\d+)/$', views.pagebrief, name='pagebrief'),
     url(r'^get/medium/(?P<pageno>\d+)/$', views.pagemedium, name='pagemedium'),
