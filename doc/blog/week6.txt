@@ -4,16 +4,14 @@ Check out the new UI at: http://socialmath.elasticbeanstalk.com/prooftree/
 
 
 Over the past week:
-  Jianchi:   
+  Jianchi:   Wrote the user profile functionalities and templates. 
   Kexin: Didn't get too much done due to ditch day. Fixed the static files 
     problem on AWS. Changed the stylesheets and url patterns to integrate 
     the front end visualization into the current website.
   Ying-Yu: HTML inferface for searching.
-  Tim: 
 
 Upcoming goals for the week:
-    Jianchi: 
+    Jianchi: Complete debugging the user profile; implement private graph.
     Kexin: Focus on the remaining integration. Make sure that there will
       be a working website online.
     Ying-Yu: Implement visual tool for editing nodes.
-    Tim: 
