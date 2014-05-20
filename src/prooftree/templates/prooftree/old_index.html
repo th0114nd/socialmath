@@ -1,0 +1,34 @@
+<!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
+<!-- Bootstrap CSS -->
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Social Math</title>
+</head>
+
+<body>
+  <h1> Welcome to Social Math </h1>
+
+  <form action="/prooftree/search/" method="get">
+    <input type="text" name="searchtext" value="{{search}}" id="searchtext" size="40" />
+    <input type="submit" value="Search" />
+  </form>
+  {% if latest_theorem_list %}
+  <p> Here are the latest works that have recently been added to the SocialMath knowledge graph. </p>
+  <ul class="check">
+    {% for theorem in latest_theorem_list %}
+      <li><a href="/prooftree/get/one/{{ theorem.node_id }}/"> {{ theorem.title }} </a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p> There are no recent works added to the SocialMath knowledge graph. </p>
+  {% endif %}
+
+  <p><h5><a href="/prooftree/add/1/"> Add a new theorem </a><h5></p>
+  <p><h5><a href="/prooftree/add/2/"> Add a new article or proof </a><h5></p>
+
+</body>
+
+</html>
