@@ -95,7 +95,7 @@ We need to show that every integer greater than 1 is a product of primes. By ind
 Uniqueness:
 Assume that $s > 1$ is the product of prime numbers in two different ways: $s =p_1p_2 ... p_m = q_1q_2 ... q_n$. We must show $m = n$ and that the $q_j$ are a rearrangement of the pi.
 
-By Euclid's lemma, $p_1$ must divide one of the $q_j$; relabeling the $q_j$ if necessary, say that $p_1$ divides $q_1$. But $q_1$ is prime, so its only divisors are itself and 1. Therefore, $p_1 = q_1$, so that $$\frac{s}{p1} = p_2 ... p_m = q_2 ... q_n$$. Reasoning the same way, $p_2$ must equal one of the remaining $q_j$. Relabeling again if necessary, say $p_2 = q_2$. Then $$\frac{s}{p1p2} = p_3 ... p_m = q_3 ... q_n$$.
+By Euclid's lemma, $p_1$ must divide one of the $q_j$; relabeling the $q_j$ if necessary, say that $p_1$ divides $q_1$. But $q_1$ is prime, so its only divisors are itself and 1. Therefore, $p_1 = q_1$, so that $$\frac{s}{p1} = p_2 ... p_m = q_2 ... q_n$$ Reasoning the same way, $p_2$ must equal one of the remaining $q_j$. Relabeling again if necessary, say $p_2 = q_2$. Then $$\frac{s}{p1p2} = p_3 ... p_m = q_3 ... q_n$$
 
 This can be done for each of the m $p_i$'s, showing that $m \leq n$ and every $p_i$ is a $q_j$. Applying the same argument with the $p$'s and $q$'s reversed shows $n \leq m$ (hence $m = n$) and every $q_j$ is a $p_i$.
 
