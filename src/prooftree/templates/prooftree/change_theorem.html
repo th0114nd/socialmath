@@ -6,7 +6,19 @@
   <!-- Bootstrap CSS -->
   <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
-  
+  <style>
+    body {
+      margin: 18px;
+      padding: 0;
+      color: #000000;
+
+      font:1.3em "lucida grande","lucida sans unicode";   
+      font-size-adjust:none;
+      font-style:normal;
+      font-variant:normal;
+      font-weight:normal;
+    }
+  </style>
 
   <title>SocialMath Edit Theorem {{node.title}}</title>
 </head>
@@ -27,12 +39,12 @@
       <tr>
         <th><label for="body">Body</label></th>
         <td>
-          <textarea id="body" rows="20" cols="100" name="body">{{node.statement}}</textarea>
+          <textarea id="body" rows="20" style="width:100%" name="body">{{node.statement}}</textarea>
         </td>
 
 
         <td>
-        <table style="text-align:left">
+        <table style="text-align:left;margin-left:5px;">
           {% for lemma in lemmas %}
           <tr>
             <th><label for="id_lemma">Lemma {% cycle '0' '1' '2' '3' '4' '5' '6' '7' '8' %}</label></th>
@@ -86,7 +98,7 @@
       </tr>
       
       <tr>
-        <th><label for="id_file1">Upload Your File Here</label></th>
+        <th><label for="id_file1">Upload File </label></th>
         <td> 
           <input type="file" name="file1" id="id_file1" />
         </td>
