@@ -5,6 +5,20 @@
   <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
   <!-- Bootstrap CSS -->
   <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 18px;
+      padding: 0;
+      color: #000000;
+
+      font:1.3em "lucida grande","lucida sans unicode";   
+      font-size-adjust:none;
+      font-style:normal;
+      font-variant:normal;
+      font-weight:normal;
+    }
+  </style>
   
   
 
@@ -47,12 +61,12 @@
       <tr>
         <th><label for="body">Body</label></th>
         <td>
-          <textarea id="body" rows="20" cols="100" name="body"></textarea>
+          <textarea id="body" rows="20" style="width:100%" name="body"></textarea>
         </td>
 
 
         <td>
-        <table style="text-align:left">
+        <table style="text-align:left;margin-left:10px;">
           {% for i in lemma_range %}
           <tr>
             <th><label for="id_lemma">Lemma {{i}}</label></th>
