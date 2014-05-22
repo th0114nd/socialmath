@@ -379,8 +379,11 @@ def lookup_keyword(request, kw_id):
     context['search'] = kw.word
     context['nodes'] = [km.node for km in KWMap.objects.filter(kw=kw)]
     context['numresults'] = len(context['nodes'])
-    rc = {'request': request, 'context': context}
-    return render(rc['request'], 'prooftree/search.html', rc['context'])
+    return {'request':request, 'context':context}
+
+def keyword_render(request, kw_id):
+    rc = lookup_keyword(request, kw_id)
+    return render(rc['request'], "prooftree/search.html", rc['context'])
 
 def search(request):
     searchtext = str(request.GET['searchtext'])

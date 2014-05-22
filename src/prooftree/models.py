@@ -146,5 +146,5 @@ class Event(models.Model):
     node = models.ForeignKey(Node)
     pub_time = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User)
-    event_type = models.Charfield(max_length=8, choices=TYPES)
+    event_type = models.CharField(max_length=8, choices=TYPES)
     objects = EVManager()
