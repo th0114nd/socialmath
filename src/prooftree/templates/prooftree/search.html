@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <h2> <a href="/prooftree/">Social Math </a> </h2>
+  <!--<h2> <a href="/prooftree/">Social Math </a> </h2>
   <form action="/prooftree/search/" method="get">
     <input type="text" name="searchtext" value="{{search}}" id="searchtext" size="40" />
     <input type="submit" value="Search" />
@@ -26,10 +26,69 @@
       <p>&nbsp;&nbsp;&nbsp;&nbsp;Published at {{node.pub_time}}</p>
     {% endfor %}
   </ul>
-  {% endif %}
-<p>
-<a type="button" class="btn btn-primary" href="/prooftree/">home </a>
-</p>
+  {% endif %}-->
+  <div class="container content" ng-app="ProoftreeApp">
+    <div ui-view><h1> Social Math Search</h1>
+      <div class="form-group">
+    <form ng-submit="searchSubmit(keywords)">
+        <div class="input-group">
+          <input 
+            class="form-control" 
+            type="text" 
+            name="searchtext" 
+            value="{{search}}"
+            ng-model="keywords" 
+            id="searchtext" />
+          <span class="input-group-btn">
+            <input class="btn btn-primary" type="submit" value="Search" />
+          </span>
+        </div>
+      </form>
+    </div>
+
+    <div 
+      class="panel panel-primary"
+      collapse="{{ numresults }}">
+      <div 
+        class="panel-heading"
+        ng-click="hideSearch = !hideSearch">
+        Search Results ({{numresults}} found)
+        <span class="pull-right" chevron-icon="!hideSearch"></span>
+      </div>
+      <div class="list-group" ng-show="nodes" collapse="hideSearch">
+        <div ng-repeat="node in searchNodes"
+          class="list-group-item list-group-item-default">
+          <span class="btn-group" style="margin-right:10px;">
+            <a 
+              class="btn btn-default"
+              ng-click="showDetail(node.node_id); $event.preventDefault()"
+              href="/prooftree/get/detail/{{ node.node_id }}/">
+              <span>
+                <span class="glyphicon glyphicon-list-alt"></span>
+              </span>
+            </a>
+            <a 
+              class="btn btn-default"
+              href="">
+              <span>
+                <span class="glyphicon glyphicon-tree-conifer"></span>
+              </span>
+            </a>
+          </span>
+          <span><a href="/prooftree/get/one/{{ node.node_id }}/">{{ node.title }}</a></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <a type="button" class="btn btn-primary" href="/prooftree/">
+        Home
+      </a>
+    </div>
+
+    </div>
+  </div>
+
 </body>
 
 </html>

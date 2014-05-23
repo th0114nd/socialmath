@@ -26,7 +26,7 @@ def index(request):
         context['user'] = request.user
     else:
         context['user'] = None
-    return render(request, 'prooftree/old_index.html', context)
+    return render(request, 'prooftree/index.html', context)
 
 def latest_json(request):
     nodes = Node.objects.all().order_by('-pub_time')[:10]
@@ -201,7 +201,7 @@ def detail_json(request, node_id):
             children.append(serializer.data)
 
         kwmaplist = KWMap.objects.filter(node=node)
-        kwlist = [km.kw for km in kwmaplist]
+        kwlist = [{'kw_id': km.kw.kw_id, 'word': km.kw.word} for km in kwmaplist]
 
         # Form responses
         response = {

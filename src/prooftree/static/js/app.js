@@ -83,7 +83,7 @@ Prooftree.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/");
     $stateProvider
         .state('index', {
-            url: "/",
+            url: "/?search",
             templateUrl: "/static/html/partials/latest.html",
             controller: "LatestCtrl"
         })
@@ -196,10 +196,12 @@ function ($scope, GetService, data) {
 }])
 
 Prooftree.controller('LatestCtrl', 
-['$scope', '$rootScope', '$modal', 'GetService', 
-function ($scope, $rootScope, $modal, GetService) {
+['$scope', '$rootScope', '$modal', '$stateParams', 'GetService', 
+function ($scope, $rootScope, $modal, $stateParams, GetService) {
   LatestCtrl = this;
   var scope = $scope;
+
+  // console.log($stateParams);
 
   scope.latest = [];
 
@@ -220,6 +222,10 @@ function ($scope, $rootScope, $modal, GetService) {
       scope.hideLatest = true;
     });
   };
+
+  if ($stateParams.search) {
+    scope.searchSubmit($stateParams.search);
+  }
 
   scope.showDetail = function (node_id) { 
     GetService.detail(node_id).then(function(response) {
