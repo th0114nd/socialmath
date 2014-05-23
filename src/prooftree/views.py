@@ -202,7 +202,7 @@ def detail_json(request, node_id):
             children.append(serializer.data)
 
         kwmaplist = KWMap.objects.filter(node=node)
-        kwlist = [km.kw.word for km in kwmaplist]
+        kwlist = [km.kw for km in kwmaplist]
 
         # Form responses
         response = {
