@@ -25,4 +25,8 @@ urlpatterns = [
     url(r'^logout/(?P<mode>\d+)/$', views.view_logout, name='logout'),
     url(r'^signup/(?P<errno>\d+)/$', views.show_signup, name='signup'),
     url(r'^signup_submit/$', views.signup, name='submit_signup'),
+    url(r'^user/(?P<user_id>\d+)/$', views.profile_detail, name='profile_detail'),
+    url(r'^self/$', views.self_profile, name='self'),
+    url(r'^follow/(?P<node_id>\d+)/$', views.follow, name='follow'),
+    url(r'^unfollow/(?P<node_id>\d+)/$', views.unfollow, name='unfollow'),
 ]

@@ -88,11 +88,11 @@ class KWManager(models.Manager):
 
 class EVManager(models.Manager):
     def get_userhistory(self, user):
-        events = Event.objects.filter(user=user)
+        events = self.filter(user=user)
         return events
 
     def get_userfollowing(self, user):
-        interests = Event.objects.filter(user=user).filter(event_type="followed").values_list('node', flat=True)
+        interests = [ev.node for ev in self.filter(user=user).filter(event_type="followed")]
         return interests
 
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	{% if user %}
+	<title> {{user.username}} </title>
+	{% else %}
+	<title> Object Not Found </title>
+	{% endif %}
+     <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
+    <!-- Bootstrap CSS -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+	    body {
+	      margin: 18px;
+	      padding: 0;
+	      color: #000000;
+
+	      font:1.35em "lucida grande","lucida sans unicode";   
+	      font-size-adjust:none;
+	      font-style:normal;
+	      font-variant:normal;
+	      font-weight:normal;
+	    }
+	</style>
+</head>
+
+<body>
+	{% if user %}
+	<div>
+	<h3> {{user.username}} </h3>
+	<p> Email: <a href="mailto:{{user.email}}"> {{user.email}} </a> </p>
+	</div>
+
+	<div>
+		<h3> Activities </h3>
+		{% for event in history %}
+		<p> {{event.pub_time}} </p>
+		<p> &nbsp;&nbsp;&nbsp;&nbsp; {{user.username}} {{event.event_type}} <a href="/prooftree/get/one/{{event.node.node_id}}">{{event.node.title}} </a>. </p>
+		{% endfor %}
+	</div>
+
+	<div>
+		<h3> Following </h3>
+		<p> {% for int_node in following %}
+			<a class="btn" href="/prooftree/get/one/{{int_node.node_id}}">{{int_node.title}} </a>
+			{% endfor %}
+		</p>
+	</div>
+	{% endif %}
+</body>
+
+</html>

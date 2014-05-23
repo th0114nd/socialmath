@@ -11,21 +11,23 @@
 
 <body>
         
+{% if errno %}
+<p> <font color="red">
+  {% if errno == 1 %}
+  Sorry, but you cannot leave the username field blank.
+  {% elif errno == 2 %}
+  Sorry, but the username you chose has already been taken. Please choose another username. 
+  {% elif errno == 3 %}
+  Sorry, but your password is blank, or your confirming password does not match with your password. Please input again. 
+  {% endif %}
+</font> </p> 
+{% endif %}
 
 <h2>Sign up for SocialMath</h2>
 <p>
   If you already have an account, <a href="/prooftree/login/0/">log in</a> instead.
 </p>
-{% if errno %}
-<p> <font color="red">
-  {% if errno == 1 %}
-  Sorry, but you cannot leave the username field blank.
-  {% else if errno == 2 %}
-  Sorry, but the username you chose has already been taken. Please choose another username. 
-  {% else if errno == 3 %}
-  Sorry, but your password is blank, or your confirming password does not match with your password. Please input again. 
-  {% endif %}
-</font> </p> 
+
 
 <form action="/prooftree/signup_submit/" method="post">
   {% csrf_token %}
