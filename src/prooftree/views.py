@@ -26,7 +26,7 @@ def index(request):
         context['user'] = request.user
     else:
         context['user'] = None
-    return render(request, 'prooftree/old_index.html', context)
+    return render(request, 'prooftree/index.html', context)
 
 def latest_json(request):
     nodes = Node.objects.all().order_by('-pub_time')[:10]
