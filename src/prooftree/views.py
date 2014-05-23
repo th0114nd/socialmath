@@ -149,7 +149,7 @@ def detail(request, node_id):
             context['follow'] = 2
     author = Event.objects.filter(node=node).filter(event_type="added")
     if len(author) == 1:
-        if author[0].user == None:
+        if author[0].user.username == "socialmathghostuser":
             context['author'] = False
         else:
             context['author'] = author[0].user
@@ -157,11 +157,10 @@ def detail(request, node_id):
     print "edited " + str(len(editors)) + "times"
     if len(editors) != 0:
         print ("hahahahahahahaha")
-        last_editor = editors[0].user
-        if last_editor == None:
+        if editors[0].user.username == "socialmathghostuser":
             context['last_editor'] = False
         else:
-            context['last_editor'] = last_editor
+            context['last_editor'] = editors[0].user
     return render(request, 'prooftree/detail.html', context)
 
 def detail_json(request, node_id):
@@ -348,7 +347,7 @@ def submit_change(request, node_id):
     if request.user.is_authenticated():
         newevent.user = request.user
     else:
-        newevent.user = None
+        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
     newevent.save()
     return detail(request, node_id)
 
@@ -384,7 +383,7 @@ def submit_article(request):
     if request.user.is_authenticated():
         newevent.user = request.user
     else:
-        newevent.user = None
+        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
     newevent.save()
     return detail(request, newnode.node_id)
 
@@ -415,7 +414,7 @@ def submit_theorem(request):
     if request.user.is_authenticated():
         newevent.user = request.user
     else:
-        newevent.user = None
+        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
     newevent.save()
     return detail(request, newnode.node_id)
 
