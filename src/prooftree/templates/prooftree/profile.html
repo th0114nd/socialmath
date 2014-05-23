@@ -4,7 +4,7 @@
 
 <head>
 	{% if user %}
-	<title> {{user.username}} </title>
+	<title>Hi, {{user.username}}! </title>
 	{% else %}
 	<title> Object Not Found </title>
 	{% endif %}
@@ -44,12 +44,23 @@
 
 	<div>
 		<h3> Following </h3>
+		{% if following %}
 		<p> {% for int_node in following %}
-			<a class="btn" href="/prooftree/get/one/{{int_node.node_id}}">{{int_node.title}} </a>
+			<a class="btn btn-link" href="/prooftree/get/one/{{int_node.node_id}}">{{int_node.title}} </a>
 			{% endfor %}
 		</p>
+		{% else %}
+		<p> You are not following anything =( </p>
+		{% endif%}
 	</div>
 	{% endif %}
+
+	<div class="form-group">
+      <a type="button" class="btn btn-primary" href="/prooftree/">
+        Home
+      </a>
+    </div>
+
 </body>
 
 </html>

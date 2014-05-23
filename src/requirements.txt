@@ -2,4 +2,5 @@ Django==1.4.1
 MySQL-python==1.2.3
 boto==2.28.0
 djangorestframework==2.3.13
+static==1.0.2
 wsgiref==0.1.2

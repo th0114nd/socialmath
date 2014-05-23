@@ -32,7 +32,6 @@ def latest_json(request):
     nodes = Node.objects.all().order_by('-pub_time')[:10]
 
     contents = []
-
     for node in nodes:
         serializer = PageNodeSerializer(node, 
             fields=('node_id', 'kind', 'title'))
