@@ -498,16 +498,16 @@ def signup(request):
     cpasswd = request.POST['confirm_password']
     if passwd == "" or passwd != cpasswd:
         return show_signup(request, 3)
-    email = (request.POST['email'] if request.POST['email'] != "" else None)
-    first_name = (request.POST['first_name'] if request.POST['first_name'] != "" else None)
-    last_name = (request.POST['last_name'] if request.POST['last_name'] != "" else None)
+    email = request.POST['email']
+    first_name = request.POST['first_name']
+    last_name = request.POST['last_name']
     newuser = User.objects.create_user(uname, email, passwd)
     newuser.last_name = last_name
     newuser.first_name = first_name
     newuser.save()
-    authenticate(username=username, password=passwd)
+    newuser = authenticate(username=uname, password=passwd)
     login(request, newuser)
-    return render(request, '/prooftree/signup_success.html', {'newuser':newuser})
+    return render(request, 'prooftree/signup_success.html', {'newuser':newuser})
 
 def show_login(request, errno):
     if int(errno) != 0:
