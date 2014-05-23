@@ -65,14 +65,25 @@ Prooftree.directive('draggable2', function($document) {
   };
 });
 
+Prooftree.filter('markdown', function ($sce) {
+  var converter = new Showdown.converter();
+  return function (value) {
+    var html = converter.makeHtml(value || '');
+    // window.console.log(html);
+    // window.console.log($sce.trustAsHtml(html));
+    return $sce.trustAsHtml(html);
+  };
+});
+
 Prooftree.directive("mathjaxBind", function() {
   return {
     restrict: "A",
-    controller: ["$scope", "$element", "$attrs",
-        function($scope, $element, $attrs) {
+    controller: ["$scope", "$element", "$attrs", "$filter",
+        function($scope, $element, $attrs, $filter) {
       $scope.$watch($attrs.mathjaxBind, function(value) {
-        $element.text(value == undefined ? "" : value);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
+        $element.text(value == undefined ? "" : $filter('markdown')(value));
+        console.log($element[0]);
+        // MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
       });
     }]
   };
@@ -396,6 +407,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       scope.searchResult = response;
       scope.searchNodes = response.data.nodes;
       scope.hideLatest = true;
+      scope.hideGraph = true;
       $location.hash('search-area');
       $anchorScroll();
     });
@@ -441,7 +453,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       [scope.width, scope.height]);
     // scope.graph.explore();
     scope.exploreGraph = function (nid) {
-      scope.graph.explore(nid);
+      scope.graph.explore(nid, 10);
       scope.hasGraph = true;
       scope.hideGraph = false;
       $location.hash('graph-area');
