@@ -78,6 +78,15 @@ Prooftree.directive("mathjaxBind", function() {
   };
 });
 
+Prooftree.filter('ellipsis', function () {
+  return function (input, len) {
+    if (input.length < len)
+      return input;
+    else
+      return input.slice(0, len - 3) + "...";
+  }
+});
+
 Prooftree.config(function ($stateProvider, $urlRouterProvider) {
     // For any unmatched url, send to /route1
     $urlRouterProvider.otherwise("/");
@@ -148,7 +157,38 @@ function ($rootScope, $scope, GetService) {
 
 }])
 
+Prooftree.controller('GraphCtrl', ['$scope', 'GetService', 'GraphService',
+function ($scope, GetService, GraphService) {
+  GraphCtrl = this;
+  var scope = $scope;
+
+  scope.graph = new GraphService.Graph([]);
+
+  scope.width = 500;
+  scope.height = 500;
+
+  GetService.brief().then(function(response) {
+    scope.graph = new GraphService.Graph(response.data);
+    scope.graph.bind(scope, "graph", [scope.width, scope.height]);
+    scope.graph.explore();
+  });
+
+  scope.showDetail = function showDetail(node) {
+    window.alert(node);
+  };
+
+}])
+
 Prooftree.factory('GraphService', function () {
+  var color = d3.scale.category10()
+
+  var colorDict = {
+    'ax':   color(0),
+    'def':  color(1),
+    'thm':  color(2),
+    'pf':   color(3)
+  };
+
   var Node = function Node(id, kind, title, depends, body) {
     this.id = id;
     this.kind = kind;
@@ -157,35 +197,166 @@ Prooftree.factory('GraphService', function () {
     this.body = body;
   };
 
-  var conv = function (nodes) {
-    var id2Pos = new Object();
-    var result = {'nodes': [], "links":[]};
+  var force = function (width, height) {
+    return d3.layout.force()
+      .charge(-500)
+      .linkDistance(120)
+      .linkStrength(0.1)
+      .size([width, height]);
+  };
+
+  var tick = function (graph, scope) {
+    return function tick(e) {
+      // Push different nodes in different directions for clustering.
+      var k = 6 * e.alpha;
+      var nodes = graph.vertices;
+      var links = graph.arrows;
+
+      nodes.forEach(function(o, i) {
+        if (o.free)
+          o.y -= k;
+      });
+
+      links.forEach(function(o, i) {
+        var s = o.source;
+        var t = o.target;
+        var dy = 1 - (s.y - t.y) / 300;
+        s.y += k * dy;
+        t.y -= k * dy;
+      });
+
+      scope.$apply();
+    };
+  };
+
+  var watch = function (graph) {
+    return function(scope, model, dimensions) {
+      scope.$watchCollection(model, function(newValue) {
+      var nodes = newValue.vertices;
+      var links = newValue.arrows;
+
+      for(var i = 0; i < links.length ; i++) {
+        links[i].strokeWidth = 1;
+      }
+
+      for(var i = 0; i < nodes.length ; i++) {
+        nodes[i].color = colorDict[nodes[i].kind];
+      }
+
+      force(dimensions[0], dimensions[1])
+        .nodes(nodes)
+        .links(links)
+        .on("tick", tick(graph, scope))
+        .start();
+      });
+    };
+  };
+
+  var explore = function (graph) { 
+    return function (center, depth) {
+      depth = typeof depth !== 'undefined' ? depth : 1;
+
+      if (typeof center == 'undefined') {
+        graph.vertices = graph.nodes;
+
+        for (var i = 0; i < graph.vertices.length; i++) {
+          graph.vertices[i].depth = 0;
+        };
+      } else {
+        var toVisit = [this.id2Pos[center]];
+        var visited = Array.apply(null, 
+          new Array(graph.nodes.length)).map(Boolean.prototype.valueOf,false);
+
+        graph.vertices = [];
+        graph.arrows = [];
+
+        graph.nodes[toVisit[0]].depth = 0;
+
+        while (toVisit.length) {
+          var idx = toVisit.shift();
+          var node = graph.nodes[idx];
+
+          if (node.depth > depth)
+            break;
+
+          visited[idx] = true;
+          node.free = true;
+          graph.vertices.push(node);
+
+          var adjs = node.parent_ids.concat(node.child_ids);
+
+          for (var i = 0; i < adjs.length; i++) {
+            var adjI = this.id2Pos[adjs[i]];
+            var adjN = graph.nodes[adjI];
+            if (!visited[adjI]) {
+              toVisit.push(adjI);
+              adjN.depth = node.depth + 1;
+            }
+          };
+        }
+      }
+
+      for (var i = 0; i < graph.vertices.length; i++) {
+        var links = graph.vertices[i].parent_ids;
+        for (var j = 0; j < links.length; j++) {
+          var t = graph.id2Pos[links[j]];
+          if (t != undefined) {
+            graph.arrows.push({
+              'source': graph.vertices[i], 
+              'target': graph.nodes[t]});
+            graph.vertices[i].free = false;
+            graph.nodes[t].free = false;
+          }
+        }
+      }
+    };
+  };
+
+  var Graph = function (nodes) {
+    this.id2Pos = {};
+
+    this.nodes = [];
+    this.edges = [];
+    this.vertices = [];
+    this.arrows = [];
+    this.opacity = function (node) {
+      if (node.depth)
+        return window.Math.exp(-0.5 * node.depth);
+      else
+        return 1;
+    };
+
+    this.bind = function (scope, model, dimensions) {
+      watch(this)(scope, model, dimensions);
+    };
+
+    this.explore = explore(this);
+
+    // var result = {'nodes': [], 'edges':[], "arrows":[]};
 
     for (var i = 0; i < nodes.length; i++) {
-      id2Pos[nodes[i].node_id] = i;
-      result.nodes.push(nodes[i]);
-
-      nodes[i].free = (nodes[i].parent_ids.length == 0);
+      this.id2Pos[nodes[i].node_id] = i;
+      this.nodes.push(nodes[i]);
     }
 
     for (var i = 0; i < nodes.length; i++) {
-      var links = result.nodes[i].parent_ids;
+      var links = this.nodes[i].parent_ids;
       for (var j = 0; j < links.length; j++) {
-        var t = id2Pos[links[j]];
+        var t = this.id2Pos[links[j]];
         if (t != undefined) {
-          result.links.push({
+          this.edges.push({
             'source': i, 
             'target': t});
-          nodes[t].free = false;
+          this.edges.push({
+            'source': t, 
+            'target': i});
         }
       }
     }
-
-    return result;
   };
 
   return {
-    'conv': conv
+    'Graph': Graph
   }
 });
 
@@ -201,12 +372,12 @@ function ($scope, GetService, data) {
 }])
 
 Prooftree.controller('LatestCtrl', 
-['$scope', '$rootScope', '$modal', '$stateParams', 'GetService', 
-function ($scope, $rootScope, $modal, $stateParams, GetService) {
+['$scope', '$rootScope', '$modal', '$stateParams', '$location', '$anchorScroll', 
+ 'GetService', 'GraphService',
+function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll, 
+          GetService, GraphService) {
   LatestCtrl = this;
   var scope = $scope;
-
-  // console.log($stateParams);
 
   scope.latest = [];
 
@@ -225,6 +396,8 @@ function ($scope, $rootScope, $modal, $stateParams, GetService) {
       scope.searchResult = response;
       scope.searchNodes = response.data.nodes;
       scope.hideLatest = true;
+      $location.hash('search-area');
+      $anchorScroll();
     });
   };
 
@@ -252,6 +425,29 @@ function ($scope, $rootScope, $modal, $stateParams, GetService) {
   };
 
   scope.load();
+
+  scope.graph = undefined;
+  scope.hasGraph = false;
+  scope.hideGraph = false;
+
+  scope.width = 500;
+  scope.height = 500;
+
+  GetService.brief().then(function(response) {
+    scope.graph = new GraphService.Graph(response.data);
+    scope.graph.bind(
+      scope, 
+      "graph", 
+      [scope.width, scope.height]);
+    // scope.graph.explore();
+    scope.exploreGraph = function (nid) {
+      scope.graph.explore(nid);
+      scope.hasGraph = true;
+      scope.hideGraph = false;
+      $location.hash('graph-area');
+      $anchorScroll();
+    };
+  });
 }])
 
 Prooftree.controller('BriefCtrl', ['$scope', '$http', 'GetService', 'GraphService',
@@ -262,243 +458,7 @@ function ($scope, $http, GetService, GraphService) {
 
   GetService.brief().then(function(response) {
     scope.pagedata = response;
-    scope.graph = GraphService.conv(scope.pagedata.data);
+    scope.graph = GraphService.Graph(scope.pagedata.data);
   });
 }])
 
-Prooftree.controller('GraphCtrl', ['$scope', 'GetService', 'GraphService',
-function ($scope, GetService, GraphService) {
-  GraphCtrl = this;
-  var scope = $scope;
-
-  scope.graph = GraphService.conv([]);
-
-  GetService.brief().then(function(response) {
-    scope.graph = GraphService.conv(response.data);
-  });
-  
-  scope.width = 500;
-  scope.height = 500;
-
-  var color = d3.scale.category10()
-
-  var colorDict = {
-    'ax':   color(0),
-    'def':  color(1),
-    'thm':  color(2),
-    'pf':   color(3)
-  };
-
-  var force = d3.layout.force()
-    .charge(-250)
-    .linkDistance(200)
-    .linkStrength(0.1)
-    .size([scope.width, scope.height]);
-
-  scope.showDetail = function showDetail(node) {
-    window.alert(node);
-  };
-
-  scope.tick = function tick(e) {
-    // Push different nodes in different directions for clustering.
-    var k = 6 * e.alpha;
-    var nodes = scope.graph.nodes;
-    var links = scope.graph.links;
-
-    nodes.forEach(function(o, i) {
-      if (o.free)
-        o.y -= k;
-    });
-
-    links.forEach(function(o, i) {
-      var s = o.source;
-      var t = o.target;
-      var dy = 1 - (s.y - t.y) / 300;
-      s.y += k * dy;
-      t.y -= k * dy;
-    });
-
-    scope.$apply();
-  };
-
-  scope.$watchCollection("graph", function(newValue) {
-    var nodes = scope.graph.nodes;
-    var links = scope.graph.links;
-
-    for(var i = 0; i < links.length ; i++) {
-      links[i].strokeWidth = 1;
-    }
-
-    for(var i = 0; i < nodes.length ; i++) {
-      nodes[i].color = colorDict[nodes[i].kind];
-    }
-
-    force
-      .nodes(nodes)
-      .links(links)
-      .on("tick", scope.tick)
-      .start();
-  });
-
-
-}])
-
-angular.module('datamaker', ['ui.bootstrap', 'prooftree'])
-  .controller('DataMakerController', function($filter, $scope) {
-    $scope.dictOutput = new Object();
-    $scope.arrayOutput = [];
-
-    $scope.isopen = true;
-    $scope.hidejson = true;
-    $scope.hidegraph = false;
-
-    $scope.lastUpdate = new Date().getTime();
-
-    $scope.promptCopy = function promptCopy(data) {
-      window.prompt(
-        'Press Ctrl+C or Cmd+C.', 
-        $filter('json')(data));
-    };
-  })
-  .controller('GraphController', 
-  ['$scope', '$filter', 'graphConverter',
-  function($scope, $filter, graphConverter) {
-    var scope = $scope;
-    gctrl = this;
-    scope.conv = graphConverter;
-    this.scope = scope;
-    scope.data = scope.$parent.arrayOutput;
-    scope.graph = {};
-    
-    scope.width = 500;
-    scope.height = 500;
-
-    var color = d3.scale.category10()
-
-    var colorDict = {
-      'ax':   color(0),
-      'def':  color(1),
-      'thm':  color(2),
-      'pf':   color(3)
-    };
-
-    var force = d3.layout.force()
-      .charge(-250)
-      .linkDistance(200)
-      .linkStrength(0.1)
-      .size([this.scope.width, this.scope.height]);
-
-    scope.showDetail = function showDetail(node) {
-      window.alert(node.body);
-    };
-
-    scope.tick = function tick(e) {
-      // Push different nodes in different directions for clustering.
-      var k = 6 * e.alpha;
-      var nodes = scope.graph.nodes;
-      var links = scope.graph.links;
-
-      nodes.forEach(function(o, i) {
-        if (o.free)
-          o.y -= k;
-      });
-
-      links.forEach(function(o, i) {
-        var s = o.source;
-        var t = o.target;
-        var dy = 1 - (s.y - t.y) / 300;
-        s.y += k * dy;
-        t.y -= k * dy;
-      });
-
-      scope.$apply();
-    };
-
-    scope.$watchCollection("data", function(newValue) {
-      scope.graph = scope.conv(newValue);
-      var nodes = scope.graph.nodes;
-      var links = scope.graph.links;
-
-      for(var i = 0; i < links.length ; i++) {
-        links[i].strokeWidth = 1;
-      }
-
-      for(var i = 0; i < nodes.length ; i++) {
-        nodes[i].color = colorDict[nodes[i].type];
-      }
-
-      force
-        .nodes(nodes)
-        .links(links)
-        .on("tick", scope.tick)
-        .start();
-    });
-
-
-  }])
-  .controller('NewEntryController', function($scope) {
-    var scope = $scope.$parent;
-
-    this.entryTypes = {
-      'ax':   'Axiom',
-      'def':  'Definition',
-      'thm':  'Theorem',
-      'pf':   'Proof'
-    };
-
-    this.newType = 'ax';
-    this.newTitle = '';
-    this.newBody = '';
-    this.newDeps = [];
-    this.nextID = 1;
-
-    this.searchDep = null;
-
-    this.searchMatch = function searchMatch() {
-      id = this.searchDep.id;
-      if (this.newDeps.indexOf(id) == -1)
-        this.newDeps.push(id);
-      this.searchDep = null;
-    };
-
-    this.removeDep = function removeDep(index) {
-      // var index = this.newDeps.indexOf(d);
-      this.newDeps.splice(index, 1);
-    };
-
-    this.formatNode = function formatNode (node) {
-      if (node)
-        return this.entryTypes[node.type] + ' - ' + node.title;
-      else
-        return '';
-    };
-
-    // this.output = function output() {
-    //   // return JSON.stringify(this.entries, null, 2);
-    //   return this.entries;
-    // };
-
-    this.add = function add() {
-      if (this.newtitle == '')
-        return;
-
-      if (scope.dictOutput[this.nextID] == undefined) {
-        var newNode = new Node(
-          this.nextID,
-          this.newType,
-          this.newTitle,
-          this.newDeps.sort(function (a,b) {return a-b;}),
-          this.newBody);
-        scope.dictOutput[this.nextID] = newNode;
-        scope.arrayOutput.push(newNode);
-        scope.lastUpdate = new Date().getTime();
-      }
-
-      this.nextID++;
-      this.newTitle = '';
-      this.newBody = '';
-      this.newDeps = [];
-    };
-
-    ctrl = this;
-  });

@@ -18,6 +18,24 @@
 </div>
 
 <div 
+  id="graph-area"
+  class="panel panel-primary"
+  collapse="!hasGraph">
+  <div 
+    class="panel-heading"
+    ng-click="hideGraph = !hideGraph">
+    Knowledge Graph
+    <span class="pull-right" chevron-icon="!hideGraph"></span>
+  </div>
+  <div collapse="hideGraph">
+    <div class="panel-body">
+      <div ng-include="graphTemplate"></div>
+    </div>
+  </div>
+</div>
+
+<div 
+  id="search-area"
   class="panel panel-primary"
   collapse="!searchResult">
   <div 
@@ -46,6 +64,7 @@
         </a>
         <a 
           class="btn btn-default"
+          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>
@@ -87,6 +106,7 @@
         </a>
         <a 
           class="btn btn-default"
+          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>
@@ -102,8 +122,6 @@
     </a> -->
   </div>
 </div>
-
-<div ng-controller="GraphCtrl" ng-include="graphTemplate"></div>
 
 <div class="form-group">
   <!-- <a type="button" class="btn btn-primary" href="/prooftree/add/1/" draggable eat-click style="position: relative;"> -->
