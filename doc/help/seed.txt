@@ -11,6 +11,11 @@ Dirichlet's theorem on arithmetic progressions
 For any two positive coprime integers $a$ and $d$, there are infinitely many primes of the form $a + nd$, where $n$ is a non-negative integer. 
 
 
+
+Lagrange's theorem
+
+For any finite group $G$, the order (number of elements) of every subgroup $H$ of $G$ divides the order of $G$.
+
 Proof of Lagrange's Theorem
 
 This can be shown using the concept of left cosets of $H$ in $G$. The left cosets are the equivalence classes of a certain equivalence relation on $G$ and therefore form a partition of $G$. Specifically, $x$ and $y$ in $G$ are related if and only if there exists $h$ in $H$ such that $x = yh$. If we can show that all cosets of $H$ have the same number of elements, then each coset of $H$ has precisely $|H|$ elements. We are then done since the order of $H$ times the number of cosets is equal to the number of elements in $G$, thereby proving that the order of $H$ divides the order of $G$. Now, if aH and bH are two left cosets of $H$, we can define a map $f : aH \to bH$ by setting $f(x) = ba^{-1}x$. This map is bijective because its inverse is given by $f^{-1}(y) = ab^{-1}y\mbox{.}$
@@ -23,9 +28,6 @@ Wilson's theorem states that a natural number $n > 1$ is a prime number if and o
 $$(n-1)!\ \equiv\ -1 \pmod n$$
 
 
-Lagrange's theorem
-
-For any finite group $G$, the order (number of elements) of every subgroup $H$ of $G$ divides the order of $G$.
 
 
 Euler's theorem

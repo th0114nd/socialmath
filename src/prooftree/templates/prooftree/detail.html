@@ -50,8 +50,9 @@
 	</p>
 
 	<p> {{node.statement}} </p>
-	<p> published at {{node.pub_time}}, by {% if author %}<a href="/prooftree/user/{{author.id}}">{{author.username}}</a> {% else %}Anonymous{% endif %} </p>
-	<p> last modified at {{node.last_modified}}, by {% if last_editor %}<a href="/prooftree/user/{{last_editor.id}}">{{last_editor.username}}</a> {% else %}Anonymous{% endif %}</p>
+    </br>
+	<p style="font:1.1em"> published at {{node.pub_time}}, by {% if author %}<a href="/prooftree/user/{{author.id}}">{{author.username}}</a> {% else %}Anonymous{% endif %} </p>
+	<p style="font:1.1em"> last modified at {{node.last_modified}}, by {% if last_editor %}<a href="/prooftree/user/{{last_editor.id}}">{{last_editor.username}}</a> {% else %}Anonymous{% endif %}</p>
 	<h3 style="color:black;"> Keywords: </h3>
 	<p> {% for kw in keywords %}
 		<a class="btn btn-link" href="/prooftree/#/?search={{ kw.word }}">{{kw.word}}</a> &nbsp;
