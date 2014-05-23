@@ -43,18 +43,19 @@
 	<div>
 	<h2> {{node.title}} </h2>
 	<p> {% if follow == 2 %}
-		<a class="btn btn-default" href="/prooftree/follow/{{node.node_id}}/">follow</a>
+		<a class="btn btn-default btn-sm" href="/prooftree/follow/{{node.node_id}}/">follow</a>
 		{% elif follow == 1 %}
-		<a class="btn btn-default" href="/prooftree/unfollow/{{node.node_id}}/">unfollow</a>
+		<a class="btn btn-default btn-sm" href="/prooftree/unfollow/{{node.node_id}}/">unfollow</a>
 		{% endif %}
 	</p>
 
 	<p> {{node.statement}} </p>
-	<p> published at {{node.pub_time}}, by {% if author %}<a href="/prooftree/user/{{author.id}}">{{author.username}}</a> {% else %}Anonymous{% endif %} </p>
-	<p> last modified at {{node.last_modified}}, by {% if last_editor %}<a href="/prooftree/user/{{last_editor.id}}">{{last_editor.username}}</a> {% else %}Anonymous{% endif %}</p>
+    </br>
+	<p style="font:1.1em"> published at {{node.pub_time}}, by {% if author %}<a href="/prooftree/user/{{author.id}}">{{author.username}}</a> {% else %}Anonymous{% endif %} </p>
+	<p style="font:1.1em"> last modified at {{node.last_modified}}, by {% if last_editor %}<a href="/prooftree/user/{{last_editor.id}}">{{last_editor.username}}</a> {% else %}Anonymous{% endif %}</p>
 	<h3 style="color:black;"> Keywords: </h3>
 	<p> {% for kw in keywords %}
-		<a class="btn btn-link" href="/prooftree/keyword/{{kw.kw_id}}">{{kw.word}}</a> &nbsp;
+		<a class="btn btn-link" href="/prooftree/#/?search={{ kw.word }}">{{kw.word}}</a> &nbsp;
 		{% endfor %}
 	</p>
 	{% endif %}

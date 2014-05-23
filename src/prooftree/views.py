@@ -29,10 +29,9 @@ def index(request):
     return render(request, 'prooftree/index.html', context)
 
 def latest_json(request):
-    nodes = Node.objects.all().order_by('-pub_time')[:10]
+    nodes = Node.objects.all().order_by('-pub_time')[:5]
 
     contents = []
-
     for node in nodes:
         serializer = PageNodeSerializer(node, 
             fields=('node_id', 'kind', 'title'))
