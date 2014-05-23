@@ -143,6 +143,11 @@ function Node(id, type, title, depends, body) {
   this.body = body;
 };
 
+Prooftree.controller('UserCtrl', ['$rootScope', '$scope', 'GetService',
+function ($rootScope, $scope, GetService) {
+
+}])
+
 Prooftree.factory('GraphService', function () {
   var Node = function Node(id, kind, title, depends, body) {
     this.id = id;

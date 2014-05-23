@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block extra_head %}
+<title>Social Math</title>
 <link href="{{ STATIC_URL }}css/force.css" rel="stylesheet">
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({skipStartupTypeset: true });
@@ -12,6 +13,21 @@
 
 {% block content %}
 <div class="container content" ng-app="ProoftreeApp">
+    <header 
+        class="container"
+        ng-controller="UserCtrl">
+        <nav class="top-bar" data-topbar>
+            <div align="right">
+                {% if user %}
+                Welcome, <a href="/prooftree/self/">{{user.username}}</a>! | 
+                <a href="/prooftree/logout/0/">logout</a>
+                {% else %}
+                <a href="/prooftree/login/0/">login</a> | 
+                <a href="/prooftree/signup/0/">signup</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
     <div ui-view><h1>Loading...</h1></div>
 </div>
 {% endblock content %}
