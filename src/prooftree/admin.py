@@ -10,4 +10,5 @@ admin.site.register(Keyword)
 admin.site.register(KWMap)
 admin.site.register(Event)
 
-User.objects.create_user("socialmathghostuser", "socialmathghost@socialmath.com", "socialmathghostuser2014")
+if len(User.objects.filter(username="socialmathghostuser")) == 0:
+	User.objects.create_user("socialmathghostuser", "socialmathghost@socialmath.com", "socialmathghostuser2014")
