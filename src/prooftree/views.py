@@ -317,7 +317,7 @@ def submit_change(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
     node.title = request.POST['title']
     node.statement = request.POST['body']
-    node.last_modeified = datetime.now()
+    node.last_modified = datetime.now()
     node.save()
     DAG.objects.filter(child_id=node_id).delete()
     KWMap.objects.filter(node=node).delete()
