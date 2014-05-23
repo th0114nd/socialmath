@@ -8,6 +8,7 @@ from django.core.exceptions import *
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 class JSONResponse(HttpResponse):
     """
@@ -19,7 +20,13 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 def index(request):
-    return render(request, 'prooftree/index.html')
+    latest_theorem_list = Node.objects.all().order_by('-pub_time')[:10]
+    context = {'latest_theorem_list': latest_theorem_list}
+    if request.user.is_authenticated():
+        context['user'] = request.user
+    else:
+        context['user'] = None
+    return render(request, 'prooftree/old_index.html', context)
 
 def latest_json(request):
     nodes = Node.objects.all().order_by('-pub_time')[:10]
@@ -134,6 +141,27 @@ def detail(request, node_id):
     kwmaplist = KWMap.objects.filter(node=node)
     kwlist = [km.kw for km in kwmaplist]
     context['keywords'] = kwlist
+    context['follow'] = 0
+    if request.user.is_authenticated():
+        if node in Event.objects.get_userfollowing(request.user):
+            context['follow'] = 1
+        else:
+            context['follow'] = 2
+    author = Event.objects.filter(node=node).filter(event_type="added")
+    if len(author) == 1:
+        if author[0].user == None:
+            context['author'] = False
+        else:
+            context['author'] = author[0].user
+    editors = Event.objects.filter(node=node).filter(Q(event_type="modified") | Q(event_type="added")).order_by("-pub_time")
+    print "edited " + str(len(editors)) + "times"
+    if len(editors) != 0:
+        print ("hahahahahahahaha")
+        last_editor = editors[0].user
+        if last_editor == None:
+            context['last_editor'] = False
+        else:
+            context['last_editor'] = last_editor
     return render(request, 'prooftree/detail.html', context)
 
 def detail_json(request, node_id):
@@ -316,6 +344,12 @@ def submit_change(request, node_id):
                 k = Keyword.objects.get(word=kw)
             kwmap = KWMap(node=node, kw=k)
             kwmap.save()
+    newevent = Event(node=node, event_type='modified')
+    if request.user.is_authenticated():
+        newevent.user = request.user
+    else:
+        newevent.user = None
+    newevent.save()
     return detail(request, node_id)
 
 def submit_article(request):
@@ -346,6 +380,12 @@ def submit_article(request):
                 k = Keyword.objects.get(word=kw)
             kwmap = KWMap(node=newnode, kw=k)
             kwmap.save()
+    newevent = Event(node=newnode, event_type='added')
+    if request.user.is_authenticated():
+        newevent.user = request.user
+    else:
+        newevent.user = None
+    newevent.save()
     return detail(request, newnode.node_id)
 
 def submit_theorem(request):
@@ -371,6 +411,12 @@ def submit_theorem(request):
                 k = Keyword.objects.get(word=kw)
             kwmap = KWMap(node=newnode, kw=k)
             kwmap.save()
+    newevent = Event(node=newnode, event_type='added')
+    if request.user.is_authenticated():
+        newevent.user = request.user
+    else:
+        newevent.user = None
+    newevent.save()
     return detail(request, newnode.node_id)
 
 def lookup_keyword(request, kw_id):
@@ -437,8 +483,10 @@ def search_json(request):
 def show_signup(request, errno):
     if request.user.is_authenticated():
         return view_logout(request, 2)
-    if (errno != 0):
+    if (int(errno) != 0):
         context = {"errno": errno}
+    else:
+        context = {}
     return render(request, 'prooftree/register.html', context)
 
 def signup(request):
@@ -458,12 +506,15 @@ def signup(request):
     newuser.last_name = last_name
     newuser.first_name = first_name
     newuser.save()
+    authenticate(username=username, password=passwd)
     login(request, newuser)
     return render(request, '/prooftree/signup_success.html', {'newuser':newuser})
 
 def show_login(request, errno):
-    if errno != 0:
+    if int(errno) != 0:
         context = {'errno': errno}
+    else:
+        context = {}
     if request.user.is_authenticated():
         logout(request)
     return render(request, 'prooftree/login.html', context)
@@ -472,8 +523,9 @@ def view_login(request):
     uname = request.POST['username']
     passwd = request.POST['password']
     user = authenticate(username=uname, password=passwd)
-    request.user = user
     if user is not None:
+        login(request, user)
+        request.user = user
         return index(request)
     else:
         return show_login(request, 1)
@@ -482,11 +534,13 @@ def view_logout(request, mode):
     if mode == 2:
         return render(request, 'prooftree/confirm_logout.html')
     logout(request)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return index(request)
 
 def change_passwd(request, errno):
-    if errno != 0:
+    if int(errno) != 0:
         context = {'errno': errno}
+    else:
+        context = {}
     if not request.user.is_authenticated():
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return render(request, '/prooftree/change_passwd.html', context)
@@ -500,24 +554,28 @@ def submit_passwd(request):
     request.user.save()
     return render(request, '/prooftree/submit_passwd.html')
 
-def profile_detail(request, username):
-    user = get_object_or_404(User, username=username)
+def profile_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
     context = {'user': user}
-    history = Event.objects.get_userhistory(user)
+    history = Event.objects.get_userhistory(user).order_by('-pub_time')
     context['history'] = history
     following = Event.objects.get_userfollowing(user)
     context['following'] = following
     return render(request, 'prooftree/profile.html', context)
+
+def self_profile(request):
+    if request.user.is_authenticated():
+        return profile_detail(request, request.user.id)
 
 def follow(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
     if request.user.is_authenticated():
         new_event = Event(node=node, user=request.user, event_type='followed')
         new_event.save()
-    return detail(request, node_id)
+    return HttpResponseRedirect('/prooftree/get/one/' + str(node_id) + '/')
 
 def unfollow(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
     if request.user.is_authenticated():
-        Event.objects.filter(node=node).filter(user=request.user).filter(event_type='followed')
-    return detail(request, node_id)
+        Event.objects.filter(node=node).filter(user=request.user).filter(event_type='followed').delete()
+    return HttpResponseRedirect('/prooftree/get/one/' + str(node_id) + '/')

@@ -1,0 +1,12 @@
+  <nav class="top-bar" data-topbar>
+  <div align="right">
+      {% if user %}
+      Welcome, <a href="/prooftree/self/">{{user.username}}</a>! | 
+      <a href="/prooftree/logout/0/">logout</a>
+      {% else %}
+      <a href="/prooftree/login/0/">login</a> | 
+      <a href="/prooftree/signup/0/">signup</a>
+      {% endif %}
+    </ul>
+  </div>
+  </nav>
