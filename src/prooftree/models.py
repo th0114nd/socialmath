@@ -41,11 +41,15 @@ class NodeManager(models.Manager):
     # Usage: Node.objects.max_nodes()
     # Return: maximum primary key
     def max_nodes(self):
+        if self.all().count() == 0:
+            return 1
         return self.max_id() - self.all().aggregate(Min('node_id'))['node_id__min'] + 1
 
     # Usage: Node.objects.max_nodes()
     # Return: maximum primary key
     def max_id(self):
+        if self.all().count() == 0:
+            return 1
         return self.all().aggregate(Max('node_id'))['node_id__max']
 
     # Usage: Node.objects.max_pageno() 
