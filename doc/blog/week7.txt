@@ -1,0 +1,16 @@
+Socialmath Week 7:
+
+
+
+Over the past week:
+  Jianchi: 
+  Kexin: 
+  Tim: 
+  Ying-Yu: Made a buggy partial display of knowledge graph. 
+
+Upcoming goals for the week:
+  Jianchi: 
+  Kexin: 
+  Tim: 
+  Ying-Yu: Debug. Implement graphic editing tool.
+  All: Poster!
