@@ -70,7 +70,11 @@
           </span>
         </a>
       </span>
-      <span><a href="/prooftree/get/one/{{ node.node_id }}/">{{ node.title }}</a></span>
+      <span>
+        <a href="/prooftree/get/one/{{ node.node_id }}/">
+          <span mathjax-bind="node.title"></span>
+        </a>
+      </span>
     </div>
   </div>
 </div>
@@ -112,7 +116,11 @@
           </span>
         </a>
       </span>
-      <span><a href="/prooftree/get/one/{{ node.node_id }}/">{{ node.title }}</a></span>
+      <span>
+        <a href="/prooftree/get/one/{{ node.node_id }}/">
+          <span mathjax-bind="node.title"></span>
+        </a>
+      </span>
     </div>
 <!--     <a 
       class="list-group-item list-group-item-info"

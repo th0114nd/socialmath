@@ -81,9 +81,10 @@ Prooftree.directive("mathjaxBind", function() {
     controller: ["$scope", "$element", "$attrs", "$filter",
         function($scope, $element, $attrs, $filter) {
       $scope.$watch($attrs.mathjaxBind, function(value) {
-        $element.text(value == undefined ? "" : $filter('markdown')(value));
-        console.log($element[0]);
-        // MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
+        $element.text(value == undefined ? "" : value);
+        // $element.text(value == undefined ? "" : $filter('markdown')(value));
+        // console.log($element[0]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
       });
     }]
   };
@@ -148,6 +149,44 @@ Prooftree.factory('GetService', function($http) {
 
     'latest': function() {
       return $http.get('/prooftree/get/latest/')
+        .then(function(result) {
+          return result.data;
+        });
+    }
+  }
+})
+
+Prooftree.factory('GetServiceRemote', function($http) {
+  var domain = 'http://socialmath-env-6bvqmbhmpe.elasticbeanstalk.com/';
+
+  return {
+
+    'brief': function(page) {
+      page = typeof page !== 'undefined' ? page : 1;
+      return $http.jsonp(domain + 'prooftree/get/brief/' + page)
+        .then(function(result) {
+          return result.data;
+        });
+    }, 
+
+    'detail': function(node_id) {
+      return $http.jsonp(domain + 'prooftree/get/detail/' + node_id)
+        .then(function(result) {
+          return result;
+        });
+    }, 
+
+    'search': function(searchtext) {
+      return $http.jsonp(domain + 'prooftree/searchj/',
+          { params: {'searchtext': searchtext} }
+        )
+        .then(function(result) {
+          return result;
+        });
+    }, 
+
+    'latest': function() {
+      return $http.jsonp(domain + 'prooftree/get/latest/')
         .then(function(result) {
           return result.data;
         });
@@ -279,7 +318,6 @@ Prooftree.factory('GraphService', function () {
           new Array(graph.nodes.length)).map(Boolean.prototype.valueOf,false);
 
         graph.vertices = [];
-        graph.arrows = [];
 
         graph.nodes[toVisit[0]].depth = 0;
 
@@ -307,6 +345,8 @@ Prooftree.factory('GraphService', function () {
         }
       }
 
+      graph.arrows = [];
+
       for (var i = 0; i < graph.vertices.length; i++) {
         var links = graph.vertices[i].parent_ids;
         for (var j = 0; j < links.length; j++) {
@@ -320,6 +360,8 @@ Prooftree.factory('GraphService', function () {
           }
         }
       }
+      console.log('Graph:\n')
+      console.log(graph);
     };
   };
 
@@ -327,7 +369,7 @@ Prooftree.factory('GraphService', function () {
     this.id2Pos = {};
 
     this.nodes = [];
-    this.edges = [];
+    // this.edges = [];
     this.vertices = [];
     this.arrows = [];
     this.opacity = function (node) {
@@ -350,20 +392,20 @@ Prooftree.factory('GraphService', function () {
       this.nodes.push(nodes[i]);
     }
 
-    for (var i = 0; i < nodes.length; i++) {
-      var links = this.nodes[i].parent_ids;
-      for (var j = 0; j < links.length; j++) {
-        var t = this.id2Pos[links[j]];
-        if (t != undefined) {
-          this.edges.push({
-            'source': i, 
-            'target': t});
-          this.edges.push({
-            'source': t, 
-            'target': i});
-        }
-      }
-    }
+    // for (var i = 0; i < nodes.length; i++) {
+    //   var links = this.nodes[i].parent_ids;
+    //   for (var j = 0; j < links.length; j++) {
+    //     var t = this.id2Pos[links[j]];
+    //     if (t != undefined) {
+    //       this.edges.push({
+    //         'source': i, 
+    //         'target': t});
+    //       this.edges.push({
+    //         'source': t, 
+    //         'target': i});
+    //     }
+    //   }
+    // }
   };
 
   return {
@@ -453,7 +495,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       [scope.width, scope.height]);
     // scope.graph.explore();
     scope.exploreGraph = function (nid) {
-      scope.graph.explore(nid, 10);
+      scope.graph.explore(nid);
       scope.hasGraph = true;
       scope.hideGraph = false;
       $location.hash('graph-area');
