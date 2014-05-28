@@ -14,8 +14,13 @@ class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
     """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
+    def __init__(self, request, data, **kwargs):
+        try:
+            callback = request.REQUEST['callback']
+            content = '%s(%s);' % (callback, JSONRenderer().render(data))
+        except(KeyError):
+            content = JSONRenderer().render(data)
+            
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
@@ -39,7 +44,7 @@ def latest_json(request):
 
     response = {'data': contents}
 
-    return JSONResponse(response)
+    return JSONResponse(request, response)
 
 def debug(request, path='base.html'):
     return render(request, path)
@@ -71,7 +76,7 @@ def pagebrief(request, pageno='1'):
         # Form responses
         response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
                     'data':contents}
-        return JSONResponse(response)
+        return JSONResponse(request, response)
 
 
 def pagemedium(request, pageno='1'):
@@ -100,7 +105,7 @@ def pagemedium(request, pageno='1'):
         # Form responses
         response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
                     'data':contents}
-        return JSONResponse(response)
+        return JSONResponse(request, response)
 
 def detail(request, node_id):
     ''' **HTTP GET**
@@ -209,7 +214,7 @@ def detail_json(request, node_id):
             'parents': parents, 
             'children': children }
 
-        return JSONResponse(response)
+        return JSONResponse(request, response)
 
 
 def add(request, work_type):
@@ -476,7 +481,7 @@ def search_json(request):
                 fields=('node_id', 'kind', 'title', 'pub_time'))
             response['nodes'].append(serializer.data)
 
-    return JSONResponse(response)
+    return JSONResponse(request, response)
 
 def show_signup(request, errno):
     if request.user.is_authenticated():
