@@ -156,28 +156,32 @@ Prooftree.factory('GetService', function($http) {
   }
 })
 
+JSON_CALLBACK = function (data) { return data; };
+
 Prooftree.factory('GetServiceRemote', function($http) {
   var domain = 'http://socialmath-env-6bvqmbhmpe.elasticbeanstalk.com/';
+  // var domain = '/';
+  var callback = '?callback=JSON_CALLBACK';
 
   return {
 
     'brief': function(page) {
       page = typeof page !== 'undefined' ? page : 1;
-      return $http.jsonp(domain + 'prooftree/get/brief/' + page)
+      return $http.jsonp(domain + 'prooftree/get/brief/' + page + callback)
         .then(function(result) {
           return result.data;
         });
     }, 
 
     'detail': function(node_id) {
-      return $http.jsonp(domain + 'prooftree/get/detail/' + node_id)
+      return $http.jsonp(domain + 'prooftree/get/detail/' + node_id + callback)
         .then(function(result) {
           return result;
         });
     }, 
 
     'search': function(searchtext) {
-      return $http.jsonp(domain + 'prooftree/searchj/',
+      return $http.jsonp(domain + 'prooftree/searchj/' + callback,
           { params: {'searchtext': searchtext} }
         )
         .then(function(result) {
@@ -186,7 +190,7 @@ Prooftree.factory('GetServiceRemote', function($http) {
     }, 
 
     'latest': function() {
-      return $http.jsonp(domain + 'prooftree/get/latest/')
+      return $http.jsonp(domain + 'prooftree/get/latest/' + callback)
         .then(function(result) {
           return result.data;
         });
@@ -249,16 +253,16 @@ Prooftree.factory('GraphService', function () {
 
   var force = function (width, height) {
     return d3.layout.force()
-      .charge(-500)
+      .charge(-700)
       .linkDistance(120)
-      .linkStrength(0.1)
+      .linkStrength(0.2)
       .size([width, height]);
   };
 
   var tick = function (graph, scope) {
     return function tick(e) {
       // Push different nodes in different directions for clustering.
-      var k = 6 * e.alpha;
+      var k = 20 * e.alpha;
       var nodes = graph.vertices;
       var links = graph.arrows;
 
@@ -270,7 +274,7 @@ Prooftree.factory('GraphService', function () {
       links.forEach(function(o, i) {
         var s = o.source;
         var t = o.target;
-        var dy = 1 - (s.y - t.y) / 300;
+        var dy = 1 - (s.y - t.y) / 200;
         s.y += k * dy;
         t.y -= k * dy;
       });
@@ -306,7 +310,12 @@ Prooftree.factory('GraphService', function () {
     return function (center, depth) {
       depth = typeof depth !== 'undefined' ? depth : 1;
 
+      var visited;
+
       if (typeof center == 'undefined') {
+        visited = Array.apply(null, 
+          new Array(graph.nodes.length)).map(Boolean.prototype.valueOf,true);
+
         graph.vertices = graph.nodes;
 
         for (var i = 0; i < graph.vertices.length; i++) {
@@ -314,21 +323,23 @@ Prooftree.factory('GraphService', function () {
         };
       } else {
         var toVisit = [this.id2Pos[center]];
-        var visited = Array.apply(null, 
+
+        visited = Array.apply(null, 
           new Array(graph.nodes.length)).map(Boolean.prototype.valueOf,false);
 
         graph.vertices = [];
 
         graph.nodes[toVisit[0]].depth = 0;
+        visited[toVisit[0]] = true;
 
         while (toVisit.length) {
           var idx = toVisit.shift();
           var node = graph.nodes[idx];
 
-          if (node.depth > depth)
-            break;
+          // if (node.depth > depth)
+          //   break;
 
-          visited[idx] = true;
+          
           node.free = true;
           graph.vertices.push(node);
 
@@ -337,7 +348,9 @@ Prooftree.factory('GraphService', function () {
           for (var i = 0; i < adjs.length; i++) {
             var adjI = this.id2Pos[adjs[i]];
             var adjN = graph.nodes[adjI];
-            if (!visited[adjI]) {
+
+            if (!visited[adjI] && node.depth < depth) {
+              visited[adjI] = true;
               toVisit.push(adjI);
               adjN.depth = node.depth + 1;
             }
@@ -351,7 +364,7 @@ Prooftree.factory('GraphService', function () {
         var links = graph.vertices[i].parent_ids;
         for (var j = 0; j < links.length; j++) {
           var t = graph.id2Pos[links[j]];
-          if (t != undefined) {
+          if (t != undefined && visited[t]) {
             graph.arrows.push({
               'source': graph.vertices[i], 
               'target': graph.nodes[t]});
@@ -374,7 +387,7 @@ Prooftree.factory('GraphService', function () {
     this.arrows = [];
     this.opacity = function (node) {
       if (node.depth)
-        return window.Math.exp(-0.5 * node.depth);
+        return window.Math.exp(-0.2 * node.depth);
       else
         return 1;
     };
@@ -481,11 +494,14 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
   scope.load();
 
   scope.graph = undefined;
+  scope.graphCenter = undefined;
+  scope.graphDepth = 1;
+  scope.graphShowAll = false;
   scope.hasGraph = false;
   scope.hideGraph = false;
 
-  scope.width = 500;
-  scope.height = 500;
+  scope.width = 800;
+  scope.height = 800;
 
   GetService.brief().then(function(response) {
     scope.graph = new GraphService.Graph(response.data);
@@ -494,12 +510,35 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       "graph", 
       [scope.width, scope.height]);
     // scope.graph.explore();
-    scope.exploreGraph = function (nid) {
-      scope.graph.explore(nid);
+    scope.exploreGraph = function (nid, depth) {
+      depth = typeof depth !== 'undefined' ? depth : 1;
+
+      scope.graphCenter = nid;
+      scope.graph.explore(nid, depth);
       scope.hasGraph = true;
       scope.hideGraph = false;
       $location.hash('graph-area');
       $anchorScroll();
+    };
+
+    scope.globalGraph = function () {
+      scope.graph.explore();
+    };
+
+    scope.toggleShowAll = function (showAll) {
+      if (showAll)
+        scope.globalGraph();
+      else
+        scope.exploreGraph(scope.graphCenter, scope.graphDepth);
+    };
+
+    scope.setDepth = function (depth) {
+      if (depth < 0)
+        depth = 0;
+      scope.graphDepth = depth;
+
+      if (!scope.graphShowAll)
+        scope.exploreGraph(scope.graphCenter, scope.graphDepth);
     };
   });
 }])

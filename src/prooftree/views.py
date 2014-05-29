@@ -16,11 +16,14 @@ class JSONResponse(HttpResponse):
     """
     def __init__(self, request, data, **kwargs):
         try:
-            callback = request.REQUEST['callback']
-            content = '%s(%s);' % (callback, JSONRenderer().render(data))
+            if 'callback' in request.REQUEST:
+                callback = request.REQUEST['callback']
+                content = '%s(%s);' % (callback, JSONRenderer().render(data))
+            else:
+                content = JSONRenderer().render(data)
         except(KeyError):
             content = JSONRenderer().render(data)
-            
+
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 

@@ -10,7 +10,7 @@
         ng-model="keywords" 
         id="searchtext" />
       <span class="input-group-btn">
-        <input class="btn btn-primary" type="submit" value="Search" />
+        <input class="btn btn-success" type="submit" value="Search" />
       </span>
     </div>
   </form>
@@ -28,7 +28,43 @@
   </div>
   <div collapse="hideGraph">
     <div class="panel-body">
-      <div ng-include="graphTemplate"></div>
+      <div class="row">
+        <div class="col-sm-9">
+          <div ng-include="graphTemplate"></div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <div 
+              class="btn btn-primary"
+              ng-model="graphShowAll"
+              btn-checkbox 
+              ng-click="toggleShowAll(!graphShowAll)">
+              Show all nodes
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-btn">
+                <button 
+                  class="btn btn-default" 
+                  ng-click="setDepth(graphDepth - 1)">
+                  <span class="glyphicon glyphicon-minus"></span>
+                </button>
+              </span>
+              <span class="form-control text-center">
+                Depth = {{ graphDepth }}
+              </span>
+              <span class="input-group-btn">
+                <button
+                  class="btn btn-default"
+                  ng-click="setDepth(graphDepth + 1)">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -85,6 +121,7 @@
     class="panel-heading"
     ng-click="hideLatest = !hideLatest">
     Latest Submissions
+    <!-- <input type="text" ng-model="latestNum"/> -->
     <span class="pull-right" chevron-icon="!hideLatest"></span>
   </div>
   <div collapse="hideLatest">
