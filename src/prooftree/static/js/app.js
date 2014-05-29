@@ -113,6 +113,7 @@ Prooftree.config(function ($stateProvider, $urlRouterProvider) {
   // For any unmatched url, send to /route1
   // $httpProvider.defaults.xsrfCookieName = 'csrftoken';
   // $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  // $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise("/");
   $stateProvider
     .state('index', {
@@ -274,6 +275,9 @@ function ($http, $scope, $window, $state, $stateParams, GetService, TokenService
   scope.back = function () {
     $window.history.back();
   };
+
+  console.log(TokenService({}));
+  
   // csrfmiddlewaretoken: Waeyu1yRFCUM13rUYUDIk1ZFa6Wo3Gcz
   scope.submit = function () {
     var params = {
@@ -557,6 +561,12 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     {
       name: 'Preview', 
       action: scope.showDetail
+    },
+    {
+      name: 'Detail', 
+      action: function (node_id) {
+        $window.location.href = '/prooftree/get/one/' + node_id;
+      }
     },
     {
       name: 'Recenter', 
