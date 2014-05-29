@@ -8,7 +8,8 @@ function Node(id, type, title, depends, body) {
 
 Prooftree = angular.module('ProoftreeApp', [
   'ui.router',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'ngCookies'
 ])
 
 Prooftree.directive('eatClick', function() {
@@ -108,10 +109,10 @@ Prooftree.filter('ellipsis', function () {
   }
 });
 
-Prooftree.config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
+Prooftree.config(function ($stateProvider, $urlRouterProvider) {
   // For any unmatched url, send to /route1
-  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  // $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+  // $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
   $urlRouterProvider.otherwise("/");
   $stateProvider
     .state('index', {
@@ -135,6 +136,12 @@ Prooftree.config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
       controller: "GraphCtrl"
     })
 })
+
+Prooftree.run(function run($http, $cookies) {
+  // For CSRF token compatibility with Django
+  $http.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
+  // console.log($cookies['csrftoken']);
+});
 
 Prooftree.factory('GetService', function($http) {
   return {
@@ -260,7 +267,7 @@ function ($http, $scope, $window, $state, $stateParams, GetService) {
   scope.back = function () {
     $window.history.back();
   };
-
+  // csrfmiddlewaretoken: Waeyu1yRFCUM13rUYUDIk1ZFa6Wo3Gcz
   scope.submit = function () {
     var params = {
       title: scope.title,
