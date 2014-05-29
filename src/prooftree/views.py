@@ -394,6 +394,42 @@ def submit_article(request):
     newevent.save()
     return detail(request, newnode.node_id)
 
+def submit_theoremj(request):
+    data = JSONParser().parse(request)
+
+    theorem_title = data['title']
+    body = data['body']
+    newnode = Node(kind='thm', title=theorem_title, statement=body, last_modified=datetime.now())
+    newnode.save()
+    deps = []
+    for i in range(9):
+        try:
+            dep = data['lemma' + str(i)]
+            if (dep != "blank") and (int(dep) not in deps):
+                deps.append(int(dep))
+                new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
+                new_dag.save()
+        except:
+            pass
+    kwstr = data['keyword']
+    kwlist = [i.strip() for i in kwstr.split(';')]
+    for kw in kwlist:
+        if kw != '':
+            if len(Keyword.objects.filter(word=kw)) == 0:
+                k = Keyword(word=kw)
+                k.save()
+            else:
+                k = Keyword.objects.get(word=kw)
+            kwmap = KWMap(node=newnode, kw=k)
+            kwmap.save()
+    newevent = Event(node=newnode, event_type='added')
+    if request.user.is_authenticated():
+        newevent.user = request.user
+    else:
+        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
+    newevent.save()
+    return JSONResponse(request, {'node_id': newnode.node_id})
+
 def submit_theorem(request):
     theorem_title = request.POST['title']
     body = request.POST['body']
@@ -401,11 +437,14 @@ def submit_theorem(request):
     newnode.save()
     deps = []
     for i in range(9):
-        dep = request.POST['lemma' + str(i)]
-        if (dep != "blank") and (int(dep) not in deps):
-            deps.append(int(dep))
-            new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
-            new_dag.save()
+        try:
+            dep = request.POST['lemma' + str(i)]
+            if (dep != "blank") and (int(dep) not in deps):
+                deps.append(int(dep))
+                new_dag = DAG(parent=get_object_or_404(Node, pk=int(dep)), child=newnode, dep_type='all')
+                new_dag.save()
+        except:
+            pass
     kwstr = request.POST['keyword']
     kwlist = [i.strip() for i in kwstr.split(';')]
     for kw in kwlist:

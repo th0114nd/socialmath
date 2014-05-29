@@ -1,4 +1,4 @@
-<h1 style="font-family:serif;font-weight:bold;"> Welcome to Social Math </h1>
+<h1> Welcome to Social Math </h1>
 
 <div class="form-group">
   <form ng-submit="searchSubmit(keywords)">
@@ -111,7 +111,7 @@
         </a>
         <a 
           class="btn btn-default"
-          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
+          ng-click="exploreGraph(node.node_id, 1, true); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>
@@ -171,7 +171,7 @@
         </a>
         <a 
           class="btn btn-default"
-          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
+          ng-click="exploreGraph(node.node_id, 1, true); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>

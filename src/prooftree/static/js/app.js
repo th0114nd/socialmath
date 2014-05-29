@@ -108,25 +108,32 @@ Prooftree.filter('ellipsis', function () {
   }
 });
 
-Prooftree.config(function ($stateProvider, $urlRouterProvider) {
-    // For any unmatched url, send to /route1
-    $urlRouterProvider.otherwise("/");
-    $stateProvider
-        .state('index', {
-            url: "/?search",
-            templateUrl: "/static/html/partials/latest.html",
-            controller: "LatestCtrl"
-        })
-        .state('brief', {
-            url: "/brief",
-            templateUrl: "/static/html/partials/brief.html",
-            controller: "BriefCtrl"
-        })
-        .state('graph', {
-            url: "/graph",
-            templateUrl: "/static/html/partials/graph.html",
-            controller: "GraphCtrl"
-        })
+Prooftree.config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
+  // For any unmatched url, send to /route1
+  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  $urlRouterProvider.otherwise("/");
+  $stateProvider
+    .state('index', {
+      url: "/?search&center",
+      templateUrl: "/static/html/partials/latest.html",
+      controller: "LatestCtrl"
+    })
+    .state('newthm', {
+      url: "/newthm?lemma",
+      templateUrl: "/static/html/partials/newthm.html",
+      controller: "NewThmCtrl"
+    })
+    .state('brief', {
+      url: "/brief",
+      templateUrl: "/static/html/partials/brief.html",
+      controller: "BriefCtrl"
+    })
+    .state('graph', {
+      url: "/graph",
+      templateUrl: "/static/html/partials/graph.html",
+      controller: "GraphCtrl"
+    })
 })
 
 Prooftree.factory('GetService', function($http) {
@@ -215,8 +222,64 @@ function Node(id, type, title, depends, body) {
   this.body = body;
 };
 
-Prooftree.controller('UserCtrl', ['$rootScope', '$scope', 'GetService',
-function ($rootScope, $scope, GetService) {
+Prooftree.controller('NewThmCtrl', [
+'$http', '$scope', '$state', '$stateParams', 'GetService',
+function ($http, $scope, $state, $stateParams, GetService) {
+  NewThmCtrl = this;
+  var scope = $scope;
+
+  scope.lemmas = [];
+
+  scope.briefs = [];
+
+  scope.load = function () { 
+    GetService.brief().then(function(response) {
+      scope.briefs = response.data;
+      // console.log(scope.briefs);
+      if ($stateParams.lemma) {
+        var lemmas = $stateParams.lemma.split(",");
+        angular.forEach(scope.briefs, function (item) {
+          if (lemmas.indexOf(String(item.node_id)) != -1)
+            scope.lemmas.push(item);
+        });
+      }
+    });
+  };
+
+  scope.load();
+
+  scope.notAdded = function (lemma) {
+    return scope.lemmas.indexOf(lemma) == -1;
+  };
+
+  scope.searchMatch = function (lemma) {
+    scope.lemmas.push(lemma);
+    scope.searchLemma = undefined;
+  };
+
+  scope.submit = function () {
+    var params = {
+      title: scope.title,
+      body: scope.body,
+      keyword: scope.keyword
+    };
+
+    for (var i = 0; i < scope.lemmas.length; i++) {
+      params['lemma' + i] = scope.lemmas[i].node_id;
+    };
+
+    console.log(params);
+
+    $http.post('/prooftree/submit_theoremj/', params)
+      .then(function (response) {
+        // console.log(response.data.node_id);
+        $state.go('index', {center: response.data.node_id});
+      }, function(reason) {
+        console.log('Failed: ');
+        console.log(reason.data);
+      }
+    );
+  };
 
 }])
 
@@ -431,9 +494,9 @@ function ($scope, GetService, data) {
 
 Prooftree.controller('LatestCtrl', 
 ['$scope', '$rootScope', '$modal', '$stateParams', '$location', '$anchorScroll', 
- '$window', '$interval', 'GetService', 'GraphService',
+ '$window', '$interval', '$state', 'GetService', 'GraphService',
 function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll, 
-          $window, $interval, GetService, GraphService) {
+          $window, $interval, $state, GetService, GraphService) {
   LatestCtrl = this;
   var scope = $scope;
 
@@ -488,7 +551,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     {
       name: 'Add child',
       action: function (node_id) {
-        $window.alert('Not implemented yet');
+        $state.go('newthm', {lemma: node_id});
       }
     },
     {
@@ -571,7 +634,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       "graph", 
       [scope.width, scope.height]);
     // scope.graph.explore();
-    scope.exploreGraph = function (nid, depth) {
+    scope.exploreGraph = function (nid, depth, jump) {
       depth = typeof depth !== 'undefined' ? depth : 1;
 
       scope.graphCenter = nid;
@@ -579,8 +642,11 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       scope.hasGraph = true;
       scope.hideGraph = false;
       scope.graphOffset = [0, 0];
-      $location.hash('graph-area');
-      $anchorScroll();
+
+      if (jump) {
+        $location.hash('graph-area');
+        $anchorScroll();
+      }
     };
 
     scope.globalGraph = function () {
@@ -603,6 +669,10 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
         scope.exploreGraph(scope.graphCenter, scope.graphDepth);
     };
 
+    if ($stateParams.center) {
+      scope.exploreGraph($stateParams.center, 1, true);
+    }
+  
     scope.latestNum = 5;
 
     // scope.setLatest = function (num) {
