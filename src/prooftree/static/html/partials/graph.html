@@ -1,6 +1,7 @@
 <div>
-  <svg ng-attr-width="{{width}}"
-       ng-attr-height="{{height}}">
+  <svg 
+    ng-attr-width="{{width}}"
+    ng-attr-height="{{height}}">
     <defs>
       <marker 
         id="markerArrow"
@@ -13,45 +14,72 @@
           class="arrow-path" 
           d="M2,2 L2,11 L10,6 L2,2" />
       </marker>
+      <path 
+        id="scrollArrow" 
+        class="scroll-path"
+        d="M -50 -50 L 0 0 L -50 50"/>
     </defs>
-    <line   
-      ng-repeat="link in graph.arrows"
-      class="link"
-      style="marker-end: url(#markerArrow);"
-      ng-attr-stroke-width="{{link.strokeWidth}}"
-      ng-attr-x1="{{link.source.x}}"
-      ng-attr-y1="{{link.source.y - 30}}"
-      ng-attr-x2="{{link.target.x}}"
-      ng-attr-y2="{{link.target.y}}">
-    </line>
-    <g 
-      ng-repeat="node in graph.vertices"
-      ng-click="nodeClick(node.node_id)"
-      ng-attr-transform="translate({{node.x}} {{node.y}})">
-      <rect
-        class="node"
-        rx="5"
-        ry="5"
-        width="180"
-        height="30"
-        ng-attr-fill="{{node.color}}"
-        ng-attr-opacity="{{graph.opacity(node)}}"
-        ng-attr-x="{{-90}}"
-        ng-attr-y="{{-30}}"
-        >
-        <title>{{node.title}}</title>
-      </rect>
-      <text
-        style="text-anchor: middle;"
-        font-family="Arial"
-        font-size="18"
-        fill="white"
-        ng-attr-opacity="{{graph.opacity(node)}}"
-        ng-attr-x="{{0}}"
-        ng-attr-y="{{6 - 15}}"
-        >
-        {{node.title | ellipsis: 20}}
-      </text>
+    <g ng-attr-transform="translate({{graphOffset[0]}} {{graphOffset[1]}})">
+      <line   
+        ng-repeat="link in graph.arrows"
+        class="link"
+        style="marker-end: url(#markerArrow);"
+        ng-attr-stroke-width="{{link.strokeWidth}}"
+        ng-attr-x1="{{link.source.x}}"
+        ng-attr-y1="{{link.source.y - 30}}"
+        ng-attr-x2="{{link.target.x}}"
+        ng-attr-y2="{{link.target.y}}">
+      </line>
+      <g 
+        ng-repeat="node in graph.vertices"
+        ng-click="nodeClick(node.node_id)"
+        ng-attr-transform="translate({{node.x}} {{node.y}})">
+        <rect
+          class="node"
+          rx="5"
+          ry="5"
+          width="180"
+          height="30"
+          ng-attr-fill="{{node.color}}"
+          ng-attr-opacity="{{graph.opacity(node)}}"
+          ng-attr-x="{{-90}}"
+          ng-attr-y="{{-30}}"
+          >
+          <title>{{node.title}}</title>
+        </rect>
+        <text
+          style="text-anchor: middle;"
+          font-family="Arial"
+          font-size="18"
+          fill="white"
+          ng-attr-opacity="{{graph.opacity(node)}}"
+          ng-attr-x="{{0}}"
+          ng-attr-y="{{6 - 15}}"
+          >
+          {{node.title | ellipsis: 20}}
+        </text>
+      </g>
+    </g>
+<!--     <foreignObject 
+      ng-repeat="sa in scrollArrows"
+      width="200" height="200" 
+      ng-attr-x="{{ width/2 - 50 + sa.loc[0] * ( width/2-100)}}" 
+      ng-attr-y="{{height/2 - 50 + sa.loc[1] * (height/2-100)}}">
+      <img 
+        width="100" 
+        height="100" 
+        src="{{sa.src}}"/>
+    </foreignObject> -->
+    <g
+      ng-repeat="sa in scrollArrows"
+      ng-attr-transform="rotate({{ sa.rot }} {{width/2}} {{height/2}})">
+      <g ng-attr-transform="translate({{width}} {{height/2}})">
+        <path 
+          class="scroll-path"
+          ng-mousedown="setMomentum(sa.offset)"
+          ng-mouseup="setMomentum([0, 0])"
+          d="M -50 -50 L 0 0 L -50 50"></path>
+      </g>
     </g>
   </svg>
 </div>

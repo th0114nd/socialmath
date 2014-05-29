@@ -19,6 +19,17 @@ Prooftree.directive('eatClick', function() {
   }
 })
 
+Prooftree.directive('stopEvent', function () {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attr) {
+      element.bind(attr.stopEvent, function (e) {
+          e.stopPropagation();
+      });
+    }
+  };
+});
+
 Prooftree.directive('chevronIcon', function() {
   return {
     restrict: 'A',
@@ -69,8 +80,6 @@ Prooftree.filter('markdown', function ($sce) {
   var converter = new Showdown.converter();
   return function (value) {
     var html = converter.makeHtml(value || '');
-    // window.console.log(html);
-    // window.console.log($sce.trustAsHtml(html));
     return $sce.trustAsHtml(html);
   };
 });
@@ -266,10 +275,10 @@ Prooftree.factory('GraphService', function () {
       var nodes = graph.vertices;
       var links = graph.arrows;
 
-      nodes.forEach(function(o, i) {
-        if (o.free)
-          o.y -= k;
-      });
+      // nodes.forEach(function(o, i) {
+      //   if (o.free)
+      //     o.y -= k;
+      // });
 
       links.forEach(function(o, i) {
         var s = o.source;
@@ -373,8 +382,8 @@ Prooftree.factory('GraphService', function () {
           }
         }
       }
-      console.log('Graph:\n')
-      console.log(graph);
+      // console.log('Graph:\n')
+      // console.log(graph);
     };
   };
 
@@ -398,27 +407,10 @@ Prooftree.factory('GraphService', function () {
 
     this.explore = explore(this);
 
-    // var result = {'nodes': [], 'edges':[], "arrows":[]};
-
     for (var i = 0; i < nodes.length; i++) {
       this.id2Pos[nodes[i].node_id] = i;
       this.nodes.push(nodes[i]);
     }
-
-    // for (var i = 0; i < nodes.length; i++) {
-    //   var links = this.nodes[i].parent_ids;
-    //   for (var j = 0; j < links.length; j++) {
-    //     var t = this.id2Pos[links[j]];
-    //     if (t != undefined) {
-    //       this.edges.push({
-    //         'source': i, 
-    //         'target': t});
-    //       this.edges.push({
-    //         'source': t, 
-    //         'target': i});
-    //     }
-    //   }
-    // }
   };
 
   return {
@@ -439,9 +431,9 @@ function ($scope, GetService, data) {
 
 Prooftree.controller('LatestCtrl', 
 ['$scope', '$rootScope', '$modal', '$stateParams', '$location', '$anchorScroll', 
- 'GetService', 'GraphService',
+ '$window', '$interval', 'GetService', 'GraphService',
 function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll, 
-          GetService, GraphService) {
+          $window, $interval, GetService, GraphService) {
   LatestCtrl = this;
   var scope = $scope;
 
@@ -489,8 +481,14 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       name: 'Recenter', 
       action: function (node_id) {
         scope.graphCenter = node_id;
-        if (!scope.graphShowAll)
-          scope.exploreGraph(scope.graphCenter, scope.graphDepth);
+        scope.graphShowAll = false;
+        scope.exploreGraph(scope.graphCenter, scope.graphDepth);
+      }
+    },
+    {
+      name: 'Add child',
+      action: function (node_id) {
+        $window.alert('Not implemented yet');
       }
     },
     {
@@ -529,8 +527,42 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
   scope.hasGraph = false;
   scope.hideGraph = false;
 
-  scope.width = 800;
-  scope.height = 800;
+  scope.graphOffset = [0, 0];
+  scope.graphMomentum = [0, 0];
+
+  // scope.scrollArrows = [
+  //   {loc: [0, -1], src:'/static/images/Aiga_uparrow_inv.svg'},
+  //   {loc: [0,  1], src:'/static/images/Aiga_downarrow_inv.svg'},
+  //   {loc: [-1, 0], src:'/static/images/Aiga_leftarrow_inv.svg'},
+  //   {loc: [ 1, 0], src:'/static/images/Aiga_rightarrow_inv.svg'}
+  // ];
+
+  scope.scrollArrows = [
+    {rot:   0, offset: [-1,  0]},
+    {rot:  90, offset: [ 0, -1]},
+    {rot: 180, offset: [ 1,  0]},
+    {rot: 270, offset: [ 0,  1]}
+  ];
+
+  scope.setMomentum = function (p) {
+    scope.graphMomentum = p;
+    console.log(p);
+  };
+
+  scope.scrollGraph = function (speed) {
+    return function () {
+      if (scope.graphMomentum[0] || scope.graphMomentum[1]) {
+        scope.graphOffset[0] += scope.graphMomentum[0] * speed;
+        scope.graphOffset[1] += scope.graphMomentum[1] * speed;
+      }
+      // console.log(scope.graphOffset);
+    };
+  };
+
+  $interval(scope.scrollGraph(5), 40, 0, true);
+
+  scope.width = 600;
+  scope.height = 600;
 
   GetService.brief().then(function(response) {
     scope.graph = new GraphService.Graph(response.data);
@@ -546,6 +578,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       scope.graph.explore(nid, depth);
       scope.hasGraph = true;
       scope.hideGraph = false;
+      scope.graphOffset = [0, 0];
       $location.hash('graph-area');
       $anchorScroll();
     };
@@ -569,6 +602,17 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       if (!scope.graphShowAll)
         scope.exploreGraph(scope.graphCenter, scope.graphDepth);
     };
+
+    scope.latestNum = 5;
+
+    // scope.setLatest = function (num) {
+    //   if (num < 0)
+    //     num = 0;
+    //   else if (num > 50)
+    //     num = 50;
+
+    //   scope.latestNum = num;
+    // };
   });
 }])
 
