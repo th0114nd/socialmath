@@ -143,6 +143,13 @@ Prooftree.run(function run($http, $cookies) {
   // console.log($cookies['csrftoken']);
 });
 
+Prooftree.factory('TokenService', function($cookies) {
+  return function (param) {
+    param['csrfmiddlewaretoken'] = $cookies['csrftoken'];
+    return param;
+  };
+});
+
 Prooftree.factory('GetService', function($http) {
   return {
 
@@ -230,8 +237,8 @@ function Node(id, type, title, depends, body) {
 };
 
 Prooftree.controller('NewThmCtrl', [
-'$http', '$scope', '$window', '$state', '$stateParams', 'GetService',
-function ($http, $scope, $window, $state, $stateParams, GetService) {
+'$http', '$scope', '$window', '$state', '$stateParams', 'GetService', 'TokenService', 
+function ($http, $scope, $window, $state, $stateParams, GetService, TokenService) {
   NewThmCtrl = this;
   var scope = $scope;
 
@@ -279,9 +286,9 @@ function ($http, $scope, $window, $state, $stateParams, GetService) {
       params['lemma' + i] = scope.lemmas[i].node_id;
     };
 
-    console.log(params);
+    // console.log(params);
 
-    $http.post('/prooftree/submit_theoremj/', params)
+    $http.post('/prooftree/submit_theoremj/', TokenService(params))
       .then(function (response) {
         // console.log(response.data.node_id);
         $state.go('index', {center: response.data.node_id});
