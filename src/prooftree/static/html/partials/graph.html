@@ -26,7 +26,7 @@
     </line>
     <g 
       ng-repeat="node in graph.vertices"
-      ng-click="showDetail(node.node_id)"
+      ng-click="nodeClick(node.node_id)"
       ng-attr-transform="translate({{node.x}} {{node.y}})">
       <rect
         class="node"

@@ -478,6 +478,35 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     });
   };
 
+  scope.nodeAction = 0;
+
+  scope.nodeActions = [
+    {
+      name: 'Preview', 
+      action: scope.showDetail
+    },
+    {
+      name: 'Recenter', 
+      action: function (node_id) {
+        scope.graphCenter = node_id;
+        if (!scope.graphShowAll)
+          scope.exploreGraph(scope.graphCenter, scope.graphDepth);
+      }
+    },
+    {
+      name: 'Console log', 
+      action: function (node_id) {
+        GetService.detail(node_id).then(function(response) {
+          console.log(response);
+        });
+      }
+    }
+  ];
+
+  scope.nodeClick = function (nid) {
+    scope.nodeActions[scope.nodeAction].action(nid);
+  };
+
   var openDetail = function (context) {
     var modalInstance = $modal.open({
       templateUrl: '/static/html/partials/detail_modal.html',
