@@ -223,8 +223,8 @@ function Node(id, type, title, depends, body) {
 };
 
 Prooftree.controller('NewThmCtrl', [
-'$http', '$scope', '$state', '$stateParams', 'GetService',
-function ($http, $scope, $state, $stateParams, GetService) {
+'$http', '$scope', '$window', '$state', '$stateParams', 'GetService',
+function ($http, $scope, $window, $state, $stateParams, GetService) {
   NewThmCtrl = this;
   var scope = $scope;
 
@@ -255,6 +255,10 @@ function ($http, $scope, $state, $stateParams, GetService) {
   scope.searchMatch = function (lemma) {
     scope.lemmas.push(lemma);
     scope.searchLemma = undefined;
+  };
+
+  scope.back = function () {
+    $window.history.back();
   };
 
   scope.submit = function () {
