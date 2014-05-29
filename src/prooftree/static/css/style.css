@@ -1,0 +1,5 @@
+.close {
+    -ms-transform: translate(0px,-3px); /* IE 9 */
+    -webkit-transform: translate(0px,-3px); /* Chrome, Safari, Opera */
+    transform: translate(0px,-3px);
+}
