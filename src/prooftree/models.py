@@ -182,9 +182,8 @@ class GNManager(models.Manager):
     def get_nodes(self, graph=None):
         if graph == None:
             nodes = Node.objects.all().order_by('-pub_time')
-            pnodes = self.all().values_list('node_id')
-            for pnode in pnodes:
-                nodes.exclude(pk__in=pnodes)
+            pnodes = self.all().values_list('node_id', flat=True)
+            nodes = nodes.exclude(pk__in=pnodes)
             return nodes
         nodes = self.filter(graph=graph).values_list('node_id')
         anodes = Node.objects.all().order_by('-pub_time')
