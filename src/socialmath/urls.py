@@ -7,6 +7,6 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'socialmath.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-    url(r'^prooftree/', include('prooftree.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('prooftree.urls')),
 )
