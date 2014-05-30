@@ -85,20 +85,38 @@ Prooftree.filter('markdown', function ($sce) {
   };
 });
 
-Prooftree.directive("mathjaxBind", function() {
+Prooftree.directive("mathjaxBind", function($sce) {
   return {
     restrict: "A",
     controller: ["$scope", "$element", "$attrs", "$filter",
         function($scope, $element, $attrs, $filter) {
       $scope.$watch($attrs.mathjaxBind, function(value) {
         $element.text(value == undefined ? "" : value);
-        // $element.text(value == undefined ? "" : $filter('markdown')(value));
-        // console.log($element[0]);
+        // if ($attrs.mathjaxMarkdown == undefined)
+        //   $element[0].innerHTML = $sce.trustAsHtml(value == undefined ? "" : value);
+        // else
+        //   $element[0].innerHTML = $sce.trustAsHtml(value == undefined ? "" : $filter('markdown')(value));
+
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
       });
     }]
   };
 });
+
+// Prooftree.directive("mathjaxBind", function() {
+//   return {
+//     restrict: "A",
+//     controller: ["$scope", "$element", "$attrs", "$filter",
+//         function($scope, $element, $attrs, $filter) {
+//       $scope.$watch($attrs.mathjaxBind, function(value) {
+//         // $element.text(value == undefined ? "" : value);
+//         $element[0].innerHTML = (value == undefined ? "" : $filter('markdown')(value));
+//         console.log($element);
+//         MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
+//       });
+//     }]
+//   };
+// });
 
 Prooftree.filter('ellipsis', function () {
   return function (input, len) {
@@ -276,8 +294,8 @@ function ($http, $scope, $window, $state, $stateParams, GetService, TokenService
     $window.history.back();
   };
 
-  console.log(TokenService({}));
-  
+  // console.log(TokenService({}));
+
   // csrfmiddlewaretoken: Waeyu1yRFCUM13rUYUDIk1ZFa6Wo3Gcz
   scope.submit = function () {
     var params = {
@@ -621,12 +639,8 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
   scope.graphOffset = [0, 0];
   scope.graphMomentum = [0, 0];
 
-  // scope.scrollArrows = [
-  //   {loc: [0, -1], src:'/static/images/Aiga_uparrow_inv.svg'},
-  //   {loc: [0,  1], src:'/static/images/Aiga_downarrow_inv.svg'},
-  //   {loc: [-1, 0], src:'/static/images/Aiga_leftarrow_inv.svg'},
-  //   {loc: [ 1, 0], src:'/static/images/Aiga_rightarrow_inv.svg'}
-  // ];
+  scope.graphZoom = 1;
+  scope.graphDilation = 0;
 
   scope.scrollArrows = [
     {rot:   0, offset: [-1,  0]},
@@ -635,25 +649,38 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     {rot: 270, offset: [ 0,  1]}
   ];
 
+  scope.resetZoom = function () {
+    scope.graphOffset[0] /= scope.graphZoom;
+    scope.graphOffset[1] /= scope.graphZoom;
+    scope.graphZoom = 1;
+  }
+
   scope.setMomentum = function (p) {
     scope.graphMomentum = p;
     console.log(p);
   };
 
-  scope.scrollGraph = function (speed) {
+  scope.scrollGraph = function (speedT, speedS) {
     return function () {
       if (scope.graphMomentum[0] || scope.graphMomentum[1]) {
-        scope.graphOffset[0] += scope.graphMomentum[0] * speed;
-        scope.graphOffset[1] += scope.graphMomentum[1] * speed;
+        scope.graphOffset[0] += scope.graphMomentum[0] * speedT;
+        scope.graphOffset[1] += scope.graphMomentum[1] * speedT;
+      }
+
+      if (scope.graphDilation) {
+        var z = Math.exp(speedS * scope.graphDilation);
+        scope.graphOffset[0] *= z;
+        scope.graphOffset[1] *= z;
+        scope.graphZoom *= z;
       }
       // console.log(scope.graphOffset);
     };
   };
 
-  $interval(scope.scrollGraph(5), 40, 0, true);
+  $interval(scope.scrollGraph(5, 0.02), 40, 0, true);
 
-  scope.width = 600;
-  scope.height = 600;
+  scope.width = 800;
+  scope.height = 800;
 
   GetService.brief().then(function(response) {
     scope.graph = new GraphService.Graph(response.data);

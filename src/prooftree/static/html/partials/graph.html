@@ -20,6 +20,9 @@
         d="M -50 -50 L 0 0 L -50 50"/>
     </defs>
     <g ng-attr-transform="translate({{graphOffset[0]}} {{graphOffset[1]}})">
+    <g ng-attr-transform="translate({{width/2}} {{height/2}})">
+    <g ng-attr-transform="scale({{graphZoom}})">
+    <g ng-attr-transform="translate({{-width/2}} {{-height/2}})">
       <line   
         ng-repeat="link in graph.arrows"
         class="link"
@@ -60,16 +63,9 @@
         </text>
       </g>
     </g>
-<!--     <foreignObject 
-      ng-repeat="sa in scrollArrows"
-      width="200" height="200" 
-      ng-attr-x="{{ width/2 - 50 + sa.loc[0] * ( width/2-100)}}" 
-      ng-attr-y="{{height/2 - 50 + sa.loc[1] * (height/2-100)}}">
-      <img 
-        width="100" 
-        height="100" 
-        src="{{sa.src}}"/>
-    </foreignObject> -->
+    </g>
+    </g>
+    </g>
     <g
       ng-repeat="sa in scrollArrows"
       ng-attr-transform="rotate({{ sa.rot }} {{width/2}} {{height/2}})">
