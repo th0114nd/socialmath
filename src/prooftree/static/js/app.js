@@ -1,11 +1,3 @@
-function Node(id, type, title, depends, body) {
-  this.id = id;
-  this.type = type;
-  this.title = title;
-  this.depends = depends;
-  this.body = body;
-};
-
 Prooftree = angular.module('ProoftreeApp', [
   'ui.router',
   'ui.bootstrap',
@@ -103,21 +95,6 @@ Prooftree.directive("mathjaxBind", function($sce) {
   };
 });
 
-// Prooftree.directive("mathjaxBind", function() {
-//   return {
-//     restrict: "A",
-//     controller: ["$scope", "$element", "$attrs", "$filter",
-//         function($scope, $element, $attrs, $filter) {
-//       $scope.$watch($attrs.mathjaxBind, function(value) {
-//         // $element.text(value == undefined ? "" : value);
-//         $element[0].innerHTML = (value == undefined ? "" : $filter('markdown')(value));
-//         console.log($element);
-//         MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
-//       });
-//     }]
-//   };
-// });
-
 Prooftree.filter('ellipsis', function () {
   return function (input, len) {
     if (input.length < len)
@@ -127,7 +104,25 @@ Prooftree.filter('ellipsis', function () {
   }
 });
 
-Prooftree.config(function ($stateProvider, $urlRouterProvider) {
+Prooftree.provider('greeter2', function($httpProvider) {
+  var salutation = 'Hello';
+  this.setSalutation = function(s) {
+    salutation = s;
+  }
+
+  function Greeter(a) {
+    this.greet = function() {
+      return salutation + ' ' + a;
+    }
+  }
+
+  this.$get = function(a) {
+    return new Greeter(a);
+  };
+});
+
+Prooftree.config(['$stateProvider', '$urlRouterProvider',
+function ($stateProvider, $urlRouterProvider) {
   // For any unmatched url, send to /route1
   // $httpProvider.defaults.xsrfCookieName = 'csrftoken';
   // $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -154,7 +149,7 @@ Prooftree.config(function ($stateProvider, $urlRouterProvider) {
       templateUrl: "/static/html/partials/graph.html",
       controller: "GraphCtrl"
     })
-})
+}])
 
 Prooftree.run(function run($http, $cookies) {
   // For CSRF token compatibility with Django
@@ -246,14 +241,6 @@ Prooftree.factory('GetServiceRemote', function($http) {
     }
   }
 })
-
-function Node(id, type, title, depends, body) {
-  this.id = id;
-  this.type = type;
-  this.title = title;
-  this.depends = depends;
-  this.body = body;
-};
 
 Prooftree.controller('NewThmCtrl', [
 '$http', '$scope', '$window', '$state', '$stateParams', 'GetService', 'TokenService', 
@@ -447,10 +434,6 @@ Prooftree.factory('GraphService', function () {
         while (toVisit.length) {
           var idx = toVisit.shift();
           var node = graph.nodes[idx];
-
-          // if (node.depth > depth)
-          //   break;
-
           
           node.free = true;
           graph.vertices.push(node);
@@ -688,7 +671,7 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
       scope, 
       "graph", 
       [scope.width, scope.height]);
-    // scope.graph.explore();
+    
     scope.exploreGraph = function (nid, depth, jump) {
       depth = typeof depth !== 'undefined' ? depth : 1;
 
@@ -703,6 +686,8 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
         $anchorScroll();
       }
     };
+
+    scope.graph.explore();
 
     scope.globalGraph = function () {
       scope.graph.explore();
@@ -729,15 +714,6 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     }
   
     scope.latestNum = 5;
-
-    // scope.setLatest = function (num) {
-    //   if (num < 0)
-    //     num = 0;
-    //   else if (num > 50)
-    //     num = 50;
-
-    //   scope.latestNum = num;
-    // };
   });
 }])
 

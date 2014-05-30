@@ -18,8 +18,7 @@
 
 <div 
   id="graph-area"
-  class="panel panel-primary"
-  collapse="!hasGraph">
+  class="panel panel-primary">
   <div 
     class="panel-heading"
     ng-click="hideGraph = !hideGraph">
@@ -37,6 +36,7 @@
             <div 
               class="btn btn-default"
               ng-model="graphShowAll"
+              ng-disabled="graphCenter == undefined"
               btn-checkbox 
               ng-click="toggleShowAll(!graphShowAll)">
               Show all nodes
