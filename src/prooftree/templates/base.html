@@ -8,6 +8,7 @@
   <!-- AngularJS -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js" 
     type="text/javascript"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-cookies.js" type="text/javascript"></script>
   <!-- UI Router -->
   <script src="{{ STATIC_URL }}js/angular-ui-router.min.js" type="text/javascript"></script>
   <!-- UI Bootstrap -->
@@ -30,7 +31,9 @@
     </div>
     </nav>
   </header>
+  <div class="container content">
   {% block content %}{% endblock content %}
+  </div>
   {% block extra_javascript %}{% endblock extra_javascript %}
 </body>
 </html>

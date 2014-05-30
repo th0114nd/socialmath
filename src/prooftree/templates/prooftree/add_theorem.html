@@ -1,32 +1,23 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" /> -->
-  <!-- Bootstrap CSS -->
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+{% extends "base.html" %}
+{% block extra_head %}
+<style>
+  body {
+    margin: 18px;
+    padding: 0;
+    color: #000000;
 
-  <style>
-    body {
-      margin: 18px;
-      padding: 0;
-      color: #000000;
+    font:1.3em "lucida grande","lucida sans unicode";   
+    font-size-adjust:none;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+  }
+</style>
 
-      font:1.3em "lucida grande","lucida sans unicode";   
-      font-size-adjust:none;
-      font-style:normal;
-      font-variant:normal;
-      font-weight:normal;
-    }
-  </style>
-  
+<title>SocialMath Submitting New Theorem</title>
+{% endblock extra_head %}
 
-  <title>SocialMath Submitting New Theorem</title>
-</head>
-
-<body>
-        
-
+{% block content %}
 <h2>Add New Theorem</h2>
 <p>
   You may enter your article content in the text box provided below, or you may upload your pdf
@@ -101,6 +92,4 @@
   </div>
 
 </form>
-
-</body>
-</html>
+{% endblock content %}

@@ -2,6 +2,13 @@
     stroke: #fff;
     stroke-width: 1.5px;
 }
+.scroll-path {
+    fill: #000;
+    fill-opacity: 0.1;
+}
+.scroll-path:hover {
+    fill-opacity: 0.8;
+}
 .link {
     stroke: #999;
     stroke-opacity: .6;
