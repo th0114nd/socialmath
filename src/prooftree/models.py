@@ -59,7 +59,7 @@ class NodeManager(models.Manager):
         return (self.max_nodes() - 1) / 100 + 1;
 
     def authenticate(self, node, user):
-        graph = GNMap.objects.filter(Node=node)
+        graph = GNMap.objects.filter(node=node)
         if len(graph) == 0:
             return True
         return PGPermission.objects.authenticate(graph[0].graph, user)
@@ -170,27 +170,31 @@ class PGPManager(models.Manager):
     def authorized_users(self, graph):
         if graph.perm_type == "public":
             return "all"
-        pu = list(self.filter(graph=graph).values_list('user_id', flat=True))
+        pu = list(self.filter(graph=graph).values_list('user'))
         return pu
     def authorized_graphs(self, user):
-        pg = list(self.filter(user=user).values_list('graph_id', flat=True))
+        pg = {}
+        pg['authorized'] = list(self.filter(user=user).values_list('graph'))
+        pg['owned'] = list(PGraph.objects.filter(owner=user))
         return pg
 
 class GNManager(models.Manager):
     def get_nodes(self, graph=None):
         if graph == None:
-            nodes = list(Node.objects.all().order_by('-pub_time'))
-            pnodes = self.all().values_list('node')
+            nodes = Node.objects.all().order_by('-pub_time')
+            pnodes = self.all().values_list('node_id')
             for pnode in pnodes:
-                nodes.remove(pnode)
+                nodes.exclude(pk__in=pnodes)
             return nodes
-        nodes = list(self.filter(graph=graph).values_list('node').order_by('-pub_time'))
-        return nodes
+        nodes = self.filter(graph=graph).values_list('node_id')
+        anodes = Node.objects.all().order_by('-pub_time')
+        anodes = anodes.filter(pk__in=nodes)
+        return anodes
     def get_graph(self, node):
         graph = list(self.filter(node=node).values_list('graph'))
         if len(graph) == 0:
             return None
-        return graph[0]
+        return PGraph.objects.get(pk=graph[0][0])
 
 class PGraph(models.Model):
     TYPES = (
@@ -207,10 +211,10 @@ class PGraph(models.Model):
 
 class PGPermission(models.Model):
     graph = models.ForeignKey(PGraph, null=False)
-    user = models.ForeignKey(User, related_name="user_id")
+    user = models.ForeignKey(User, related_name="user")
     objects = PGPManager()
 
 class GNMap(models.Model):
-    graph = models.ForeignKey(PGraph, related_name="graph_id")
-    node = models.ForeignKey(Node, related_name="node_id")
+    graph = models.ForeignKey(PGraph, related_name="graph")
+    node = models.ForeignKey(Node)
     objects = GNManager()

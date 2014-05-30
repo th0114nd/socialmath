@@ -42,9 +42,9 @@ def pgindex(request, graph_id):
         return HttpResponse("You are not authorized to view this content.", status=401)
     context = {"graph":graph}
     nodes = GNMap.objects.get_nodes(graph)
-    context['users'] = PGPermission.objects.authorized_users(graph)['users']
+    context['users'] = PGPermission.objects.authorized_users(graph)
     context['latest_theorem_list'] = nodes
-    return render(request, 'prooftree/index.html', context)
+    return render(request, 'prooftree/old_index.html', context)
 
 def latest_json(request, graph_id=None):
     if graph_id == None:
@@ -74,6 +74,7 @@ def pagebrief(request, pageno='1'):
         # Check whether page number is valid
         max_pageno = Node.objects.max_pageno()
         pageno = int(pageno)
+        gnodes = GNMap.objects.get_nodes()
         if pageno > max_pageno:
             return HttpResponseNotFound('Page Number Out of Bound')
         # Get serialized data for each node on the page
@@ -85,10 +86,11 @@ def pagebrief(request, pageno='1'):
                 node = Node.objects.get(node_id=node_id)
             except ObjectDoesNotExist:
                 continue
-            count += 1
-            serializer = PageNodeSerializer(node, 
-                fields=('node_id', 'kind', 'title', 'parent_ids', 'child_ids'))
-            contents.append(serializer.data)
+            if node in gnodes:
+                count += 1
+                serializer = PageNodeSerializer(node, 
+                    fields=('node_id', 'kind', 'title', 'parent_ids', 'child_ids'))
+                contents.append(serializer.data)
         # Form responses
         response = {'paging':{'current':pageno,'total':max_pageno,'count':count},
                     'data':contents}
@@ -138,13 +140,19 @@ def detail(request, node_id):
         node = Node.objects.get(node_id=node_id)
     except ObjectDoesNotExist:
         return HttpResponse("Bad Request. Id has been deleted.", status=410)
-
+    if not Node.objects.authenticate(node, request.user):
+        return HttpResponse("You are not authorized to view this content.", status=401)
+    context = {'node':node}
+    graph = GNMap.objects.get_graph(node)
+    if graph != None:
+        context['graph'] = graph
+        print graph.name + "hahaha"
     deps = DAG.objects.filter(child_id=node_id).filter(dep_type='all')
     dependencies = []
     for dep in deps:
         neighbor = Node.objects.get(node_id=dep.parent_id)
         dependencies.append(neighbor)
-    context = {'node':node, 'dependencies':dependencies}
+    context['dependencies'] = dependencies
 
     if node.kind == 'thm':
         proofs = []
@@ -233,9 +241,17 @@ def detail_json(request, node_id):
         return JSONResponse(request, response)
 
 
-def add(request, work_type):
-    theorem_list = Node.objects.filter(kind='thm').order_by('-pub_time')
-    context = {'theorem_list': theorem_list}
+def add(request, work_type, graph_id=None):
+    context = {}
+    if graph_id == None:
+        nodes = GNMap.objects.get_nodes()
+        theorem_list = nodes.filter(kind='thm')
+    else:
+        graph = get_object_or_404(PGraph, pk=graph_id)
+        context['graph'] = graph
+        nodes = GNMap.objects.get_nodes(graph)
+        theorem_list = nodes.filter(kind='thm')
+    context['theorem_list'] = theorem_list
     context['lemma_range'] = range(9)
     if (int(work_type) == 1):
         return render(request, 'prooftree/add_theorem.html', context)
@@ -255,15 +271,25 @@ def delete_one(request, node_id):
     except ObjectDoesNotExist:
         return HttpResponse("Bad Request. Id has been delete.", status=410)
     # TODO: 403 do not have authorization
-
+    if not Node.objects.authenticate(node, request.user):
+        return HttpResponse("You are not authorized to view this content.", status=401)
+    gnmaps = GNMap.objects.filter(node_id=node_id)
+    if len(gnmaps) == 0:
+        public = True
+    else:
+        public = False
+        graph_id = gnmaps[0].graph.pgraph_id
     # Delete dependencies from DAG
     DAG.objects.filter(child_id=node_id).delete()
     DAG.objects.filter(parent_id=node_id).delete()
     # Delete keyword mapping
     KWMap.objects.filter(node_id=node_id).delete()
+    gnmaps.delete()
     # Delete node
     node.delete()
-    return index(request)
+    if public:
+        return index(request)
+    return pgindex(request, graph_id)
 
 def delete_pf(request, node_id, pf_id):
     ''' **HTTP PUT**
@@ -301,7 +327,9 @@ def delete_all(request):
 
 def change(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
-    theorem_list = list(Node.objects.filter(kind='thm').order_by('pub_time'))
+    if not Node.objects.authenticate(node, request.user):
+        return HttpResponse("You are not authorized to view this content.", status=401)
+    theorem_list = list(GNMap.objects.get_nodes().filter(kind='thm'))
     context = {'theorem_list': theorem_list}
     context['node'] = node
     dependencies = DAG.objects.filter(child_id=node_id).filter(dep_type='all')
@@ -334,6 +362,8 @@ def change(request, node_id):
 
 def submit_change(request, node_id):
     node = get_object_or_404(Node, pk=node_id)
+    if not Node.objects.authenticate(node, request.user):
+        return HttpResponse("You are not authorized to view this content.", status=401)
     node.title = request.POST['title']
     node.statement = request.POST['body']
     node.last_modified = datetime.now()
@@ -371,7 +401,11 @@ def submit_change(request, node_id):
     newevent.save()
     return detail(request, node_id)
 
-def submit_article(request):
+def submit_article(request, graph_id=None):
+    if graph_id != None:
+        graph = get_object_or_404(PGraph, pk=graph_id)
+        if not PGPermission.objects.authenticate(graph, request.user):
+            return HttpResponse("Action not authorized.", status=401)
     article_title = request.POST['title']
     theorem = get_object_or_404(Node, pk=int(request.POST['theorem']))
     body = request.POST['body']
@@ -399,12 +433,16 @@ def submit_article(request):
                 k = Keyword.objects.get(word=kw)
             kwmap = KWMap(node=newnode, kw=k)
             kwmap.save()
-    newevent = Event(node=newnode, event_type='added')
-    if request.user.is_authenticated():
-        newevent.user = request.user
+    if graph_id == None:
+        newevent = Event(node=newnode, event_type='added')
+        if request.user.is_authenticated():
+            newevent.user = request.user
+        else:
+            newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
+        newevent.save()
     else:
-        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
-    newevent.save()
+        gnmap = GNMap(graph=graph, node=newnode)
+        gnmap.save()
     return detail(request, newnode.node_id)
 
 def submit_theoremj(request):
@@ -443,7 +481,11 @@ def submit_theoremj(request):
     newevent.save()
     return JSONResponse(request, {'node_id': newnode.node_id})
 
-def submit_theorem(request):
+def submit_theorem(request, graph_id=None):
+    if graph_id != None:
+        graph = get_object_or_404(PGraph, pk=graph_id)
+        if not PGPermission.objects.authenticate(graph, request.user):
+            return HttpResponse("Action not authorized.", status=401)
     theorem_title = request.POST['title']
     body = request.POST['body']
     newnode = Node(kind='thm', title=theorem_title, statement=body, last_modified=datetime.now())
@@ -470,11 +512,15 @@ def submit_theorem(request):
             kwmap = KWMap(node=newnode, kw=k)
             kwmap.save()
     newevent = Event(node=newnode, event_type='added')
-    if request.user.is_authenticated():
-        newevent.user = request.user
+    if graph_id == None:
+        if request.user.is_authenticated():
+            newevent.user = request.user
+        else:
+            newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
+        newevent.save()
     else:
-        newevent.user = authenticate(username="socialmathghostuser", password="socialmathghostuser2014")
-    newevent.save()
+        gnmap = GNMap(graph=graph, node=newnode)
+        gnmap.save()
     return detail(request, newnode.node_id)
 
 def lookup_keyword(request, kw_id):
@@ -619,6 +665,11 @@ def profile_detail(request, user_id):
     context['history'] = history
     following = Event.objects.get_userfollowing(user)
     context['following'] = following
+    graphs = PGPermission.objects.authorized_graphs(user)
+    context['authorized'] = graphs['authorized']
+    context['owned'] = graphs['owned']
+    if request.user == user:
+        context['self'] = True
     return render(request, 'prooftree/profile.html', context)
 
 def self_profile(request):
@@ -637,3 +688,31 @@ def unfollow(request, node_id):
     if request.user.is_authenticated():
         Event.objects.filter(node=node).filter(user=request.user).filter(event_type='followed').delete()
     return HttpResponseRedirect('/prooftree/get/one/' + str(node_id) + '/')
+
+def pg_add(request):
+    if request.user.is_authenticated():
+        return render(request, 'prooftree/add_graph.html')
+    return HttpResponse('Action not authorized.', status=401)
+
+def pg_submit(request):
+    if not request.user.is_authenticated():
+        return HttpResponse('Action not authorized.', status=401)
+    name = request.POST['name']
+    description = request.POST['description']
+    owner = request.user
+    perm_type = request.POST['perm_type']
+    graph = PGraph(name=name, description=description, owner=owner, perm_type=perm_type)
+    graph.save()
+    return pgindex(request, graph.pgraph_id)
+
+def pg_delete(request, graph_id):
+    graph = get_object_or_404(PGraph, pk=graph_id)
+    if not request.user.is_authenticated():
+        return HttpResponse('Action not authorized.', status=401)
+    if graph.owner != request.user:
+        return HttpResponse('Action not authorized.', status=401)
+    GNMap.objects.get_nodes(graph).delete()
+    PGPermission.objects.filter(graph=graph).delete()
+    GNMap.objects.filter(graph=graph).delete()
+    graph.delete()
+    return self_profile(request)

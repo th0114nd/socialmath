@@ -38,7 +38,7 @@
 		<h3> Activities </h3>
 		{% for event in history %}
 		<p> {{event.pub_time}} </p>
-		<p> &nbsp;&nbsp;&nbsp;&nbsp; {{user.username}} {{event.event_type}} <a href="/prooftree/get/one/{{event.node.node_id}}">{{event.node.title}} </a>. </p>
+		<p> &nbsp;&nbsp;&nbsp;&nbsp; {{user.username}} {{event.event_type}} <a href="/prooftree/get/one/{{event.node.node_id}}/">{{event.node.title}} </a>. </p>
 		{% endfor %}
 	</div>
 
@@ -46,12 +46,30 @@
 		<h3> Following </h3>
 		{% if following %}
 		<p> {% for int_node in following %}
-			<a class="btn btn-link" href="/prooftree/get/one/{{int_node.node_id}}">{{int_node.title}} </a>
+			<a class="btn btn-link" href="/prooftree/get/one/{{int_node.node_id}}/">{{int_node.title}} </a>
 			{% endfor %}
 		</p>
 		{% else %}
-		<p> You are not following anything =( </p>
+		<p> This user is not following anything =( </p>
 		{% endif%}
+	</div>
+
+	<div>
+		<h3> Owned Graphs </h3>
+		{% if owned %}
+		<p> {% for graph in owned %}
+			<a class="btn btn-link" href="/prooftree/pg/{{graph.pgraph_id}}/">{{graph.name}} </a>
+			{% endfor %}
+		</p>
+		{% else %}
+		<p> This user doesn't own any graphs. =( </p>
+		{% endif%}
+		{% if self %}
+		<p>
+			<a class="btn btn-link" href="
+			/prooftree/add_graph/">Add a private graph</a>
+		</p>
+		{% endif %}
 	</div>
 	{% endif %}
 

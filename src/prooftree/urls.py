@@ -30,4 +30,11 @@ urlpatterns = [
     url(r'^self/$', views.self_profile, name='self'),
     url(r'^follow/(?P<node_id>\d+)/$', views.follow, name='follow'),
     url(r'^unfollow/(?P<node_id>\d+)/$', views.unfollow, name='unfollow'),
+    url(r'^add_graph/$', views.pg_add, name='add_graph'),
+    url(r'^del_graph/(?P<graph_id>\d+)/$', views.pg_delete, name="delete_graph"),
+    url(r'^submit_graph/$', views.pg_submit, name='submit_graph'),
+    url(r'^pg/(?P<graph_id>\d+)/$', views.pgindex, name="private_index"),
+    url(r'^submit_theorem/(?P<graph_id>\d+)/$', views.submit_theorem, name='submit-theorem'),
+    url(r'^submit_article/(?P<graph_id>\d+)/$', views.submit_article, name='submit-article'),
+    url(r'^add_pn/(?P<graph_id>\d+)/(?P<work_type>\d+)/$', views.add, name='add_pn'),
 ]

@@ -42,12 +42,16 @@
 	{% if node %}
 	<div>
 	<h2> {{node.title}} </h2>
+	{% if graph %}
+	<p> This is a part of {{graph.name}} private graph. </p>
+	{% else %}
 	<p> {% if follow == 2 %}
 		<a class="btn btn-default btn-sm" href="/prooftree/follow/{{node.node_id}}/">follow</a>
 		{% elif follow == 1 %}
 		<a class="btn btn-default btn-sm" href="/prooftree/unfollow/{{node.node_id}}/">unfollow</a>
 		{% endif %}
 	</p>
+	{% endif %}
 
 	<p> {{node.statement}} </p>
     </br>
@@ -85,7 +89,7 @@
 
     
 	</div>
-	<p><a class="btn btn-primary" href="/prooftree/">Home</a>  &nbsp; &nbsp; <a class="btn btn-default" href="/prooftree/change/{{node.node_id}}">edit</a> &nbsp; &nbsp;
+	<p><a class="btn btn-primary" {% if graph %} href="/prooftree/pg/{{graph.pgraph_id}}/" {% else %} href="/prooftree/" {% endif %}>Home</a>  &nbsp; &nbsp; <a class="btn btn-default" href="/prooftree/change/{{node.node_id}}">edit</a> &nbsp; &nbsp;
 	 <a class="btn btn-danger" href="/prooftree/delete/one/{{node.node_id}}">delete</a></p>
 
 </body>

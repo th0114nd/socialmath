@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<style>
+  body {
+    margin: 18px;
+    padding: 0;
+    color: #000000;
+
+    font:1.3em "lucida grande","lucida sans unicode";   
+    font-size-adjust:none;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+  }
+</style>
+
+<title>SocialMath Create New Graph</title>
+{% endblock extra_head %}
+
+{% block content %}
+<h2>Create New Graph</h2>
+
+<form action="/prooftree/submit_graph/" method="post">
+  {% csrf_token %}
+  <p>
+    <table style="text-align:left;margin-left:5px;">
+  
+      <tr>
+        <th><label for="id_name">Graph Name</label></th>
+        <td>
+          
+          <input name="name" value="" class="name_input" type="text" id="name" size="80" />
+        </td>
+      </tr>
+
+      <tr>
+        <th><label for="description">Description</label></th>
+        <td>
+          <textarea id="description" rows="20" style="width:100%" name="description"></textarea>
+        </td>
+      </tr>
+
+      <tr>
+        <th><label for="perm_type">Permission Type</label></th>
+        <td>
+            <select id="perm_type" name="perm_type">
+              <option value="blank">--Please Select Protection Type--</option>
+              <option value="public"}>public</option>
+              <option value="protected"}>protected</option>
+            </select>
+        </td>
+      </tr>
+    </table>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a class="btn btn-link" href="/prooftree/"> Cancel</a>
+  </div>
+
+</form>
+{% endblock content %}
