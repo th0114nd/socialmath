@@ -534,7 +534,7 @@ function ($scope, GetService, data) {
 
 Prooftree.controller('LatestCtrl', 
 ['$scope', '$rootScope', '$modal', '$stateParams', '$location', '$anchorScroll', 
- '$window', '$interval', '$state', 'GetService', 'GraphService',
+ '$window', '$interval', '$state', 'GetServiceRemote', 'GraphService',
 function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll, 
           $window, $interval, $state, GetService, GraphService) {
   LatestCtrl = this;
@@ -639,12 +639,8 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
   scope.graphOffset = [0, 0];
   scope.graphMomentum = [0, 0];
 
-  // scope.scrollArrows = [
-  //   {loc: [0, -1], src:'/static/images/Aiga_uparrow_inv.svg'},
-  //   {loc: [0,  1], src:'/static/images/Aiga_downarrow_inv.svg'},
-  //   {loc: [-1, 0], src:'/static/images/Aiga_leftarrow_inv.svg'},
-  //   {loc: [ 1, 0], src:'/static/images/Aiga_rightarrow_inv.svg'}
-  // ];
+  scope.graphZoom = 1;
+  scope.graphDilation = 0;
 
   scope.scrollArrows = [
     {rot:   0, offset: [-1,  0]},
@@ -653,22 +649,35 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
     {rot: 270, offset: [ 0,  1]}
   ];
 
+  scope.resetZoom = function () {
+    scope.graphOffset[0] /= scope.graphZoom;
+    scope.graphOffset[1] /= scope.graphZoom;
+    scope.graphZoom = 1;
+  }
+
   scope.setMomentum = function (p) {
     scope.graphMomentum = p;
     console.log(p);
   };
 
-  scope.scrollGraph = function (speed) {
+  scope.scrollGraph = function (speedT, speedS) {
     return function () {
       if (scope.graphMomentum[0] || scope.graphMomentum[1]) {
-        scope.graphOffset[0] += scope.graphMomentum[0] * speed;
-        scope.graphOffset[1] += scope.graphMomentum[1] * speed;
+        scope.graphOffset[0] += scope.graphMomentum[0] * speedT;
+        scope.graphOffset[1] += scope.graphMomentum[1] * speedT;
+      }
+
+      if (scope.graphDilation) {
+        var z = Math.exp(speedS * scope.graphDilation);
+        scope.graphOffset[0] *= z;
+        scope.graphOffset[1] *= z;
+        scope.graphZoom *= z;
       }
       // console.log(scope.graphOffset);
     };
   };
 
-  $interval(scope.scrollGraph(5), 40, 0, true);
+  $interval(scope.scrollGraph(5, 0.02), 40, 0, true);
 
   scope.width = 800;
   scope.height = 800;

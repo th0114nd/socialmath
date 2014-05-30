@@ -64,6 +64,41 @@
               </span>
             </div>
           </div>
+          <div class="form-group">
+            <label>Zoom:</label>
+            <div class="btn-toolbar" role="toolbar">
+              <div class="btn-group">
+                <div class="input-group" style="width: 150px;">
+                  <span class="input-group-btn">
+                    <button 
+                      class="btn btn-default" 
+                      ng-mouseup="graphDilation = 0"
+                      ng-mousedown="graphDilation = -1">
+                      <span class="glyphicon glyphicon-zoom-out"></span>
+                    </button>
+                  </span>
+                  <span class="form-control text-center">
+                    {{ graphZoom | number: 2 }} x
+                  </span>
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      ng-mouseup="graphDilation = 0"
+                      ng-mousedown="graphDilation = 1">
+                      <span class="glyphicon glyphicon-zoom-in"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button 
+                  class="btn btn-default" 
+                  ng-click="resetZoom()">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+            </div>
+          </div>
           <label>Action on click:</label>
           <div class="form-group">
             <div class="btn-group-vertical">
