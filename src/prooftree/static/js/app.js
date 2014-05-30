@@ -85,20 +85,38 @@ Prooftree.filter('markdown', function ($sce) {
   };
 });
 
-Prooftree.directive("mathjaxBind", function() {
+Prooftree.directive("mathjaxBind", function($sce) {
   return {
     restrict: "A",
     controller: ["$scope", "$element", "$attrs", "$filter",
         function($scope, $element, $attrs, $filter) {
       $scope.$watch($attrs.mathjaxBind, function(value) {
         $element.text(value == undefined ? "" : value);
-        // $element.text(value == undefined ? "" : $filter('markdown')(value));
-        // console.log($element[0]);
+        // if ($attrs.mathjaxMarkdown == undefined)
+        //   $element[0].innerHTML = $sce.trustAsHtml(value == undefined ? "" : value);
+        // else
+        //   $element[0].innerHTML = $sce.trustAsHtml(value == undefined ? "" : $filter('markdown')(value));
+
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
       });
     }]
   };
 });
+
+// Prooftree.directive("mathjaxBind", function() {
+//   return {
+//     restrict: "A",
+//     controller: ["$scope", "$element", "$attrs", "$filter",
+//         function($scope, $element, $attrs, $filter) {
+//       $scope.$watch($attrs.mathjaxBind, function(value) {
+//         // $element.text(value == undefined ? "" : value);
+//         $element[0].innerHTML = (value == undefined ? "" : $filter('markdown')(value));
+//         console.log($element);
+//         MathJax.Hub.Queue(["Typeset", MathJax.Hub, $element[0]]);
+//       });
+//     }]
+//   };
+// });
 
 Prooftree.filter('ellipsis', function () {
   return function (input, len) {
@@ -277,7 +295,7 @@ function ($http, $scope, $window, $state, $stateParams, GetService, TokenService
   };
 
   console.log(TokenService({}));
-  
+
   // csrfmiddlewaretoken: Waeyu1yRFCUM13rUYUDIk1ZFa6Wo3Gcz
   scope.submit = function () {
     var params = {
@@ -652,8 +670,8 @@ function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll,
 
   $interval(scope.scrollGraph(5), 40, 0, true);
 
-  scope.width = 600;
-  scope.height = 600;
+  scope.width = 800;
+  scope.height = 800;
 
   GetService.brief().then(function(response) {
     scope.graph = new GraphService.Graph(response.data);
