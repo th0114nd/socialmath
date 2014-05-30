@@ -10,17 +10,18 @@ Also, the search feature bugs are fixed as well.
 
 Over the past week:
   Jianchi: Fully implement user profile features, "follow" feature, and fixed
-  		   user registration glitches. Now everyone can register can make
-  		   contributions to our knowledge graph. Wrote models for private 
-  		   graph, but not ready for deployment yet. Also the www.socmat.com
-  		   domain name. 
+           user registration glitches. Now everyone can register can make
+           contributions to our knowledge graph. Wrote models for private 
+           graph, but not ready for deployment yet. Also the www.socmat.com
+           domain name. 
   Kexin: Worked to merge the our js visualization tools with the django
-  		 framework. Made sure everything works on AWS. 
+         framework. Made sure everything works on AWS. 
   Ying-Yu: Made a buggy partial display of knowledge graph. 
 
 Upcoming goals for the week:
   Jianchi: Fully implement private graph feature. Finish up!
-  Kexin: Make sure the server side works. Also works to deploy the private
-  		 graph works, and make sure database migration works smoothly. 
+  Kexin:  Work on private graph and poster. Meanwhile, make 
+          sure that we will still have a working demo at the 
+          presentation after deploying new features 
   Ying-Yu: Debug. Implement graphic editing tool.
   All: Poster!

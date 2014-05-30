@@ -58,6 +58,12 @@ class NodeManager(models.Manager):
     def max_pageno(self):
         return (self.max_nodes() - 1) / 100 + 1;
 
+    def authenticate(self, node, user):
+        graph = GNMap.objects.filter(Node=node)
+        if len(graph) == 0:
+            return True
+        return PGPermission.objects.authenticate(graph[0].graph, user)
+
 
 # Custom manager for DAG relations
 class DAGManager(models.Manager):
@@ -165,39 +171,26 @@ class PGPManager(models.Manager):
         if graph.perm_type == "public":
             return "all"
         pu = list(self.filter(graph=graph).values_list('user_id', flat=True))
-        pu.append(graph.owner.id)
         return pu
+    def authorized_graphs(self, user):
+        pg = list(self.filter(user=user).values_list('graph_id', flat=True))
+        return pg
 
-class PNManager(models.Manager):
-    def authenticate(self, pnode, user):
-        return PGPermission.objects.authenticate(pnode.graph, user)
-
-# Custom manager for DAG relations
-class PDAGManager(models.Manager):
-    # Usage: DAG.objects.get_children(node_id)
-    # Return: [child_id1, child_id2, ...]
-    def get_children(self, node_id):
-        return self.filter(parent=node_id).values_list('child_id', flat=True)
-
-    # Usage: DAG.objects.get_parents(node_id)
-    # Return: [parent_id1, parent_id2, ...]
-    def get_parents(self, node_id):
-        return self.filter(child=node_id).values_list('parent_id', flat=True)
-
-
-# Custom manager for Keyword class
-class PKWManager(models.Manager):
-    # Usage: Keyword.objects.get_related(keyword)
-    # Return: List of node_id for theorems tagged with keyword
-    def get_related(self, keyword):
-        kw = Keyword.objects.filter(word__exact=keyword)
-        return PKWMap.objects.filter(kw=kw).values_list('node', flat=True)
-
-    # Usage: Keyword.objects.get_keywords(node_id)
-    # Return: List of keywords for the theorems
-    def get_keywords(self, node_id):
-        keywords = list(PKWMap.objects.filter(node_id=node_id).values_list('kw', flat=True))
-        return keywords
+class GNManager(models.Manager):
+    def get_nodes(self, graph=None):
+        if graph == None:
+            nodes = list(Node.objects.all().order_by('-pub_time'))
+            pnodes = self.all().values_list('node')
+            for pnode in pnodes:
+                nodes.remove(pnode)
+            return nodes
+        nodes = list(self.filter(graph=graph).values_list('node').order_by('-pub_time'))
+        return nodes
+    def get_graph(self, node):
+        graph = list(self.filter(node=node).values_list('graph'))
+        if len(graph) == 0:
+            return None
+        return graph[0]
 
 class PGraph(models.Model):
     TYPES = (
@@ -217,39 +210,7 @@ class PGPermission(models.Model):
     user = models.ForeignKey(User, related_name="user_id")
     objects = PGPManager()
 
-class PNode(models.Model):
-    TYPES = (
-        ('thm', 'Theorem'),
-        ('ax', 'Axiom'),
-        ('def', 'Definition'),
-        ('pf', 'Proof'),
-    )
-    node_id = models.AutoField(primary_key=True)
-    kind = models.CharField(max_length=3, choices=TYPES)
-    title = models.CharField(max_length=100, null=True)
-    statement = models.TextField()
-    pub_time = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now_add=False, auto_now=False)
-    graph = models.ForeignKey(PGraph)
-    objects = PNManager()
-
-    def __str__kind(self):
-        return self.title        
-
-# Adjacency list of nodes in the DAG
-class PDAG(models.Model):
-    TYPES = (
-        ('prove', 'prove'),
-        ('any', 'any'),
-        ('all', 'all'),
-    )
-    parent = models.ForeignKey(PNode, related_name="parent_id")
-    child = models.ForeignKey(PNode, related_name="child_id")
-    dep_type = models.CharField(max_length=5, choices=TYPES)
-    objects = PDAGManager()
-
-# Many to many mapping between nodes and keywords
-class PKWMap(models.Model):
-    node = models.ForeignKey(PNode)
-    kw = models.ForeignKey(Keyword)
-    objects = PKWManager()
+class GNMap(models.Model):
+    graph = models.ForeignKey(PGraph, related_name="graph_id")
+    node = models.ForeignKey(Node, related_name="node_id")
+    objects = GNManager()

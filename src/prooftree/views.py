@@ -33,9 +33,22 @@ def index(request):
         context['user'] = None
     return render(request, 'prooftree/index.html', context)
 
-def latest_json(request):
-    nodes = Node.objects.all().order_by('-pub_time')[:50]
+def pgindex(request, graph_id):
+    graph = get_object_or_404(PGraph, pk=graph_id)
+    if not PGPermission.objects.authenticate(graph, request.user):
+        return HttpResponse("You are not authorized to view this content.", status=401)
+    context = {"graph":graph}
+    nodes = GNMap.objects.get_nodes(graph)
+    context['users'] = PGPermission.objects.authorized_users(graph)['users']
+    context['latest_theorem_list'] = nodes
+    return render(request, 'prooftree/index.html', context)
 
+def latest_json(request, graph_id=None):
+    if graph_id == None:
+        nodes = GNMap.objects.get_nodes()[:50]
+    else:
+        graph = get_object_or_404(PGraph, pk=graph_id)
+        nodes = GNMap.objects.get_nodes(graph)
     contents = []
     for node in nodes:
         serializer = PageNodeSerializer(node, 
