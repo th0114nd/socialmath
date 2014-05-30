@@ -294,7 +294,7 @@ function ($http, $scope, $window, $state, $stateParams, GetService, TokenService
     $window.history.back();
   };
 
-  console.log(TokenService({}));
+  // console.log(TokenService({}));
 
   // csrfmiddlewaretoken: Waeyu1yRFCUM13rUYUDIk1ZFa6Wo3Gcz
   scope.submit = function () {
@@ -534,7 +534,7 @@ function ($scope, GetService, data) {
 
 Prooftree.controller('LatestCtrl', 
 ['$scope', '$rootScope', '$modal', '$stateParams', '$location', '$anchorScroll', 
- '$window', '$interval', '$state', 'GetServiceRemote', 'GraphService',
+ '$window', '$interval', '$state', 'GetService', 'GraphService',
 function ($scope, $rootScope, $modal, $stateParams, $location, $anchorScroll, 
           $window, $interval, $state, GetService, GraphService) {
   LatestCtrl = this;
