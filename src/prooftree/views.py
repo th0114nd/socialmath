@@ -65,7 +65,7 @@ def latest_json(request, graph_id=None):
 def debug(request, path='base.html'):
     return render(request, path)
 
-def pagebrief(request, pageno='1'):
+def pagebrief(request, pageno='1', graph_id=None):
     ''' **HTTP GET**
         /get/brief
         /get/brief?page=n
@@ -74,7 +74,11 @@ def pagebrief(request, pageno='1'):
         # Check whether page number is valid
         max_pageno = Node.objects.max_pageno()
         pageno = int(pageno)
-        gnodes = GNMap.objects.get_nodes()
+        if graph_id == None:
+            gnodes = GNMap.objects.get_nodes()
+        else:
+            graph = get_object_or_404(PGraph, pk=graph_id)
+            gnodes = GNMap.objects.get_nodes(graph)
         if pageno > max_pageno:
             return HttpResponseNotFound('Page Number Out of Bound')
         # Get serialized data for each node on the page
