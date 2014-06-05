@@ -1,0 +1,61 @@
+<h2>Add New Theorem</h2>
+<p>
+  You may enter your article content in the text box provided below, or you may upload your pdf
+  or tex file using the upload file button. Note that you file should not exceed 4MB in size.
+  If you wish to add a new article, <a href="/prooftree/add/2/">add a proof here</a>.
+</p>
+
+<form role="form" ng-submit="submit()">
+  <div class="row">
+    <div class="col-sm-7">
+      <div class="form-group">
+        <label for="title1">Theorem title</label>
+        <input type="text" class="form-control" id="title1" ng-model="title" required>
+      </div>
+      <div class="form-group">
+        <label for="body1">Body</label>
+        <textarea class="form-control" id="body1" rows="20" ng-model="body"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="keyword1">Keywords</label>
+        <input type="text" class="form-control" id="keyword1" ng-model="keyword">
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <label>Lemma</label>
+      <div class="form-group">
+        <div class="input-group">
+          <input
+            type="search"
+            class="form-control"
+            placeholder="Find lemma(s) here"
+            ng-model="searchLemma"
+            typeahead="b as b.title for b in briefs | filter:$viewValue | filter:notAdded | limitTo:8"
+            typeahead-on-select="searchMatch(searchLemma)">
+          </input>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-search"></span>
+          </span>
+        </div>
+      </div>
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          ng-repeat="lemma in lemmas track by $index">
+          {{lemma.title}}
+          <button
+            ng-click="lemmas.splice($index, 1)"
+            type="button"
+            class="close">×</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-success">Submit</button>
+    <button
+      ng-click="back()"
+      type="button" 
+      class="btn btn-danger">Cancel</button>
+  </div>
+</form>

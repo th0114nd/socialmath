@@ -35,7 +35,11 @@
   If you wish to add a new theorem, <a href="/prooftree/add/1/">add a theorem here</a>.
 </p>
 
-<form action="/prooftree/submit_article/" method="post">
+{% if graph %}
+<form action="/prooftree/submit_theorem/{{graph.pgraph_id}}/" method="post">
+{% else %}
+<form action="/prooftree/submit_theorem/" method="post">
+{% endif %}
   {% csrf_token %}
   <p>
     <table style="text-align:left">

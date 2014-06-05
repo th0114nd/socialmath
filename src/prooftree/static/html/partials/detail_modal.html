@@ -1,8 +1,9 @@
 <div class="modal-header">
-    <h3>{{ node.title }}</h3>
+    <h3><div mathjax-bind="node.title"></div></h3>
 </div>
 <div class="modal-body">
-    <span mathjax-bind="node.statement"></span>
+    <!-- <div ng-bind-html="node.statement | markdown"></div> -->
+    <div mathjax-bind="node.statement"></div>
     <hr />
     <p> Published at {{node.pub_time | date}} </p>
     <hr />

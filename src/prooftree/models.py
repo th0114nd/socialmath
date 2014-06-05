@@ -58,6 +58,12 @@ class NodeManager(models.Manager):
     def max_pageno(self):
         return (self.max_nodes() - 1) / 100 + 1;
 
+    def authenticate(self, node, user):
+        graph = GNMap.objects.filter(node=node)
+        if len(graph) == 0:
+            return True
+        return PGPermission.objects.authenticate(graph[0].graph, user)
+
 
 # Custom manager for DAG relations
 class DAGManager(models.Manager):
@@ -95,8 +101,6 @@ class EVManager(models.Manager):
         interests = [ev.node for ev in self.filter(user=user).filter(event_type="followed")]
         return interests
 
-
-
 # Entity for a node in DAG. 
 class Node(models.Model):
     TYPES = (
@@ -127,7 +131,7 @@ class DAG(models.Model):
     parent = models.ForeignKey(Node, related_name="parent_id")
     child = models.ForeignKey(Node, related_name="child_id")
     dep_type = models.CharField(max_length=5, choices=TYPES)
-    objects = DAGManager() 
+    objects = DAGManager()
 
 # Entity for keywords
 class Keyword(models.Model):
@@ -137,8 +141,8 @@ class Keyword(models.Model):
 
 # Many to many mapping between nodes and keywords
 class KWMap(models.Model):
-	node = models.ForeignKey(Node)
-	kw = models.ForeignKey(Keyword)
+    node = models.ForeignKey(Node)
+    kw = models.ForeignKey(Keyword)
 
 
 class Event(models.Model):
@@ -152,3 +156,64 @@ class Event(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     event_type = models.CharField(max_length=8, choices=TYPES)
     objects = EVManager()
+
+# Private Graph classes
+class PGManager(models.Manager):
+    def get_userpg(self, user):
+        pgs = self.filter(owner=user)
+
+class PGPManager(models.Manager):
+    def authenticate(self, graph, user):
+        if graph.perm_type == "public":
+            return True
+        return ((graph.owner == user) or (len(self.filter(graph=graph).filter(user=user)) > 0))
+    def authorized_users(self, graph):
+        if graph.perm_type == "public":
+            return "all"
+        pu = list(self.filter(graph=graph).values_list('user'))
+        return pu
+    def authorized_graphs(self, user):
+        pg = {}
+        pg['authorized'] = list(self.filter(user=user).values_list('graph'))
+        pg['owned'] = list(PGraph.objects.filter(owner=user))
+        return pg
+
+class GNManager(models.Manager):
+    def get_nodes(self, graph=None):
+        if graph == None:
+            nodes = Node.objects.all().order_by('-pub_time')
+            pnodes = self.all().values_list('node_id', flat=True)
+            nodes = nodes.exclude(pk__in=pnodes)
+            return nodes
+        nodes = self.filter(graph=graph).values_list('node_id')
+        anodes = Node.objects.all().order_by('-pub_time')
+        anodes = anodes.filter(pk__in=nodes)
+        return anodes
+    def get_graph(self, node):
+        graph = list(self.filter(node=node).values_list('graph'))
+        if len(graph) == 0:
+            return None
+        return PGraph.objects.get(pk=graph[0][0])
+
+class PGraph(models.Model):
+    TYPES = (
+        ('public', 'public'),
+        ('protected', 'protected'),
+    )
+    pgraph_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, null=False)
+    description = models.TextField()
+    pub_time = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User)
+    perm_type = models.CharField(max_length=9, choices=TYPES)
+    objects = PGManager()
+
+class PGPermission(models.Model):
+    graph = models.ForeignKey(PGraph, null=False)
+    user = models.ForeignKey(User, related_name="user")
+    objects = PGPManager()
+
+class GNMap(models.Model):
+    graph = models.ForeignKey(PGraph, related_name="graph")
+    node = models.ForeignKey(Node)
+    objects = GNManager()

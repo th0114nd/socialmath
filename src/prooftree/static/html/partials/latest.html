@@ -1,4 +1,4 @@
-<h1 style="font-family:serif;font-weight:bold;"> Welcome to Social Math </h1>
+<h1> Welcome to Social Math </h1>
 
 <div class="form-group">
   <form ng-submit="searchSubmit(keywords)">
@@ -10,7 +10,7 @@
         ng-model="keywords" 
         id="searchtext" />
       <span class="input-group-btn">
-        <input class="btn btn-primary" type="submit" value="Search" />
+        <input class="btn btn-success" type="submit" value="Search" />
       </span>
     </div>
   </form>
@@ -18,8 +18,7 @@
 
 <div 
   id="graph-area"
-  class="panel panel-primary"
-  collapse="!hasGraph">
+  class="panel panel-primary">
   <div 
     class="panel-heading"
     ng-click="hideGraph = !hideGraph">
@@ -28,7 +27,93 @@
   </div>
   <div collapse="hideGraph">
     <div class="panel-body">
-      <div ng-include="graphTemplate"></div>
+      <div class="row">
+        <div class="col-sm-9 text-center">
+          <div ng-include="graphTemplate"></div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <div 
+              class="btn btn-default"
+              ng-model="graphShowAll"
+              ng-disabled="graphCenter == undefined"
+              btn-checkbox 
+              ng-click="toggleShowAll(!graphShowAll)">
+              Show all nodes
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Depth:</label>
+            <div class="input-group" style="width: 100px;">
+              <span class="input-group-btn">
+                <button 
+                  class="btn btn-default" 
+                  ng-click="setDepth(graphDepth - 1)">
+                  <span class="glyphicon glyphicon-minus"></span>
+                </button>
+              </span>
+              <span class="form-control text-center">
+                {{ graphDepth }}
+              </span>
+              <span class="input-group-btn">
+                <button
+                  class="btn btn-default"
+                  ng-click="setDepth(graphDepth + 1)">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Zoom:</label>
+            <div class="btn-toolbar" role="toolbar">
+              <div class="btn-group">
+                <div class="input-group" style="width: 150px;">
+                  <span class="input-group-btn">
+                    <button 
+                      class="btn btn-default" 
+                      ng-mouseup="graphDilation = 0"
+                      ng-mousedown="graphDilation = -1">
+                      <span class="glyphicon glyphicon-zoom-out"></span>
+                    </button>
+                  </span>
+                  <span class="form-control text-center">
+                    {{ graphZoom | number: 2 }} x
+                  </span>
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      ng-mouseup="graphDilation = 0"
+                      ng-mousedown="graphDilation = 1">
+                      <span class="glyphicon glyphicon-zoom-in"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button 
+                  class="btn btn-default" 
+                  ng-click="resetZoom()">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <label>Action on click:</label>
+          <div class="form-group">
+            <div class="btn-group-vertical">
+              <button 
+                type="button" 
+                class="btn btn-default" 
+                ng-repeat="na in nodeActions track by $index"
+                ng-model="$parent.nodeAction" 
+                btn-radio="$index">
+                {{ na.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -58,19 +143,23 @@
           ng-click="showDetail(node.node_id); $event.preventDefault()"
           href="/prooftree/get/detail/{{ node.node_id }}/">
           <span>
-            <span class="glyphicon glyphicon-list-alt"></span>
+            <span class="glyphicon glyphicon-eye-open"></span>
           </span>
         </a>
         <a 
           class="btn btn-default"
-          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
+          ng-click="exploreGraph(node.node_id, 1, true); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>
           </span>
         </a>
       </span>
-      <span><a href="/prooftree/get/one/{{ node.node_id }}/">{{ node.title }}</a></span>
+      <span>
+        <a href="/prooftree/get/one/{{ node.node_id }}/">
+          <span mathjax-bind="node.title"></span>
+        </a>
+      </span>
     </div>
   </div>
 </div>
@@ -81,6 +170,20 @@
     class="panel-heading"
     ng-click="hideLatest = !hideLatest">
     Latest Submissions
+<!--     <span class="button-group">
+      <span 
+        stop-event="click"
+        ng-click="setLatest(latestNum - 1)">
+        <span class="glyphicon glyphicon-minus"></span>
+      </span>
+
+      <span
+        stop-event="click"
+        ng-click="setLatest(latestNum + 1)">
+        <span class="glyphicon glyphicon-plus"></span>
+      </span>
+    </span> -->
+    <!-- <input type="text" ng-model="latestNum"/> -->
     <span class="pull-right" chevron-icon="!hideLatest"></span>
   </div>
   <div collapse="hideLatest">
@@ -92,7 +195,7 @@
   </div>
   <div class="list-group" ng-show="latest" collapse="hideLatest">
     <div 
-      ng-repeat="node in latest"
+      ng-repeat="node in latest | limitTo: latestNum"
       class="list-group-item list-group-item-default">
       <span class="btn-group" style="margin-right:10px;">
         <a 
@@ -105,20 +208,24 @@
         </a>
         <a 
           class="btn btn-default"
-          ng-click="exploreGraph(node.node_id); $event.preventDefault()"
+          ng-click="exploreGraph(node.node_id, 1, true); $event.preventDefault()"
           href="">
           <span>
             <span class="glyphicon glyphicon-tree-conifer"></span>
           </span>
         </a>
       </span>
-      <span><a href="/prooftree/get/one/{{ node.node_id }}/">{{ node.title }}</a></span>
+      <span>
+        <a href="/prooftree/get/one/{{ node.node_id }}/">
+          <span mathjax-bind="node.title"></span>
+        </a>
+      </span>
     </div>
-<!--     <a 
+    <a 
       class="list-group-item list-group-item-info"
-      href="#"> 
+      ng-click="latestNum = latestNum + 5"> 
       Show more
-    </a> -->
+    </a>
   </div>
 </div>
 

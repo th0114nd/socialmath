@@ -2,17 +2,20 @@
 {% block extra_head %}
 <title>Social Math</title>
 <link href="{{ STATIC_URL }}css/force.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({skipStartupTypeset: true });
     MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js">
 </script>
 {% endblock extra_head %}
 
 {% block content %}
-<div class="container content" ng-app="ProoftreeApp">
+<div ng-app="ProoftreeApp">
 <!--     <header 
         class="container"
         ng-controller="UserCtrl">

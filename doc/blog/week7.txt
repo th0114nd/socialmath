@@ -1,0 +1,27 @@
+Socialmath Week 7:
+
+Our new domain name: www.socmat.com
+(The knowledge graph display contains bugs that will be fixed soon.)
+This week has been pretty productive. We made successful merge between our
+django framework with our angular/d3 js visualization and front-end features. 
+Also, as the full user profile service is up, everyone can make contributions
+to the knowledge graph, and follow the theorems/articles they are interested. 
+Also, the search feature bugs are fixed as well. 
+
+Over the past week:
+  Jianchi: Fully implement user profile features, "follow" feature, and fixed
+           user registration glitches. Now everyone can register can make
+           contributions to our knowledge graph. Wrote models for private 
+           graph, but not ready for deployment yet. Also the www.socmat.com
+           domain name. 
+  Kexin: Worked to merge the our js visualization tools with the django
+         framework. Made sure everything works on AWS. 
+  Ying-Yu: Made a buggy partial display of knowledge graph. 
+
+Upcoming goals for the week:
+  Jianchi: Fully implement private graph feature. Finish up!
+  Kexin:  Work on private graph and poster. Meanwhile, make 
+          sure that we will still have a working demo at the 
+          presentation after deploying new features 
+  Ying-Yu: Debug. Implement graphic editing tool.
+  All: Poster!
