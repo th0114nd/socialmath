@@ -125,7 +125,7 @@ Should have a simple working prototype, which allows adding, deleting and viewin
 \end{itemize}
 
 \subsection{Actual Timeline}
-Below is a summary of our actual weekly progress based on the blogs. The front end progress is highly non-linear because we either underestimated the amount of work or overestimated the ability to stick to schedule of the person in charge. Thus many features were first implemented on server-side and enhanced with Ajax later. Nevertheless, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
+Below is a summary of our actual weekly progress based on the blogs. The front end progress was highly non-linear because we either underestimated the amount of work or overestimated the ability to stick to schedule of the person in charge. Thus many features were first implemented on server-side and enhanced with Ajax later. Nevertheless, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
 \begin{enumerate}
 \item \emph{Week 1: Changing Gears}\\\\
 Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original project proposal and to work, instead, on a web app to accommodate the visualization of mathematical proof tree structures. We discussed the basic application architecture: the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python	with Django REST framework, the M stands for SQLite, and the A could either be Apache or Amazon Web Service.\\\\
@@ -150,19 +150,24 @@ At this point, the backend has already reached the original midterm milestone. I
 
 \item \emph{Week 4: Moving on}\\\\
 This week, the backend side has moved on to advanced features, starting with the keyword related ones. We implemented keyword creation, edit and search. Users can add an arbitrary number of keywords for theorems/proofs, and a search bar was added on the index page to allow search by keywords.\\\\
-As we moved one person from the backend to the front end, the front end side has made substantial progress this week. First, we wrote a stylesheet for the website to make it more user friendly. We also set up MathJax, a free online LaTex compiling tool, to support adding and displaying LaTex code on the website. Finally, we had a working dynamic knowledge graph layout algorithm. However, the visualization was working as an independent component, and needed to be merged with the rest of the project.\\\\
+As we moved one person from the backend to the front end, the front end side has made substantial progress this week. We wrote a stylesheet for the website to make it more user friendly. We also set up MathJax, a free online LaTeX compiling tool, to support adding and displaying LaTeX code on the website.\\\\
+Finally, we built a client-side knowledge graph editor that made it possible to implement and test a working graph layout algorithm by the end of week. This graph editor also served as an exercise on Bootstrap UI components and a reference of our final user interface.
+Our next mission was turning the graph editor into an Ajax application that was able to communicate with the server.
 \\
 
 \item \emph{Week 5:  MVP online}\\\\
-This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. The knowledge graph visualization was still unavailable online at this point. \\\\
-Meanwhile, we have also been extending the website's functionalities. We started to implement user authentication system in the hope of enabling users to set up private knowledge graphs for classroom setttings.\\\\
-
+This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. 
+Time was spent on fixing API for Ajax calls, delaying the integration of knowledge graph visualization. \\\\
+Meanwhile, we have also been extending the website's functionalities. We started to implement user authentication system in the hope of enabling users to set up private knowledge graphs for classroom settings.
+\\
 
 \item \emph{Week 6: }\\
 
-
+We made a single-page application that loaded latest submissions and performed searches via Ajax calls. In addition, we were able to display the whole graph in database with our graph layout algorithm. Then we needed to make the graph interactive.
 
 \item \emph{Week 7:  }\\
+
+
 
 \item \emph{Week 8: }\\
 
