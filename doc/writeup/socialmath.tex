@@ -177,7 +177,111 @@ The end product would hopefully be a useful web application that would
 allow publishing of proofs in a graphical format subject to immediate review
 of other users, and a repository for a large collection of proofs to be
 seen in a graphical format upon request.
-\subsection{Front End}
-\subsection{Back End}
+\subsection{UI and Visualization}
+\subsection{Web Framework}
+The server middleware is based on the Django web-framework. It provides a full set of functionalities for socialmath users to conveniently contribute to the mathematical knowledge library and to build their own graph:
+\begin{itemize}
+
+\item \emph{Nodes and Dependencies} \\
+The most fundamental functionality in the socialmath web framework is the node-dependency system. In the framework, the nodes contain information about its theme, content, type, publication and modification dates. We used relationship structures to store node-node relationship, as well as node-to-other-object relationships. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.5]{oneNode.png}
+\caption{One node in social math knowledge graph}
+\end{figure}\\
+Dependencies are classified into three types:
+\begin{enumerate}
+\item \emph{Proof-to-Theorem}: Lemma dependency. This relationship exists when a proof of one theorem cites another theorem in the proving process. 
+\item \emph{Theorem-to-Proof}: Prove dependency. This relationship exists when a proof proves a theorem. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.3]{prove_lemma_relationship.png}
+\caption{Erdos' prove of Euclid's theorem exhibits prove relationship to Euclid's theorem, and exhibits lemma relationship to Fundamental Theorem of Arithmetic}
+\end{figure}\
+\item \emph{Theorem-to-Theorem}: High-Relevancy dependency. This relationship exists when a theorem is the special case or a broader case of another, or they have strong logical relationship with each other. This also includes the relationship between theorems and definitions, which we also model as theorems in our system (only that defs can't have proofs).
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{tt_relationship.png}
+\caption{Theorem-theorem and theorem-definition relationship}
+\end{figure}\
+\end{enumerate}
+
+\item \emph{Keywords and Search} \\
+Keywords are words that generalize a node's content and branch of study. They can be added upon adding the node, or can be added when editing an existing node. Node-keyword relationships are stored in a separate object named KWMap. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.8]{keyword.png}
+\caption{Keywords in the detail-view of a node}
+\end{figure}\\
+The search functionality is supported by keyword mapping. Search can be used in two ways: you can either enter text in the search bar displayed at the index page, or you can click on the link of an existing keyword. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{search.png}
+\caption{Search result for the keyword "prime factorization"}
+\end{figure}\
+
+\item \emph{Submission and Editing} \\
+Adding a new theorem or proof can be done in two ways: 
+Click on the button at the bottom of the index page,
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.8]{add_node.png}
+\caption{Add theorem/proof button at bottom of index page}
+\end{figure}\\
+or use the "add child" tool on the graph. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{add_child.png}
+\caption{The "add child" tool}
+\end{figure}\\
+To edit an existing theorem, the user would have to go to the detail page and click on the "edit" button, where the user will see an interface similar to the add-node page, only that existing information has been filled in. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{edit.png}
+\caption{Editing an existing node}
+\end{figure}\\
+
+\item \emph{Users and Profile} \\
+Socialmath doesn't require a user to login to view its content, but there are additional functionalities for logged in users. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.15]{signup.png}
+\caption{User registration page}
+\end{figure}\\
+Once a user is logged in, every edition/addition activity will be recorded as an "event" in the database. They will show up both on the detail page of the node being edited, and on your own profile page as well. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.6]{edit_history.png}
+\caption{Edition history of a node showing the initial author and the last modifier}
+\end{figure}\\
+\emph{Follow} is a functionality provided for registered users. The user may click on the "follow" button of any given node, and the server will record it as an event of "follow" type. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.8]{follow.png}
+\caption{The follow button}
+\end{figure}\\
+To view a user's own profile, the user can always click on his own username on the top navigation bar. Right now, there is now search-for-user functionality, so the only entrance for viewing other users' profiles is in the edition history of nodes. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.52]{profile.png}
+\caption{The profile page of Jianchi Chen, consist of basic info, activities, following-nodes, and private graphs he owns}
+\end{figure}\\
+
+\item \emph{Private Graphs} \\
+In addition to one public graph visible to everyone, socialmath also implemented a functionality called \emph{private graph} so that each registered user can create and edit his own graph. Upon creation, the user may choose to make the graph public or only disclosed to authorized users. 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{create_pg.png}
+\caption{Creating a private graph}
+\end{figure}\\
+The created private graph will have a individual index page, and every node added to the private graph will not show up on the public graph.  
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{pg_index.png}
+\caption{The index page of a private graph, with a node called "test theorem" added.}
+\end{figure}\\
+All contents associated with a private graph will be visible to the owner and invited user only. An attempt to view private graph contents when you're not invited will result in a 401 unauthorized error. 
+
+\end{itemize}
 
 \end{document}
