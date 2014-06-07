@@ -125,11 +125,13 @@ Should have a simple working prototype, which allows adding, deleting and viewin
 \end{itemize}
 
 \subsection{Actual Timeline}
-Below is a summary of our actual weekly progress based on the blogs. We underestimated the amount of front end work needed in the project. However, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
+Below is a summary of our actual weekly progress based on the blogs. The front end progress is highly non-linear because we either underestimated the amount of work or overestimated the ability to stick to schedule of the person in charge. Thus many features were first implemented on server-side and enhanced with Ajax later. Nevertheless, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
 \begin{enumerate}
-\item \emph{Week 1:  Changing Gears}\\\\
-Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original project proposal and to work, instead, on a web app to accommodate the visualization of mathematical proof tree structures. We discussed the basic application architecture: the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python, the M stands for SQLite, and the A could either be Apache or AWS. On the backend we're running Django to setup the structure of the site, and on the front end we're using d3.js for visualization, AngularJS for DOM manipulation, as well as Bootstrap for templates and style. That is of course if there is enough orthogonality between the web frameworks for them to play nicely together.\\\\
+\item \emph{Week 1: Changing Gears}\\\\
+Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original project proposal and to work, instead, on a web app to accommodate the visualization of mathematical proof tree structures. We discussed the basic application architecture: the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python	with Django REST framework, the M stands for SQLite, and the A could either be Apache or Amazon Web Service.\\\\
 The first steps we took were similar to any team making a CRUD app: setting up the database and a method of communication between the client and server. Specifically, we determined a schema for the database and fleshed out data structures for the DAG. We also started to familiarized ourselves with the frameworks that we will be working with for the rest of the term.\\\\
+On the front end side, several JavaScript frameworks quickly came to our mind:
+AngularJS and/or jQuery for DOM manipulation, Bootstrap for style and UI components, and D3.js for data visualization. These frameworks have some overlapping functions so it was important to use them in a way that avoided conflicts and, preferably, reflected separation of concerns. Since we had little experience in web development (actually the main front-end architect had none), it would take significant time to research on JavaScript and its frameworks before making design decisions.\\\\
 
 \item \emph{Week 2: Getting Started }\\\\
 This week the first draft of the API was written. It's a fairly
@@ -137,17 +139,19 @@ standard one that supports the collection of all entries in
 a paginated manner, getting a single entry for a close up view,
 and the CRUD operations expected to have. \\\\
 On the server side, we've decided to go for AWS instead of Apache. As a result, we switched to using virtualenv, which gave us consistent versioning across our local machines as well as allowing us to use versions required by AWS without having conflicts of the development computers. We also migrated from SQLite to MySQL, since AWS had the best support for the latter. Although setting up MySQL was slightly frustrating.\\\\
-On the backend side, we implemented serializers to help form json responses, and view methods for creating and reading theorems/proofs .\\\\
-On the front end side, we were able to transform the backend proof tree models into D3.js' graph format. We also wrote view templates for corresponding view methods. However, developing an algorithm for automatic hierarchical layout was harder than we had expected.\\
+On the backend side, we implemented serializers to help form JSON responses, and view methods for creating and reading theorems/proofs.\\\\
+On the front end side, we started by finding data visualization examples to understand the power of available tools. One of our particular interest was \textbf{d3 process map} (https://github.com/nylen/d3-process-map), which demonstrated a hierarchical layout of graph that we would eventually mimic. Meanwhile, we realized that AngularJS, jQuery, and D3.js all provided DOM manipulation methods, which had the most potential of conflicts. Hence we decided to structure front end applications on MVC (model-viewer-controller) framework of AngularJS, avoid jQuery as possible, and use D3.js mainly as a graph layout engine.\\\\
+No JavaScript codes were written yet, but we were able to write some Django view templates to provide text-based interaction with DAG.
+\\
 
 \item \emph{Week 3: Backend Milestone}\\\\
 After adding templates and view methods for edit and deletion, we had a fully working set of CRUD functionalities implemented this week. We also did substantial unit tests on database models and api calls to make sure that our backend was robust so far. \\\\
-At this point, the backend has already reached the original midterm milestone. In the front end, however, we were still tweaking hierarchical force layout algorithm to handle collisions and overlaps between boxes.\\
+At this point, the backend has already reached the original midterm milestone. In the front end, we succeeded in driving AngularJS templates with D3 graph layout engine. However, time was wasted on studying hierarchical force layout algorithm of d3 process map. While force layout was provided by D3.js, it turned out that the hierarchical part was manually specified in the dataset, so we needed to invent our own algorithm. A minor issue was that we formatted graphs as adjacency lists while D3 Force Layout used nodes and edges as native objects, which required some conversion.\\
 
 \item \emph{Week 4: Moving on}\\\\
 This week, the backend side has moved on to advanced features, starting with the keyword related ones. We implemented keyword creation, edit and search. Users can add an arbitrary number of keywords for theorems/proofs, and a search bar was added on the index page to allow search by keywords.\\\\
 As we moved one person from the backend to the front end, the front end side has made substantial progress this week. First, we wrote a stylesheet for the website to make it more user friendly. We also set up MathJax, a free online LaTex compiling tool, to support adding and displaying LaTex code on the website. Finally, we had a working dynamic knowledge graph layout algorithm. However, the visualization was working as an independent component, and needed to be merged with the rest of the project.\\\\
-
+\\
 
 \item \emph{Week 5:  MVP online}\\\\
 This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. The knowledge graph visualization was still unavailable online at this point. \\\\
