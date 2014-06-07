@@ -2,18 +2,39 @@
 %\usepackage{usenix,epsfig,endnotes}
 \begin{document}
 
-%don't want date printed
-\date{}
 
 %make title bold and 14 pt font (Latex default is non-bold, 16 pt)
 \title{\Large \bf Social Dynamics Used for Verification of Large Proof Trees.}
-
+\numberofauthors{4} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
 \author{
-{\rm Jianchi Chen}\and
-{\rm Ying-Yu Ho}\and
-{\rm Tim Holland}\and
-{\rm Kexin Rong}
-{\em California Institute of Technology}
+\alignauthor
+Jianchi Chen\\
+       \affaddr{California Institute of Technology}\\
+       \affaddr{1200 E. California Blvd.}\\
+       \affaddr{Pasadena, United States}\\
+       \email{jchen2@caltech.edu}
+\alignauthor
+Ying-Yu Ho\\
+       \affaddr{California Institute of Technology}\\
+       \affaddr{1200 E. California Blvd.}\\
+       \affaddr{Pasadena, United States}\\
+       \email{yingyu@caltech.edu}
+\alignauthor
+Tim Holland\\
+       \affaddr{California Institute of Technology}\\
+       \affaddr{1200 E. California Blvd.}\\
+       \affaddr{Pasadena, United States}\\
+       \email{th0114nd@gmail.com}
+\and  % use '\and' if you need 'another row' of author names
+\alignauthor 
+Kexin Rong\\
+        \affaddr{California Institute of Technology}\\
+       \affaddr{1200 E. California Blvd.}\\
+       \affaddr{Pasadena, United States}\\
+       \email{krong@caltech.edu}
 }
 
 \maketitle
@@ -79,9 +100,75 @@ an effective mechanism of rejecting poorly worded or incorrect proofs.
 I'm not aware of any similar projects.
 % \bibliography{sample}}
 % \theendnotes
+
+\section{Timeline}
+\subsection{Initial Timeline}
+Below is the initial project timeline we proposed at the project proposal presentation. The plan was to build a working prototype before midterm, and to add as many features as time allows afterwards.  
+\begin{itemize}
+\item Week 2 - 5: Basics
+\begin{itemize}
+\item Client-server API
+\item Database API
+\item Implement views and templates for browsing, editing, and adding theorems
+\item Front end visualization
+\end{itemize}
+\item Week 6: Milestone:\\
+Should have a simple working prototype, which allows adding, deleting and viewing nodes from the proof DAG
+\item Week 7 - 9: Useful advanced features
+\begin{itemize}
+\item Search by keywords
+\item User profile
+\item private graph
+\item Auto-keyword-extraction
+\item Suggested theorems
+\end{itemize}
+\end{itemize}
+
+\subsection{Actual Timeline}
+Below is a summary of our actual weekly progress based on the blogs. We underestimated the amount of front end work needed in the project. However, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
+\begin{enumerate}
+\item \emph{Week 1:  Changing Gears}\\\\
+Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original project proposal and to work, instead, on a web app to accommodate the visualization of mathematical proof tree structures. We discussed the basic application architecture: the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python, the M stands for SQLite, and the A could either be Apache or AWS. On the backend we're running Django to setup the structure of the site, and on the front end we're using d3.js for visualization, AngularJS for DOM manipulation, as well as Bootstrap for templates and style. That is of course if there is enough orthogonality between the web frameworks for them to play nicely together.\\\\
+The first steps we took were similar to any team making a CRUD app: setting up the database and a method of communication between the client and server. Specifically, we determined a schema for the database and fleshed out data structures for the DAG. We also started to familiarized ourselves with the frameworks that we will be working with for the rest of the term.\\\\
+
+\item \emph{Week 2: Getting Started }\\\\
+This week the first draft of the API was written. It's a fairly
+standard one that supports the collection of all entries in
+a paginated manner, getting a single entry for a close up view,
+and the CRUD operations expected to have. \\\\
+On the server side, we've decided to go for AWS instead of Apache. As a result, we switched to using virtualenv, which gave us consistent versioning across our local machines as well as allowing us to use versions required by AWS without having conflicts of the development computers. We also migrated from SQLite to MySQL, since AWS had the best support for the latter. Although setting up MySQL was slightly frustrating.\\\\
+On the backend side, we implemented serializers to help form json responses, and view methods for creating and reading theorems/proofs .\\\\
+On the front end side, we were able to transform the backend proof tree models into D3.js' graph format. We also wrote view templates for corresponding view methods. However, developing an algorithm for automatic hierarchical layout was harder than we had expected.\\
+
+\item \emph{Week 3: Backend Milestone}\\\\
+After adding templates and view methods for edit and deletion, we had a fully working set of CRUD functionalities implemented this week. We also did substantial unit tests on database models and api calls to make sure that our backend was robust so far. \\\\
+At this point, the backend has already reached the original midterm milestone. In the front end, however, we were still tweaking hierarchical force layout algorithm to handle collisions and overlaps between boxes.\\
+
+\item \emph{Week 4: Moving on}\\\\
+This week, the backend side has moved on to advanced features, starting with the keyword related ones. We implemented keyword creation, edit and search. Users can add an arbitrary number of keywords for theorems/proofs, and a search bar was added on the index page to allow search by keywords.\\\\
+As we moved one person from the backend to the front end, the front end side has made substantial progress this week. First, we wrote a stylesheet for the website to make it more user friendly. We also set up MathJax, a free online LaTex compiling tool, to support adding and displaying LaTex code on the website. Finally, we had a working dynamic knowledge graph layout algorithm. However, the visualization was working as an independent component, and needed to be merged with the rest of the project.\\\\
+
+
+\item \emph{Week 5:  MVP online}\\\\
+This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. The knowledge graph visualization was still unavailable online at this point. \\\\
+Meanwhile, we have also been extending the website's functionalities. We started to implement user authentication system in the hope of enabling users to set up private knowledge graphs for classroom setttings.\\\\
+
+
+\item \emph{Week 6: }\\
+
+
+
+\item \emph{Week 7:  }\\
+
+\item \emph{Week 8: }\\
+
+\end{enumerate}
 \section{End Product}
 The end product would hopefully be a useful web application that would
 allow publishing of proofs in a graphical format subject to immediate review
 of other users, and a repository for a large collection of proofs to be
 seen in a graphical format upon request.
+\subsection{Front End}
+\subsection{Back End}
+
 \end{document}
