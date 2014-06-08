@@ -181,19 +181,15 @@ seen in a graphical format upon request.
 \subsubsection{Layout}
 \begin{figure}[h!]
 \centering
-\includegraphics[width=6cm]{layout_1.png}
+\includegraphics[scale=0.3]{layout_1.png}
 \caption{Parent nodes positioned above child nodes (Green: theorem. Red: Proof.)}
 \end{figure}
-We build the graph layout engine based on D3 Force Layout,
-which models nodes as repulsing charged particles and edges as elastic cables holding nodes together, 
-and then run a physics simulation that animates the process of finding equilibrium positions of nodes.
-
+We build the graph layout engine based on D3 Force Layout, which models nodes as repulsing charged particles and edges as elastic cables holding nodes together. The layout algorithm then runs a physics simulation to determine the position of each node.
 For each node, we draw a text box with its title inside,
-and we draw an arrow from Node $c$ to Node $p$ to indicate that $c$ depends on $p$.
-
-So far the layout engine only takes care of undirected structure of the graph. 
-For two nodes $c$ depending on $p$, we want $p$ to stay a little above $c$ to emphasize such dependency.
-Let us temporarily forget D3 Force Layout.
+and an arrow from Node $c$ to Node $p$ to indicate that $c$ depends on $p$. Different types of dependencies will be discussed in the next subsection.\\\\
+So far the layout engine only takes care of undirected graph structure. 
+Ideally, for two nodes $c, p$ with $c$ depending on $p$, we want Node $p$ to stay a little above Node $c$, so that the root of a tree can always be pushed to the top.
+In order to do so, we invented our own algorithm.
 If our graph is a tree, we can unambiguously compute the height of each node and assign a $y$-coordinate accordingly. 
 To deal with cycles, 
 we can minimize the potential
@@ -205,9 +201,10 @@ Note that $U(\mathbf{y})\geq0$ and that $U(\mathbf{y})=0$ has solutions if the g
 The solution is not unique because $U(\mathbf{y})$ is invariant under translation of all nodes by the same displacement, 
 but this issue turns out to be unimportant.
 
-As an example, if we have nodes $1,2,3,4$ with edges 
+For example, if we have nodes $1,2,3,4$ with edges 
 $(2 \rightarrow 1), (3 \rightarrow 1), (3 \rightarrow 2), (3 \rightarrow 4)$,
-the solution (subject to translation) is
+the solution (subject to translation) to equation (1)  is
+
 $$y_1=\frac43,~y_2=\frac23,~y_3=0,~y_4=1.$$
 
 We want to use this information to adjust equilibrium positions of nodes in D3 Force Layout,
@@ -228,11 +225,7 @@ which pulls nodes away from their D3 equilibrium positions and minimize the sum 
 \includegraphics[width=8cm]{toolbar1.png}
 \caption{Knowledge graph UI Overview}
 \end{figure}
-\begin{figure}[h!]
-\centering
-\includegraphics[width=4cm]{toolbar2.png}
-\caption{Knowledge graph UI Toolbar}
-\end{figure}
+
 \begin{itemize}
 \item Scroll horizontally / vertically
 \item Zoom in / zoom out / reset
@@ -242,12 +235,18 @@ For example, 0 only displays the center node, 1 also displays its parents and ch
 \item Show all nodes: display the whole graph or only nodes around a center node.
 \item Preview: open a small window to show the node's content.
 \end{itemize}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=4cm]{toolbar2.png}
+\caption{Knowledge graph UI Toolbar}
+\end{figure}
+
 \subsection{Web Framework}
 The server middleware is based on the Django web-framework. It provides a full set of functionalities for socialmath users to conveniently contribute to the open mathematics library and to build their own knowledge graphs:
 \begin{itemize}
 
 \item \emph{Nodes and Dependencies} \\\\
-The fundamental functionality in the socialmath web framework is the node-dependency system. In the framework, nodes contain information about its theme, content, type, publication and modification time. We store node-node relationship as well as node-to-other-object relationships. 
+The fundamental functionality in the socialmath web framework is the node-dependency system. In the framework, nodes contain information about its theme, content, type, publication and modification time. We store node-node relationship as well as node-to-other-object relationships. \\
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.37]{oneNode.png}
@@ -281,12 +280,13 @@ The search functionality is supported by keyword mapping. Search can be used in 
 
 \item \emph{Submission and Editing} \\\\
 Adding a new theorem or proof can be done in two ways: 
-Click on the button at the bottom of the index page, or use the "add child" tool on the graph. 
+Click on the button at the bottom of the index page, or use the "add child" tool on the graph. \\\\
 %\begin{figure}[h!]
 %\centering
 %\includegraphics[scale=0.4]{add_child.png}
 %\caption{The "add child" tool}
 %\end{figure}\\
+
 Users can edit an existing theorem/proof by clicking the "edit" button on the node's detail page. The button links to an interface similar to the add-node page, except that the existing information will be pre populated. 
 
 \item \emph{Users and Profile} \\\\
@@ -357,7 +357,7 @@ Another concern is that the website currently has no way of assessing the correc
 \item \emph{A more collaborative private graph system} \\
 An ideal model for a private graph is the github repository. Users are able to collaborate on a graph, fork someone else's work, assign and discuss issues, and use version control. We would also like to include visualization in the private graph. 
 \item \emph{File support} \\
-Currently, socialmath only supports in-box writing. Although LaTeX editing is supported, it would be more desirable if we can add pdf-uploading and displaying functionality. 
+In addition to in-box writing, we should support pdf upload and display, so that users can also make contributions by finding existing write ups. 
 \item \emph{Lemma and keyword detection} \\
 A more advanced version of the socialmath node submission system includes lemma and keyword auto-detection. A simple algorithm is to collect statistics on the text's N-grams (sequences of $n$ consecutive words).  Sequences with a significant number of occurrences are then candidates for the keyword/lemma \cite{Kumar:2008:AKE:1410140.1410180}.
 \item \emph{Better user interaction} \\
