@@ -1,10 +1,10 @@
 \documentclass{acm_proc_article-sp}
-%\usepackage{usenix,epsfig,endnotes}
+\usepackage{url}
 \begin{document}
 
 
 %make title bold and 14 pt font (Latex default is non-bold, 16 pt)
-\title{\Large \bf Social Dynamics Used for Verification of Large Proof Trees.}
+\title{\Large \bf Social Math: A collaborative, visual host for mathematical proof trees}
 \numberofauthors{4} %  in this sample file, there are a *total*
 % of EIGHT authors. SIX appear on the 'first-page' (for formatting
 % reasons) and the remaining two appear in the \additionalauthors section.
@@ -12,29 +12,24 @@
 \author{
 \alignauthor
 Jianchi Chen\\
-       \affaddr{California Institute of Technology}\\
-       \affaddr{1200 E. California Blvd.}\\
-       \affaddr{Pasadena, United States}\\
+       \affaddr{Dept. of Electronical Engineering}\\
        \email{jchen2@caltech.edu}
 \alignauthor
 Ying-Yu Ho\\
-       \affaddr{California Institute of Technology}\\
-       \affaddr{1200 E. California Blvd.}\\
-       \affaddr{Pasadena, United States}\\
+       \affaddr{Dept. of Physics,}\\
+       \affaddr{Mathematics, and Astronomy}\\
        \email{yingyu@caltech.edu}
 \alignauthor
 Tim Holland\\
-       \affaddr{California Institute of Technology}\\
-       \affaddr{1200 E. California Blvd.}\\
-       \affaddr{Pasadena, United States}\\
+       \affaddr{Dept. of Computing and}\\
+       \affaddr{Mathematical Sciences}\\
        \email{th0114nd@gmail.com}
 \and  % use '\and' if you need 'another row' of author names
 \alignauthor 
 Kexin Rong\\
-        \affaddr{California Institute of Technology}\\
-       \affaddr{1200 E. California Blvd.}\\
-       \affaddr{Pasadena, United States}\\
-       \email{krong@caltech.edu}
+       \affaddr{Dept. of Computing and}\\
+      \affaddr{Mathematical Sciences}\\
+      \email{krong@caltech.edu}
 }
 
 \maketitle
@@ -118,58 +113,61 @@ Should have a simple working prototype, which allows adding, deleting and viewin
 \begin{itemize}
 \item Search by keywords
 \item User profile
-\item private graph
+\item Private graph
 \item Auto-keyword-extraction
 \item Suggested theorems
 \end{itemize}
 \end{itemize}
 
 \subsection{Actual Timeline}
-Below is a summary of our actual weekly progress based on the blogs. The front end progress was highly non-linear because we either underestimated the amount of work or overestimated the ability to stick to schedule of the person in charge. Thus many features were first implemented on server-side and enhanced with Ajax later. Nevertheless, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
+Below is a summary of our actual weekly progress based on the blogs. The front end progress was highly non-linear because we either underestimated the amount of work or overestimated the ability to stick to schedule of the person in charge. Thus most features were first implemented on the server-side, and then enhanced with Ajax. Nevertheless, we were able to implement the three most useful advanced features: keyword search, user profile and private graph. A detail description of the end product is given in the next section.
 \begin{enumerate}
 \item \emph{Week 1: Changing Gears}\\\\
-Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original project proposal and to work, instead, on a web app to accommodate the visualization of mathematical proof tree structures. We discussed the basic application architecture: the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python	with Django REST framework, the M stands for SQLite, and the A could either be Apache or Amazon Web Service.\\\\
+Due to the discovery of a fairly comprehensive open source traffic simulator project, we decided to abandon the original 144 project proposal and to work, instead, on a web application that accommodates the visualization of mathematical proof tree structures. We discussed the basic application architecture, and decided to use the typical LAMP stack with a REST API and CRUD functionality. In our case the P stands for Python with Django REST framework, the M stands for SQLite, and the A could either be Apache or Amazon Web Service.\\\\
 The first steps we took were similar to any team making a CRUD app: setting up the database and a method of communication between the client and server. Specifically, we determined a schema for the database and fleshed out data structures for the DAG. We also started to familiarized ourselves with the frameworks that we will be working with for the rest of the term.\\\\
 On the front end side, several JavaScript frameworks quickly came to our mind:
-AngularJS and/or jQuery for DOM manipulation, Bootstrap for style and UI components, and D3.js for data visualization. These frameworks have some overlapping functions so it was important to use them in a way that avoided conflicts and, preferably, reflected separation of concerns. Since we had little experience in web development (actually the main front-end architect had none), it would take significant time to research on JavaScript and its frameworks before making design decisions.\\\\
+AngularJS\cite{Google:2014:Online} and/or jQuery for DOM manipulation, Bootstrap\cite{UI:2014:Online} for style and UI components, and D3.js \cite{Bostock:2014:Online} for data visualization. These frameworks have some overlapping functions so it was important to use them in a way that avoided conflicts and, preferably, reflected separation of concerns. Since we had  very little experience in web development, it took a significant amount of time to study JavaScript and its frameworks before we could make design decisions.\\\\
 
 \item \emph{Week 2: Getting Started }\\\\
-This week the first draft of the API was written. It's a fairly
+This week, the first draft of the API was written. It's a fairly
 standard one that supports the collection of all entries in
 a paginated manner, getting a single entry for a close up view,
-and the CRUD operations expected to have. \\\\
-On the server side, we've decided to go for AWS instead of Apache. As a result, we switched to using virtualenv, which gave us consistent versioning across our local machines as well as allowing us to use versions required by AWS without having conflicts of the development computers. We also migrated from SQLite to MySQL, since AWS had the best support for the latter. Although setting up MySQL was slightly frustrating.\\\\
+and the CRUD operations. \\\\
+On the server side, we've decided to go for AWS instead of Apache. As a result, we switched to using virtualenv, which gave us consistent versioning across our local machines, as well as allowing us to use versions required by AWS without having conflicts of the development computers. We also migrated from SQLite to MySQL, since AWS had the best support for the latter. Although setting up MySQL was slightly frustrating.\\\\
 On the backend side, we implemented serializers to help form JSON responses, and view methods for creating and reading theorems/proofs.\\\\
-On the front end side, we started by finding data visualization examples to understand the power of available tools. One of our particular interest was \textbf{d3 process map} (https://github.com/nylen/d3-process-map), which demonstrated a hierarchical layout of graph that we would eventually mimic. Meanwhile, we realized that AngularJS, jQuery, and D3.js all provided DOM manipulation methods, which had the most potential of conflicts. Hence we decided to structure front end applications on MVC (model-viewer-controller) framework of AngularJS, avoid jQuery as possible, and use D3.js mainly as a graph layout engine.\\\\
-No JavaScript codes were written yet, but we were able to write some Django view templates to provide text-based interaction with DAG.
-\\
+On the front end side, we started by finding data visualization examples to understand the power of available tools. One of our particular interest was d3 process map \cite{Nylen:2014:Online}, which demonstrated a hierarchical layout of graph that we could potentially mimic. Meanwhile, we realized that AngularJS, jQuery, and D3.js all provided DOM manipulation methods. To avoid potential conflicts among the three frameworks,  we decided to structure front end applications on MVC (model-viewer-controller) framework of AngularJS, avoid jQuery as much as possible, and use D3.js mainly as a graph layout engine. No JavaScript codes were written yet, but we were able to write some Django view templates to provide text-based interaction with DAG.\\
 
 \item \emph{Week 3: Backend Milestone}\\\\
-After adding templates and view methods for edit and deletion, we had a fully working set of CRUD functionalities implemented this week. We also did substantial unit tests on database models and api calls to make sure that our backend was robust so far. \\\\
-At this point, the backend has already reached the original midterm milestone. In the front end, we succeeded in driving AngularJS templates with D3 graph layout engine. However, time was wasted on studying hierarchical force layout algorithm of d3 process map. While force layout was provided by D3.js, it turned out that the hierarchical part was manually specified in the dataset, so we needed to invent our own algorithm. A minor issue was that we formatted graphs as adjacency lists while D3 Force Layout used nodes and edges as native objects, which required some conversion.\\
+After adding templates and view methods for editing and deleting, we had a fully working set of CRUD functionality implemented this week. We also did substantial unit tests on database models and api calls to make sure that our backend infrastructure had been robust so far. \\\\
+At this point, the backend side has already reached the original midterm milestone. On the front end side, we succeeded in driving AngularJS templates with D3 graph layout engine. However, the hierarchical force layout algorithm in d3 process map wasn't as useful as we had expected. While D3.js provided nice force layout algorithm, it required users to manually specify the hierarchy relationships in the dataset.  Therefore, we started to design our own algorithm. Another obstacle was that we formatted graphs as adjacency lists while D3 Force Layout used nodes and edges as native objects. Therefore, proper conversion was needed in order to make use of the D3 framework.\\
 
-\item \emph{Week 4: Moving on}\\\\
-This week, the backend side has moved on to advanced features, starting with the keyword related ones. We implemented keyword creation, edit and search. Users can add an arbitrary number of keywords for theorems/proofs, and a search bar was added on the index page to allow search by keywords.\\\\
-As we moved one person from the backend to the front end, the front end side has made substantial progress this week. We wrote a stylesheet for the website to make it more user friendly. We also set up MathJax, a free online LaTeX compiling tool, to support adding and displaying LaTeX code on the website.\\\\
-Finally, we built a client-side knowledge graph editor that made it possible to implement and test a working graph layout algorithm by the end of week. This graph editor also served as an exercise on Bootstrap UI components and a reference of our final user interface.
-Our next mission was turning the graph editor into an Ajax application that was able to communicate with the server.
-\\
+\item \emph{Week 4: Frontend Milestone}\\\\
+After reaching the milestone, the backend side has moved on to advanced features, starting with the keyword related ones. We first implemented functionalities for keyword creation, edit and search . Users can now tag theorems and proofs with appropriate  keywords.  A search bar was added on the index page to allow search by keywords.\\\\
+As we moved one person from the backend to the front end, the front end side was able to make substantial progress this week. We wrote a stylesheet for the website to make it more user friendly. We also set up MathJax \cite{MathJax}, a free online LaTeX compiling tool, to support adding and displaying LaTeX code on the website. Finally, we built a client-side knowledge graph editor that made it possible to implement and test a working graph layout algorithm. This graph editor also served as an exercise on Bootstrap UI components and a reference of our final user interface. The next step was to turn the graph editor into an Ajax application that was able to communicate with the server.\\
 
-\item \emph{Week 5:  MVP online}\\\\
-This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. 
-Time was spent on fixing API for Ajax calls, delaying the integration of knowledge graph visualization. \\\\
-Meanwhile, we have also been extending the website's functionalities. We started to implement user authentication system in the hope of enabling users to set up private knowledge graphs for classroom settings.
-\\
-
-\item \emph{Week 6: }\\
-
-We made a single-page application that loaded latest submissions and performed searches via Ajax calls. In addition, we were able to display the whole graph in database with our graph layout algorithm. Then we needed to make the graph interactive.
-
-\item \emph{Week 7:  }\\
+\item \emph{Week 5:  Prototype online}\\\\
+This week, we have been focusing on putting a simple working version of our product online. On one hand, we tried to connect the knowledge graph visualization with backend database. On the other hand, we worked on setting up Amazon EC2 (Amazon Elastic Compute Cloud) to host the website. We were able to seed the database with number theory theorems and deploy the latest backend code. Knowledge graph visualization was not fully integrated yet, due to bugs in API for Ajax calls. \\\\
+Meanwhile, we have also been extending the website's functionalities. We started to implement user authentication system, in the hope of enabling users to set up private knowledge graphs for classroom settings in the future.\\
 
 
+\item \emph{Week 6: Makeover}\\\\
+We did a makeover to the website by refactoring the HTML files using UI Bootstrap. We also redesigned the index page so that it could nicely combine the graph visualization with the search functionality.  In addition, we finished implementing user authentication systems and user profile. This was our first step of incorporating the "social" component in the website. \\
 
-\item \emph{Week 8: }\\
+\item \emph{Week 7:  Merging}\\\\
+This week we successfully merged the backend Django framework with the front end graph editor for knowledge graph visualization. We made a single-page application that can load latest submissions and perform searches via Ajax calls. We were also able to display all nodes and their dependencies in database with the graph layout algorithm. Future work was needed to make the visualization more interactive. \\\\
+We extended user profiles to include recent activities, so users can keep track of their latest contributions. We started to keep track of users who published and last modified each theorem/proof. We also added a "following" feature for theorems to make it easier for users to keep up with their interests.  We moved the website to a new domain: socmat.com/prooftree.\\
+
+
+\item \emph{Week 8: MVP}\\\\
+This week we further polished the product. For the front end, we merged and deployed user profile related features. We were able to add a few interactive features to the knowledge graph:
+\begin{enumerate}
+\item Zoom and Panning: Since it is hard to fit the entire knowledge graph on the index page, we decided, instead, to giver users full control of which part of the graph they would like to see. 
+\item Recenter: In addition to the global knowledge graph, we also allow users to view a local graph centered around any chosen node. This feature comes in handy when a user wants to explore a specific theorem/proof. By default, only the chosen node and its immediate neighbors are displayed in the local graph. However, users can adjust the number of higher-order neighbors shown from the interface.
+\item Add child: This feature allows one to add a new theorem/proof directly from the knowledge graph. This serves as a more intuitive way for users to make contributions. 
+\item Preview: This feature allows users to view the content of a node without redirecting to the detail page.
+\end{enumerate}
+
+Finally, we finished implementing private graphs, which was mainly designed for a classroom setting use case. Users can choose to create their own knowledge graphs, which will not be displayed on the public global graph. CRUD functionality and keyword search were also implemented in the private graph. 
 
 \end{enumerate}
 \section{End Product}
@@ -284,6 +282,7 @@ All contents associated with a private graph will be visible to the owner and in
 
 \end{itemize}
 
+
 \section{Future plans} 
 Although we think that the current socialmath is ready for public usage, there are several additional goals that we plan to achieve with socialmath in the future in order to make it a better product:
 \begin{enumerate}
@@ -300,5 +299,27 @@ A more advanced version of the socialmath node submission system plans to have l
 \item \emph{Better user interaction system} \\
 We plan to enhance the "social" side of socialmath. Search-for-user, follow-user, invite/messaging systems are all planned. 
 \end{enumerate}
+
+%ACKNOWLEDGMENTS are optional
+\section{Acknowledgments}
+
+
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{plain}
+\bibliography{socialmath} 
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+
+% That's all folks!
 
 \end{document}
