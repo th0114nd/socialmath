@@ -170,6 +170,8 @@ This week we further polished the product. For the front end, we merged and depl
 Finally, we finished implementing private graphs, which was mainly designed for a classroom setting use case. Users can choose to create their own knowledge graphs, which will not be displayed on the public global graph. CRUD functionality and keyword search were also implemented in the private graph. 
 
 \end{enumerate}
+
+
 \section{End Product}
 The end product would hopefully be a useful web application that would
 allow publishing of proofs in a graphical format subject to immediate review
@@ -238,26 +240,26 @@ For example, 0 only displays the center node, 1 also displays its parents and ch
 \item Preview: open a small window to show the node's content.
 \end{itemize}
 \subsection{Web Framework}
-The server middleware is based on the Django web-framework. It provides a full set of functionalities for socialmath users to conveniently contribute to the mathematical knowledge library and to build their own graph:
+The server middleware is based on the Django web-framework. It provides a full set of functionalities for socialmath users to conveniently contribute to the open mathematics library and to build their own knowledge graphs:
 \begin{itemize}
 
-\item \emph{Nodes and Dependencies} \\
-The most fundamental functionality in the socialmath web framework is the node-dependency system. In the framework, the nodes contain information about its theme, content, type, publication and modification dates. We used relationship structures to store node-node relationship, as well as node-to-other-object relationships. 
+\item \emph{Nodes and Dependencies} \\\\
+The fundamental functionality in the socialmath web framework is the node-dependency system. In the framework, nodes contain information about its theme, content, type, publication and modification time. We store node-node relationship as well as node-to-other-object relationships. 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.5]{oneNode.png}
-\caption{One node in social math knowledge graph}
+\includegraphics[scale=0.37]{oneNode.png}
+\caption{A node in socialmath's knowledge graph}
 \end{figure}\\
 Dependencies are classified into three types:
 \begin{enumerate}
-\item \emph{Proof-to-Theorem}: Lemma dependency. This relationship exists when a proof of one theorem cites another theorem in the proving process. 
+\item \emph{Proof-to-Theorem}: Lemma dependency. This relationship exists when a proof of one theorem cites another theorem in the process. 
 \item \emph{Theorem-to-Proof}: Prove dependency. This relationship exists when a proof proves a theorem. 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.3]{prove_lemma_relationship.png}
-\caption{Erdos' prove of Euclid's theorem exhibits prove relationship to Euclid's theorem, and exhibits lemma relationship to Fundamental Theorem of Arithmetic}
+\caption{Erd$\tilde{o}$s' proof of Euclid's theorem exhibits prove relationship to Euclid's theorem, and lemma relationship to Fundamental Theorem of Arithmetic}
 \end{figure}\
-\item \emph{Theorem-to-Theorem}: High-Relevancy dependency. This relationship exists when a theorem is the special case or a broader case of another, or they have strong logical relationship with each other. This also includes the relationship between theorems and definitions, which we also model as theorems in our system (only that defs can't have proofs).
+\item \emph{Theorem-to-Theorem}: High-Relevancy dependency. This relationship exists when a theorem is the special case or a generalization of another, or they have strong logical relationship with each other. This also includes the relationship between theorems and definitions. We also model definitions as theorems in our system, except that definitions can't have proofs.
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.4]{tt_relationship.png}
@@ -265,105 +267,104 @@ Dependencies are classified into three types:
 \end{figure}\
 \end{enumerate}
 
-\item \emph{Keywords and Search} \\
-Keywords are words that generalize a node's content and branch of study. They can be added upon adding the node, or can be added when editing an existing node. Node-keyword relationships are stored in a separate object named KWMap. 
+\item \emph{Keywords and Search} \\\\
+Keywords are words that imply a node's content and branch of study. They can be added when adding the node, or when editing an existing node. Node-keyword relationships are stored in a relationship set called "Tags". 
+The search functionality is supported by keyword mapping. Search can be used in two ways: you can either enter text in the search bar displayed at the index page, or click on the link of an existing keyword. 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.8]{keyword.png}
-\caption{Keywords in the detail-view of a node}
+\includegraphics[scale=0.36]{search.png}
+\caption{Search results for the keyword "prime factorization"}
 \end{figure}\\
-The search functionality is supported by keyword mapping. Search can be used in two ways: you can either enter text in the search bar displayed at the index page, or you can click on the link of an existing keyword. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.4]{search.png}
-\caption{Search result for the keyword "prime factorization"}
-\end{figure}\
 
-\item \emph{Submission and Editing} \\
+\item \emph{Submission and Editing} \\\\
 Adding a new theorem or proof can be done in two ways: 
-Click on the button at the bottom of the index page,
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.8]{add_node.png}
-\caption{Add theorem/proof button at bottom of index page}
-\end{figure}\\
-or use the "add child" tool on the graph. 
+Click on the button at the bottom of the index page, or use the "add child" tool on the graph. 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.4]{add_child.png}
 \caption{The "add child" tool}
 \end{figure}\\
-To edit an existing theorem, the user would have to go to the detail page and click on the "edit" button, where the user will see an interface similar to the add-node page, only that existing information has been filled in. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.4]{edit.png}
-\caption{Editing an existing node}
-\end{figure}\\
+Users can edit an existing theorem/proof by clicking the "edit" button on the node's detail page. The button links to an interface similar to the add-node page, except that the existing information will be pre populated. 
 
-\item \emph{Users and Profile} \\
-Socialmath doesn't require a user to login to view its content, but there are additional functionalities for logged in users. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.15]{signup.png}
-\caption{User registration page}
-\end{figure}\\
-Once a user is logged in, every edition/addition activity will be recorded as an "event" in the database. They will show up both on the detail page of the node being edited, and on your own profile page as well. 
+\item \emph{Users and Profile} \\\\
+Socialmath doesn't require a user to login to view its content, but we provide additional functionalities for logged in users. 
+Once a user is logged in, his recent activities (adding/editing nodes) will be recorded as events in the database. The events will show up both on the detail page of the modified node, and on the user's profile page. \\
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.6]{edit_history.png}
-\caption{Edition history of a node showing the initial author and the last modifier}
+\caption{Change history of a node shows the initial author and the last modifier.}
 \end{figure}\\
-\emph{Follow} is a functionality provided for registered users. The user may click on the "follow" button of any given node, and the server will record it as an event of "follow" type. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.8]{follow.png}
-\caption{The follow button}
-\end{figure}\\
-To view a user's own profile, the user can always click on his own username on the top navigation bar. Right now, there is now search-for-user functionality, so the only entrance for viewing other users' profiles is in the edition history of nodes. 
+\emph{Follow} is another feature provided for registered users to help keep track of topics they are interested in. The user may click on the "follow" button of any given node, and the server will capture it as a following event. \\
+Clicking on a username redirects to that user's profile page. Since there is no search-for-user functionality yet, the only entrance for viewing other users' profiles is through the node's change history. 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.52]{profile.png}
 \caption{The profile page of Jianchi Chen, consist of basic info, activities, following-nodes, and private graphs he owns}
 \end{figure}\\
 
-\item \emph{Private Graphs} \\
-In addition to one public graph visible to everyone, socialmath also implemented a functionality called \emph{private graph} so that each registered user can create and edit his own graph. Upon creation, the user may choose to make the graph public or only disclosed to authorized users. 
-\begin{figure}[h!]
+\item \emph{Private Graphs} \\\\
+In addition to one public knowledge graph visible to everyone, socialmath also provides \emph{private graph} feature so that each registered user can create and edit his own graph. Each private graph has an individual index page. Permission relationship-set makes sure that no nodes in the private graph can be accessed from the public one.   \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.4]{create_pg.png}
 \caption{Creating a private graph}
 \end{figure}\\
-The created private graph will have a individual index page, and every node added to the private graph will not show up on the public graph.  
+Upon creation, the user may choose to make the graph public or only visible to authorized users. An attempt to view private graph contents when you're not invited will result in a 401 unauthorized error. 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.4]{pg_index.png}
 \caption{The index page of a private graph, with a node called "test theorem" added.}
 \end{figure}\\
-All contents associated with a private graph will be visible to the owner and invited user only. An attempt to view private graph contents when you're not invited will result in a 401 unauthorized error. 
 
 \end{itemize}
 
+\subsection{Database}
+\subsubsection{Entity-set Schema}
+\begin{itemize}
+\item Node(\underline{node\_id}, kind, title, statement, pub\_time, last\_modified)
+\item Keyword(\underline{kw\_id}, word)
+\item PrivateGraph(\underline{pgraph\_id}, name, description, pub\_time, perm\_type)
+\item We used the default Django model for user authentication:
+User(\underline{user\_id}, username, email, password, ...)\\ 
+\end{itemize}
 
-\section{Future plans} 
-Although we think that the current socialmath is ready for public usage, there are several additional goals that we plan to achieve with socialmath in the future in order to make it a better product:
+\subsubsection{Relationship-set Schema}
+\begin{itemize}
+\item Depends(\underline{node\_id}, \underline{node\_id}, dep\_type)
+\item Tags(\underline{node\_id}, \underline{kw\_id})
+\item Modifies(\underline{node\_id}, \underline{user\_id}, pub\_time, event\_type)
+\item Owns(\underline{user\_id}, \underline{pgraph\_id})
+\item Includes(\underline{pgraph\_id}, \underline{node\_id})
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.5]{socialmath_ER.png}
+\caption{ER Diagram}
+\end{figure}
+
+
+\section{Future Work} 
+Here are a few additional 
+Although the current socialmath is ready for public usage, there are several additional goals that we plan to achieve with socialmath in the future in order to make it a better product:
 \begin{enumerate}
-\item \emph{Protection against malicious activity} \\
-Right now, socialmath has no protection against a user who simply wants to delete everything on the knowledge graph, or change everything to spam. We plan to learn from how wikipedia prevents users from malicious editions, by having a more comprehensive edition history and revert-edition functionality, as well as user-penalty system. 
+\item \emph{Protection against abuses} \\
+Right now, socialmath has no protection against malicious activities such as deleting everything from the knowledge graph, creating dummy nodes, or adding unrelated contents. We can model our protection mechanism after Wikipedia, and build a more comprehensive change history, which allows the system to revert malicious changes and penalize misbehaved users. 
 \item \emph{Correctness system} \\
-Also, the website currently has no way of detecting correctness of a proof or a theorem. Multiple alternatives can be used in this regard: an user upvote system, or a user "questioning" system where users can request verification on statements, etc. 
-\item \emph{A more complete private graph system} \\
-An ideal model for a private graph will be a github repository, where users can collaborate and utilize multiple edition tools. Also, we will work to implement full visualization of the private graph so that it is the same as the global graph. 
-\item \emph{File uploading} \\
-Right now, socialmath only supports in-box writing. Although LaTeX formulas are supported, it would be more desirable if we can add pdf-uploading and displaying functionality. 
+Another concern is that the website currently has no way of assessing the correctness of a proof or a theorem. We can either implement an user upvote system similar to Stack Overflow's, or a user "questioning" system where users can request verification on statements. 
+\item \emph{A more collaborative private graph system} \\
+An ideal model for a private graph is the github repository. Users are able to collaborate on a graph, fork someone else's work, assign and discuss issues, and use version control. We would also like to include visualization in the private graph. 
+\item \emph{File support} \\
+Currently, socialmath only supports in-box writing. Although LaTeX editing is supported, it would be more desirable if we can add pdf-uploading and displaying functionality. 
 \item \emph{Lemma and keyword detection} \\
-A more advanced version of the socialmath node submission system plans to have lemma and keyword auto-detection, where the system scans for heuristics in the content. 
-\item \emph{Better user interaction system} \\
-We plan to enhance the "social" side of socialmath. Search-for-user, follow-user, invite/messaging systems are all planned. 
+A more advanced version of the socialmath node submission system includes lemma and keyword auto-detection. A simple algorithm is to collect statistics on the text's N-grams (sequences of $n$ consecutive words).  Sequences with a significant number of occurrences are then candidates for the keyword/lemma \cite{Kumar:2008:AKE:1410140.1410180}.
+\item \emph{Better user interaction} \\
+There's a lot of room for enhancing the "social" side of the current product. The first step is to implement handy features such as user searching, following, and in-site messaging. We can implement a level-based experience system to reward active and reliable users. We should also reward users who manage to invite new users.
 \end{enumerate}
 
 %ACKNOWLEDGMENTS are optional
 \section{Acknowledgments}
-
+We would like to thank our faculty advisor, Professor Steven
+Low, and our teaching assistant, Qiuyu Peng, for their feedback and guidance.We would also like to thank Professor Adam Wierman for co-hosting the class.
 
 %
 % The following two commands are all you need in the
