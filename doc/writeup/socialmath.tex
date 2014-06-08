@@ -175,7 +175,68 @@ The end product would hopefully be a useful web application that would
 allow publishing of proofs in a graphical format subject to immediate review
 of other users, and a repository for a large collection of proofs to be
 seen in a graphical format upon request.
-\subsection{UI and Visualization}
+\subsection{Graph Visualization}
+\subsubsection{Layout}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=6cm]{layout_1.png}
+\caption{Parent nodes positioned above child nodes}
+\end{figure}
+We build the graph layout engine based on D3 Force Layout,
+which models nodes as repulsing charged particles and edges as elastic cables holding nodes together, 
+and then run a physics simulation to determine the positions of nodes.
+For each node, we draw a text box with its title inside,
+and we draw an arrow from Node $c$ to Node $p$ to indicate that $c$ depends on $p$.
+
+So far the layout engine only takes care of undirected structure of the graph. 
+For two nodes $c$ depending on $p$, we want $p$ to stay a little above $c$ to emphasize such dependency.
+Let us temporarily forget D3 Force Layout.
+If our graph is a tree, we can unambiguously compute the height of each node and assign a $y$-coordinate accordingly. 
+To deal with cycles, 
+we can minimize the potential
+\begin{equation}
+U(\mathbf{y}) = \sum_{<c,p>}\left(y_p-y_c-H\right)^2.
+\end{equation}
+Note that $U(\mathbf{y})\geq0$ and that $U(\mathbf{y})=0$ has solutions if the graph is a tree. 
+The solution is not unique because $U(\mathbf{y})$ is invariant under translation of all nodes by the same displacement, 
+but this issue turns out to be unimportant.
+
+As an example, if we have nodes $1,2,3,4$ with edges 
+$2 \rightarrow 1, 3 \rightarrow 1, 3 \rightarrow 2, 3 \rightarrow 4$,
+the solution (subject to translation) is
+$$y_1=\frac43,~y_2=\frac23,~y_3=0,~y_4=1.$$
+
+To combine this method with D3 Force Layout, 
+which also automatically computes coordinates of nodes,
+we can apply ``gradient descent'' on $U(\mathbf{y})$ so that
+\begin{equation}
+\frac{\mathrm{d}y_i}{\mathrm{d}t} = \eta
+\left[
+\sum_{<i,p>}\left(y_p-y_i-H\right)
+-\sum_{<c,i>}\left(y_i-y_c-H\right)\right],
+\end{equation}
+which effectively shifts equilibrium position of nodes in D3 Force Layout.
+
+\subsubsection{Manipulation}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=8cm]{toolbar.png}
+\caption{Knowledge graph UI Overview}
+\end{figure}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=4cm]{toolbar2.png}
+\caption{Knowledge graph UI Toolbar}
+\end{figure}
+\begin{itemize}
+\item Scroll horizontally / vertically
+\item Zoom in / zoom out / reset
+\item Recenter: change the center node around which the graph is explored
+\item Depth: the maximal distance from the center node to display. 
+For example, 0 only displays the center node, 1 also displays its parents and children, and 2 also displays its grandparents and grandchildren.
+\item Show all nodes: display the whole graph or only nodes around a center node.
+\item Preview: open a small window to show the node's content.
+\end{itemize}
 \subsection{Web Framework}
 The server middleware is based on the Django web-framework. It provides a full set of functionalities for socialmath users to conveniently contribute to the mathematical knowledge library and to build their own graph:
 \begin{itemize}
