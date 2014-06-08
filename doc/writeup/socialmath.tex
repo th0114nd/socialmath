@@ -182,11 +182,12 @@ seen in a graphical format upon request.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=6cm]{layout_1.png}
-\caption{Parent nodes positioned above child nodes}
+\caption{Parent nodes positioned above child nodes (Green: theorem. Red: Proof.)}
 \end{figure}
 We build the graph layout engine based on D3 Force Layout,
 which models nodes as repulsing charged particles and edges as elastic cables holding nodes together, 
-and then run a physics simulation to determine the positions of nodes.
+and then run a physics simulation that animates the process of finding equilibrium positions of nodes.
+
 For each node, we draw a text box with its title inside,
 and we draw an arrow from Node $c$ to Node $p$ to indicate that $c$ depends on $p$.
 
@@ -197,32 +198,34 @@ If our graph is a tree, we can unambiguously compute the height of each node and
 To deal with cycles, 
 we can minimize the potential
 \begin{equation}
-U(\mathbf{y}) = \sum_{<c,p>}\left(y_p-y_c-H\right)^2.
+U(\mathbf{y}) = \sum_{<c,p>}\left(y_p-y_c-H\right)^2,
 \end{equation}
+where the constant $H$ is vertical spacing per level.
 Note that $U(\mathbf{y})\geq0$ and that $U(\mathbf{y})=0$ has solutions if the graph is a tree. 
 The solution is not unique because $U(\mathbf{y})$ is invariant under translation of all nodes by the same displacement, 
 but this issue turns out to be unimportant.
 
 As an example, if we have nodes $1,2,3,4$ with edges 
-$2 \rightarrow 1, 3 \rightarrow 1, 3 \rightarrow 2, 3 \rightarrow 4$,
+$(2 \rightarrow 1), (3 \rightarrow 1), (3 \rightarrow 2), (3 \rightarrow 4)$,
 the solution (subject to translation) is
 $$y_1=\frac43,~y_2=\frac23,~y_3=0,~y_4=1.$$
 
-To combine this method with D3 Force Layout, 
-which also automatically computes coordinates of nodes,
-we can apply ``gradient descent'' on $U(\mathbf{y})$ so that
+We want to use this information to adjust equilibrium positions of nodes in D3 Force Layout,
+so we promote minimization of $U(\mathbf{y})$ to a dynamical process,
+and a natural choice is gradient descent.
+Thus we differentiate $U(\mathbf{y})$ with respect to $y_i$ (and multiply by a constant $-\eta$) to obtain equations of motion 
 \begin{equation}
 \frac{\mathrm{d}y_i}{\mathrm{d}t} = \eta
 \left[
 \sum_{<i,p>}\left(y_p-y_i-H\right)
 -\sum_{<c,i>}\left(y_i-y_c-H\right)\right],
 \end{equation}
-which effectively shifts equilibrium position of nodes in D3 Force Layout.
+which pulls nodes away from their D3 equilibrium positions and minimize the sum of D3 potential and $U(\mathbf{y})$.
 
 \subsubsection{Manipulation}
 \begin{figure}[h!]
 \centering
-\includegraphics[width=8cm]{toolbar.png}
+\includegraphics[width=8cm]{toolbar1.png}
 \caption{Knowledge graph UI Overview}
 \end{figure}
 \begin{figure}[h!]
@@ -279,11 +282,11 @@ The search functionality is supported by keyword mapping. Search can be used in 
 \item \emph{Submission and Editing} \\\\
 Adding a new theorem or proof can be done in two ways: 
 Click on the button at the bottom of the index page, or use the "add child" tool on the graph. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.4]{add_child.png}
-\caption{The "add child" tool}
-\end{figure}\\
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[scale=0.4]{add_child.png}
+%\caption{The "add child" tool}
+%\end{figure}\\
 Users can edit an existing theorem/proof by clicking the "edit" button on the node's detail page. The button links to an interface similar to the add-node page, except that the existing information will be pre populated. 
 
 \item \emph{Users and Profile} \\\\
