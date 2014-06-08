@@ -220,13 +220,7 @@ The search functionality is supported by keyword mapping. Search can be used in 
 
 \item \emph{Submission and Editing} \\
 Adding a new theorem or proof can be done in two ways: 
-Click on the button at the bottom of the index page,
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.8]{add_node.png}
-\caption{Add theorem/proof button at bottom of index page}
-\end{figure}\\
-or use the "add child" tool on the graph. 
+Click on the button at the bottom of the index page, or use the "add child" tool on the graph. 
 \begin{figure}[h!]
 \centering
 \includegraphics[scale=0.4]{add_child.png}
@@ -253,11 +247,6 @@ Once a user is logged in, every edition/addition activity will be recorded as an
 \caption{Edition history of a node showing the initial author and the last modifier}
 \end{figure}\\
 \emph{Follow} is a functionality provided for registered users. The user may click on the "follow" button of any given node, and the server will record it as an event of "follow" type. 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.8]{follow.png}
-\caption{The follow button}
-\end{figure}\\
 To view a user's own profile, the user can always click on his own username on the top navigation bar. Right now, there is now search-for-user functionality, so the only entrance for viewing other users' profiles is in the edition history of nodes. 
 \begin{figure}[h!]
 \centering
@@ -281,6 +270,31 @@ The created private graph will have a individual index page, and every node adde
 All contents associated with a private graph will be visible to the owner and invited user only. An attempt to view private graph contents when you're not invited will result in a 401 unauthorized error. 
 
 \end{itemize}
+
+\subsection{Database}
+\subsubsection{Entity-set Schema}
+\begin{itemize}
+\item Node(\underline{node\_id}, kind, title, statement, pub\_time, last\_modified)
+\item Keyword(\underline{kw\_id}, word)
+\item PrivateGraph(\underline{pgraph\_id}, name, description, pub\_time, perm\_type)
+\item We used the default Django model for user authentication:
+User(\underline{user\_id}, username, email, password, ...)\\ 
+\end{itemize}
+
+\subsubsection{Relationship-set Schema}
+\begin{itemize}
+\item Depend(\underline{node\_id}, \underline{node\_id}, dep\_type)
+\item Tag(\underline{node\_id}, \underline{kw\_id})
+\item Modify(\underline{node\_id}, \underline{user\_id}, pub\_time, event\_type)
+\item Own(\underline{user\_id}, \underline{pgraph\_id})
+\item Include(\underline{pgraph\_id}, \underline{node\_id})
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.5]{socialmath_ER.png}
+\caption{ER Diagram}
+\end{figure}
 
 
 \section{Future plans} 
