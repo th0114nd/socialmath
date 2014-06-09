@@ -39,12 +39,12 @@ Kexin Rong\\
 \thispagestyle{empty}
 
 \subsection*{Abstract}
-Mathematical proofs and theorems, and the inter-dependencies among them (edges) have the structure of a directed acyclic graph (DAG). However, in most educational processes or online mathematical libraries, theorems and proofs are typically presented in a linear fashion, which fails to connotate the theorem's inter-relationship with others, or how it is positioned in the mathematical world. Therefore, we propose a web service to better present mathematical proof trees as graphs, and allows users from all over the world to contribute to the graph, and use it for their own interest. Supposedly, the visualization should  help users both navigate through the existing mathematical library and also easily contribute new proofs to expand the reach of the proof trees. Specification of proofs could either be very formal, in which case a program could verify them, or more relaxed and reviewed by other users in a collaborative effort to find mathematical truth. People can also benefit by using the visualization tool we provided to construct graphs for other purposes that visualization of logical inter-relationship can help with. 
+Mathematical proofs and theorems, and the inter-dependencies among them (edges) have the structure of a directed acyclic graph (DAG). However, in most educational processes or online mathematical libraries, theorems and proofs are typically presented in a linear fashion, which fails to connotate the theorem's inter-relationship with others, or how it is positioned in the mathematical world. Therefore, we propose a web service to better present mathematical proof trees as graphs, and allows users from all over the world to contribute to the graph, and use it for their own interest. Supposedly, the visualization should  help users both navigate through the existing mathematical library and also easily contribute new proofs to expand the reach of the proof trees. The service can serve as a stand alone online crowd sourced mathematical library, or can be incorporated into other systems as a tool to visualize logical inter-relationship. 
 
 \keywords{proof trees, visualization, social network, education, graph} % NOT required for Proceedings
 
 \section{Introduction}
-The course of mathematical study can be frustrating. After proving one lemma after another, students can easily get caught in the details and forget about the big picture. In another case, students can know 10 different theorems without understanding how they are related to each other.  This is due to the lack of a more intuitive ways to visualize these concepts and their relationships. If we model mathematical theorems and proofs as nodes, and their dependencies as directed edges, a mathematical library is indeed a set of "proof trees" with the structure of a DAG. Acyclic is guaranteed by the fallacy of circular reasoning. 
+The course of mathematical study can be frustrating. After proving one lemma after another, students can easily get caught in the details and forget about the big picture. In another case, students can learn 10 different theorems without understanding how they are related to each other.  The difficulty is caused by the lack of an intuitive ways to visualize these concepts and their relationships. If we model mathematical theorems and proofs as nodes, and their relationships as directed edges, a mathematical library is indeed a set of "proof trees" with the structure of a DAG. Acyclic is guaranteed by the fallacy of circular reasoning. 
  
 We therefore created a service and web based front end that allows the entry, modification, inspection, and visualization of theorems, definitions, proofs and the dependencies between them. Dependencies include the relationship between a theorem and its proof, between a proof and its lemma, or a theorem/definition and its special case/generalization.
 
@@ -56,14 +56,10 @@ Alternatively, the service can be incorporated as an useful feature for other we
 
 
 
-
-
-The same idea can apply to other fields of study as well. 
-
 \section{Related Work}
-Expii \cite{expii} is an extensive crowdsourced MOOC service that has recently launched. It currently focuses on topics in Math and Physics, and provides a zoom in style visualization of the knowledge graph. When users zoom in from section "Three Big Perspectives for Calculus" for example, they will see three subsections "Algebra", "Analytic Geometry" and "Sets and Maps". Further zooming in from subsection "Sets and Maps" will lead you to sub subsections "Set Definitions", "Special Sets" and "Functions as Maps Between Sets".
+Expii \cite{expii} is an extensive crowdsourced MOOC service that has  launched recently. It currently focuses on topics in Math and Physics, and provides a zoom in style visualization of the knowledge graph. When users zoom in from section "Three Big Perspectives for Calculus" for example, they can see three subsections "Algebra", "Analytic Geometry" and "Sets and Maps". Further zooming in from subsection "Sets and Maps" will lead users to sub-subsections "Set Definitions", "Special Sets" and "Functions as Maps Between Sets".
 
-Despite the similarities in idea, Expii and socialmath have different end goals. Expii aims to the biggest interactive tutor, while socialmath focuses on becoming a intuitive and comprehensive use crowd source mathematical library. As a result, Expii organizes topics in a pedagogical manner while socialmath organizes according to logical dependencies. For instance, theorems in algebra and analytic geometry might not directly depend on each other, but these two topics are closed related as background knowledge to calculus. 
+Despite being similar crowd sourced products with knowledge graph visualization, Expii and socialmath have distinct end goals. Expii aims to the biggest interactive tutor, while socialmath focuses on becoming a intuitive and comprehensive mathematical library. As a result, Expii organizes topics in a pedagogical manner while socialmath organizes according to logical dependencies. For instance, theorems in algebra and analytic geometry might not directly depend on each other, but these two topics are closed related as background knowledge to calculus. 
 
 \section{Timeline}
 \subsection{Initial Timeline}
