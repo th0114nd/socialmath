@@ -39,62 +39,31 @@ Kexin Rong\\
 \thispagestyle{empty}
 
 \subsection*{Abstract}
-A mathematical proof has the structure of a DAG. However, it is typically
-presented in a linear fashion, and cannot practically expose the depth of its
-roots. We propose a web service to provide both of these by exposing part of
-the graph to the user and allowing them to explore down into the subproofs.
-Naturally it would be prohibitive for the authors to write even a useful amount
-of the tree in, so the service allows the introduction of new proofs to expand
-the reach of the proof trees. Specification of proofs could either be very
-formal, in which case a program could verify them or more relaxed and reviewed
-by other users in a social effort to find mathematical truth.
+Mathematical proofs (nodes) and the dependencies among them (edges) have the structure of a directed acyclic graph (DAG). However, theorems and proofs are typically presented in a linear fashion, which fails to connotate the theorem's context. Therefore, we propose a web service to better present mathematical proof trees as DAGs. Supposedly, the visualization should  help users both navigate through the existing mathematical library and also easily contribute new proofs to expand the reach of the proof trees. Specification of proofs could either be very formal, in which case a program could verify them, or more relaxed and reviewed by other users in a social effort to find mathematical truth.
+
+\keywords{proof trees, visualization, social network} % NOT required for Proceedings
 
 \section{Introduction}
-We propose a web application that allows the inspection of, addition to, and
-potentially input of verification of collection of large proof DAGs.
-Interfacing with a node of the tree will present a statement of the theorem
-associated with that node, edges to the children and potentially to some of its
-parents. Text accompanies the node, and explains how the children are combined
-together to prove the theorem. Ideally the accompanying text is as small as
-possible and the nodes have a small fan out to break the proof down into
-digestible chunks.
+The course of mathematical study can be frustrating. After proving one lemma after another, students can easily get caught in the details and forget about the big picture. In another case, students can know 10 different theorems without understanding how they are related to each other.  This is due to the lack of a more intuitive ways to visualize these concepts and their relationships. If we model mathematical theorems and proofs as nodes, and their dependencies as directed edges, a mathematical library is indeed a set of "proof trees" with the structure of a DAG. Acyclic is guaranteed by the fallacy of circular reasoning. 
+ 
+We therefore created a service and web based front end that allows the entry, modification, inspection, and visualization of theorems, definitions, proofs and the dependencies between them. Dependencies include the relationship between a theorem and its proof, between a proof and its lemma, or a theorem/definition and its special case/generalization.
 
-We have two possible choices to proceed on how to keep the DAG logically sound.
-The first is more of a technical problem: require highly precise statements of
-additions to the tree to be parsed, the logical statements can then be verified
-(or rejected) automatically. Alternatively, with a more social emphasis proofs
-could be stated in natural mathematical language. Under this scheme, the
-correctness would have to be verified by users, through a combination
-of moderation, reputation, and democracy.
+We have two possible choices to proceed on how to keep the DAG logically sound. The first is more of a technical problem: require highly precise statements of additions to the tree to be parsed, the logical statements can then be verified (or rejected) automatically. Alternatively, with a more social emphasis proofs could be stated in natural mathematical language. Under this scheme, the correctness would have to be verified by users, through a combination of moderation, reputation, and democracy.
 
-\section{Technical Hurdles}
-At the very basic level we have to deal with all the usual problems in
-building a webapp: deciding upon tools (languages, databases, frameworks)
-and an API to communicate between client and server. Further features
-needed would be dynamic loading of the graph as the user scrolls through,
-search to look for other proofs to minimize redundancy, automated theorem
-verification or a voting mechanism, ability to mention other theorems
-to include them is lemmas in a particular proof, text entry for a theorem,
-inclusion of images for proofs that necessitate it, and collections of
-axioms for the various fields of mathematics that could be present as
-a starting point. Hard problems would involve the choice of data 
-structure for the proofs, intuitive presentation of the DAG to the user,
-an effective mechanism of rejecting poorly worded or incorrect proofs.
+We hope that this is a service with fruitful pedagogical applications. In a class taught via the Moore Method for example, the service could be used as a study tool: A set of isolated definitions and theorems are given at the start of the term. Students' progress can be easily assessed from the completeness of the graph visualization. 
 
-\section{Potential Order of Implementation}
-\begin{enumerate}
-    \item Persistent storage of a proof in the database.
-    \item Communication of a proof over the network.
-    \item User interface.
-    \item Adding a new theorem from the user interface.
-    \item Persistence of theorems in UI across page loads.
-    \item Verification system (social or formal). 
-\end{enumerate}
+Alternatively, the service can be incorporated as an useful feature for other web services. The idea of a mathematical proof tree can be generalize to a knowledge graph in any field.  For sites like Wikipedia, having a graphic interface navigation to provide a map of topics to learn and modify can greatly enhance user experiences.
 
-\section{Background}
-I'm not aware of any similar projects.
-% \bibliography{sample}}
-% \theendnotes
+
+
+
+
+The same idea can apply to other field of study as well. 
+
+\section{Related Work}
+TODO: will talk about MOOC
+
+
 
 \section{Timeline}
 \subsection{Initial Timeline}
